@@ -39,7 +39,10 @@ namespace WendySharp
 
             Bootstrap.Client.Client.Leave(channel);
 
-            command.Reply("Left {0}", channel);
+            if (channel != command.Event.Recipient)
+            {
+                command.Reply("Left {0}", channel);
+            }
         }
     }
 }

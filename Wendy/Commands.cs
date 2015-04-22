@@ -19,6 +19,7 @@ namespace WendySharp
 
             RegisteredCommands = new List<Command>();
             RegisteredCommands.Add(new Kick());
+            RegisteredCommands.Add(new Redirect());
             RegisteredCommands.Add(new Join());
             RegisteredCommands.Add(new Part());
             RegisteredCommands.Add(new Echo());
@@ -43,8 +44,6 @@ namespace WendySharp
             {
                 return;
             }
-
-            Log.WriteDebug("CommandHandler", "{0} -> {1} : {2}", e.Sender, e.Recipient, e.Message);
 
             var message = e.Message.ToString().TrimEnd();
 
@@ -72,8 +71,6 @@ namespace WendySharp
             {
                 return;
             }
-
-            Log.WriteDebug("CommandHandler", "Checking for command '{0}'", message);
 
             var match = CompiledCommandMatch.Match(message);
 

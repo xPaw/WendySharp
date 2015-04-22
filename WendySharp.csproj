@@ -61,6 +61,8 @@
     <Compile Include="Wendy\Users.cs" />
     <Compile Include="Utils\ModeList.cs" />
     <Compile Include="Utils\LateModeRequest.cs" />
+    <Compile Include="Commands\Redirect.cs" />
+    <Compile Include="Wendy\Channels.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

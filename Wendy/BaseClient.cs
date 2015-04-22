@@ -10,6 +10,7 @@ namespace WendySharp
     {
         public readonly IrcClient Client;
         public readonly ModeList ModeList;
+        public readonly Channels ChannelList;
 
         public BaseClient()
         {
@@ -20,10 +21,9 @@ namespace WendySharp
             Client.Connected += OnConnected;
             Client.Closed += OnDisconnected;
             Client.GotIrcError += OnError;
-            Client.GotChannelListEntry += OnGotChannelListEntry;
-            Client.GotNameListReply += OnGotNameListReply;
 
             ModeList = new ModeList(Client);
+            ChannelList = new Channels(Client);
 
             new Permissions();
             new Commands(Client);
@@ -76,26 +76,15 @@ namespace WendySharp
             }
         }
 
-        private void OnGotChannelListEntry(object sender, ChannelListEntryEventArgs e)
-        {
-            Log.WriteDebug("OnGotChannelListEntry", "{0} - {1} - {2}", e.Channel, e.Topic, e.UserCount);
-        }
-
-        private void OnGotNameListReply(object sender, NameListReplyEventArgs e)
-        {
-            var names = e.GetNameList();
-
-            foreach (var name in names)
-            {
-                Log.WriteDebug("OnGotNameListReply", "{0} - {1}", e.Channel, name);
-            }
-        }
-
         private void OnError(object sender, IrcErrorEventArgs e)
         {
             switch (e.Error)
             {
                 case IrcReplyCode.MissingMOTD:
+                    return;
+
+                case IrcReplyCode.NotChannelOperator:
+
                     return;
             }
 
