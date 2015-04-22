@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace WendySharp
 {
-    public class BaseClient
+    class BaseClient
     {
         public readonly IrcClient Client;
+        public readonly ModeList ModeList;
 
         public BaseClient()
         {
@@ -21,6 +22,8 @@ namespace WendySharp
             Client.GotIrcError += OnError;
             Client.GotChannelListEntry += OnGotChannelListEntry;
             Client.GotNameListReply += OnGotNameListReply;
+
+            ModeList = new ModeList(Client);
 
             new Permissions();
             new Commands(Client);

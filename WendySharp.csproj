@@ -59,6 +59,8 @@
     <Compile Include="Wendy\User.cs" />
     <Compile Include="Utils\Permissions.cs" />
     <Compile Include="Wendy\Users.cs" />
+    <Compile Include="Utils\ModeList.cs" />
+    <Compile Include="Utils\LateModeRequest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

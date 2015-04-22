@@ -35,7 +35,7 @@ namespace WendySharp
 
             foreach (var channel in Permissions)
             {
-                if (!IrcValidation.IsChannelName(channel.Key))
+                if (channel.Key != "*" && !IrcValidation.IsChannelName(channel.Key))
                 {
                     throw new JsonException(string.Format("Invalid channel '{0}' for user '{1}'", channel.Key, Username));
                 }
@@ -56,11 +56,23 @@ namespace WendySharp
             Permissions = null;
         }
 
-        public bool HasPermission(IrcString channel, string permission)
+        public bool HasPermission(string channel, string permission)
         {
-            Log.WriteDebug("User", "Checking '{1}' permission for '{0}'", Username, permission);
+            Log.WriteDebug("User", "Checking '{0}' permission for '{1}' in '{2}'", permission, Username, channel);
 
-            return CompiledPermissionsMatch.ContainsKey(channel) && CompiledPermissionsMatch[channel].Match(permission).Success;
+            if (CompiledPermissionsMatch.ContainsKey(channel) && CompiledPermissionsMatch[channel].Match(permission).Success)
+            {
+                return true;
+            }
+
+            if (channel != "*" && HasPermission("*", permission))
+            {
+                Log.WriteDebug("User", "Matched wildcard permission for '{0}'", Username);
+
+                return true;
+            }
+
+            return false;
         }
     }
 }
