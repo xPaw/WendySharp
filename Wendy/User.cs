@@ -42,11 +42,11 @@ namespace WendySharp
                     throw new JsonException(string.Format("Invalid channel '{0}' for user '{1}'", channel.Key, Identity));
                 }
 
-                string pattern = @"^(?:" + string.Join("|", channel.Value.Select(x => Regex.Escape(x))).Replace(@"\*", @".*") + @")$";
+                string pattern = @"^(" + string.Join("|", channel.Value.Select(x => Regex.Escape(x))).Replace(@"\*", @".*") + @")$";
 
                 Log.WriteDebug("User", "'{0}' permissions in {1}: {2}", IrcIdentity, channel.Key, pattern);
 
-                CompiledPermissionsMatch.Add(channel.Key, new Regex(pattern, RegexOptions.Compiled | RegexOptions.CultureInvariant));
+                CompiledPermissionsMatch.Add(channel.Key, new Regex(pattern, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture));
             }
 
             // We no longer need these
