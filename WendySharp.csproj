@@ -63,6 +63,11 @@
     <Compile Include="Utils\LateModeRequest.cs" />
     <Compile Include="Commands\Redirect.cs" />
     <Compile Include="Wendy\Channels.cs" />
+    <Compile Include="ThirdParty\DateTimeRoutines.cs" />
+    <Compile Include="Commands\Op.cs" />
+    <Compile Include="Commands\Deop.cs" />
+    <Compile Include="Commands\Devoice.cs" />
+    <Compile Include="Commands\Voice.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

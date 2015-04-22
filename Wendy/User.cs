@@ -58,8 +58,6 @@ namespace WendySharp
 
         public bool HasPermission(string channel, string permission)
         {
-            Log.WriteDebug("User", "Checking '{0}' permission for '{1}' in '{2}'", permission, Username, channel);
-
             if (CompiledPermissionsMatch.ContainsKey(channel) && CompiledPermissionsMatch[channel].Match(permission).Success)
             {
                 return true;
@@ -67,8 +65,6 @@ namespace WendySharp
 
             if (channel != "*" && HasPermission("*", permission))
             {
-                Log.WriteDebug("User", "Matched wildcard permission for '{0}'", Username);
-
                 return true;
             }
 

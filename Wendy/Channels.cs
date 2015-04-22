@@ -33,6 +33,13 @@ namespace WendySharp
                     channel.Value.AddUser(e.NewName);
                 }
             }
+
+            if (e.Identity.Nickname == Bootstrap.Client.TrueNickname)
+            {
+                Bootstrap.Client.TrueNickname = e.NewName;
+
+                Log.WriteDebug("Channels", "Bot's name changed to '{0}'", e.NewName);
+            }
         }
 
         private void OnNameListReply(object sender, NameListReplyEventArgs e)

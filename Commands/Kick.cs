@@ -37,7 +37,7 @@ namespace WendySharp
                 return;
             }
 
-            if (ident.Nickname.ToString().ToLowerInvariant() == Settings.BotNick.ToLowerInvariant())
+            if (ident.Nickname.ToString().ToLowerInvariant() == Bootstrap.Client.TrueNickname.ToLowerInvariant())
             {
                 Log.WriteInfo("Kick", "{0} tried to kick the bot in {1}", command.Event.Sender, command.Event.Recipient);
 

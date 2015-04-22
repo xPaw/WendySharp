@@ -11,6 +11,7 @@ namespace WendySharp
         public readonly IrcClient Client;
         public readonly ModeList ModeList;
         public readonly Channels ChannelList;
+        public string TrueNickname;
 
         public BaseClient()
         {
@@ -31,6 +32,8 @@ namespace WendySharp
 
         public void Connect()
         {
+            TrueNickname = Settings.BotNick;
+
             try
             {
                 var options = new IrcClientConnectionOptions();

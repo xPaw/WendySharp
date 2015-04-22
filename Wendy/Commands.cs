@@ -20,6 +20,10 @@ namespace WendySharp
             RegisteredCommands = new List<Command>();
             RegisteredCommands.Add(new Kick());
             RegisteredCommands.Add(new Redirect());
+            RegisteredCommands.Add(new Op());
+            RegisteredCommands.Add(new Deop());
+            RegisteredCommands.Add(new Voice());
+            RegisteredCommands.Add(new Devoice());
             RegisteredCommands.Add(new Join());
             RegisteredCommands.Add(new Part());
             RegisteredCommands.Add(new Echo());
@@ -47,9 +51,9 @@ namespace WendySharp
 
             var message = e.Message.ToString().TrimEnd();
 
-            if (message.StartsWith(Settings.BotNick, StringComparison.Ordinal))
+            if (message.StartsWith(Bootstrap.Client.TrueNickname, StringComparison.InvariantCultureIgnoreCase))
             {
-                var length = Settings.BotNick.Length; // "Wendy: "
+                var length = Bootstrap.Client.TrueNickname.Length; // "Wendy: "
 
                 // Allow pinging with any character following bots name
                 if (message.Length < length + 2 || message[length] == ' ' || message[length + 1] != ' ')
@@ -104,8 +108,6 @@ namespace WendySharp
                     return;
                 }
 
-                Log.WriteDebug("CommandHandler", "Trying to find user '{0}'", e.Sender.Username);
-
                 User user;
 
                 if (!Users.TryGetUser(e.Sender, out user))
@@ -121,6 +123,8 @@ namespace WendySharp
 
                     return;
                 }
+
+                Log.WriteDebug("CommandHandler", "'{0}' is authorized to perform '{1}' ({2}).", e.Sender, command.Name, command.Permission);
             }
 
             if (command.CompiledMatch != null)

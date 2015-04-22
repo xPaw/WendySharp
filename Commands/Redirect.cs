@@ -47,7 +47,7 @@ namespace WendySharp
                 return;
             }
 
-            if (ident.Nickname.ToString().ToLowerInvariant() == Settings.BotNick.ToLowerInvariant())
+            if (ident.Nickname.ToString().ToLowerInvariant() == Bootstrap.Client.TrueNickname.ToLowerInvariant())
             {
                 Log.WriteInfo("Redirect", "{0} tried to redirect the bot in {1}", command.Event.Sender, command.Event.Recipient);
 
@@ -81,10 +81,27 @@ namespace WendySharp
 
             Log.WriteInfo("Redirect", "{0} redirected {1} from {2} to {3}", command.Event.Sender, ident, command.Event.Recipient, targetChannel);
 
-            Bootstrap.Client.Client.Mode(command.Event.Recipient, "+b", new IrcString[1] { ident + "$" + targetChannel });
-            Bootstrap.Client.Client.Kick(ident.Nickname, command.Event.Recipient, string.Format("Redirected to {0} by {1}", targetChannel, command.Event.Sender.Nickname));
+            var isNickInChannel = channel.HasUser(ident.Nickname);
 
-            command.Reply("Redirected {0} to {1} for 2 hours", ident, targetChannel);
+            nick = ident + "$" + targetChannel;
+
+            var reason = string.Format("Redirected to {0} by {1}", targetChannel, command.Event.Sender.Nickname);
+
+            Bootstrap.Client.Client.Mode(command.Event.Recipient, "+b", new IrcString[1] { nick });
+            Bootstrap.Client.Client.Kick(ident.Nickname, command.Event.Recipient, reason);
+
+            command.Reply("Redirected {0} to {1} for 2 hours{2}", ident, targetChannel, isNickInChannel ? "" : " (this nick doesn't appear to be in this channel)");
+
+            Bootstrap.Client.ModeList.AddLateModeRequest(
+                new LateModeRequest
+                {
+                    Channel = command.Event.Recipient,
+                    Recipient = nick,
+                    Mode = "-b",
+                    Time = DateTime.Now.AddHours(2),
+                    Reason = reason
+                }
+            );
         }
     }
 }

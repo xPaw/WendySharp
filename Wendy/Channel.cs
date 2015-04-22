@@ -12,7 +12,7 @@ namespace WendySharp
         public Channel(string name)
         {
             Name = name;
-            Users = new Dictionary<string, byte>();
+            Users = new Dictionary<string, byte>(StringComparer.InvariantCultureIgnoreCase);
         }
 
         public void AddUser(string user)
@@ -25,7 +25,7 @@ namespace WendySharp
             {
                 user = user.Substring(1);
 
-                if (user.ToLowerInvariant() == Settings.BotNick.ToLowerInvariant())
+                if (user.ToLowerInvariant() == Bootstrap.Client.TrueNickname.ToLowerInvariant())
                 {
                     WeAreOpped = true;
                 }
