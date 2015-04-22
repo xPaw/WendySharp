@@ -22,6 +22,9 @@ namespace WendySharp
             Client.GotChannelListEntry += OnGotChannelListEntry;
             Client.GotNameListReply += OnGotNameListReply;
 
+            var permissions = new Permissions();
+            //new User(IrcIdentity.TryParse("xPaw@unaffiliated/xpaw"));
+
             new Commands(Client);
         }
 

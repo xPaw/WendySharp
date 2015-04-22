@@ -1,5 +1,6 @@
 ﻿using System;
 using NetIrc2;
+using NetIrc2.Parsing;
 
 namespace WendySharp
 {
@@ -17,7 +18,7 @@ namespace WendySharp
 
         public override void OnCommand(CommandArguments command)
         {
-            if (!Bootstrap.IsRecipientChannel(command.Event.Recipient))
+            if (!IrcValidation.IsChannelName(command.Event.Recipient))
             {
                 command.Reply("Can't kick here, silly.");
 

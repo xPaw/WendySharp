@@ -36,6 +36,9 @@
     <Reference Include="NetIrc2">
       <HintPath>packages\NetIrc2.1.0.0.0\lib\NetIrc2.dll</HintPath>
     </Reference>
+    <Reference Include="LitJson">
+      <HintPath>packages\LitJson.0.7.0\lib\LitJson.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -53,6 +56,9 @@
     <Compile Include="Wendy\Command.cs" />
     <Compile Include="Wendy\CommandArguments.cs" />
     <Compile Include="Wendy\Commands.cs" />
+    <Compile Include="Wendy\User.cs" />
+    <Compile Include="Utils\Permissions.cs" />
+    <Compile Include="Wendy\Users.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

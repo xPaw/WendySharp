@@ -1,4 +1,5 @@
 ﻿using System;
+using NetIrc2.Parsing;
 
 namespace WendySharp
 {
@@ -20,7 +21,7 @@ namespace WendySharp
 
             if (string.IsNullOrEmpty(channel))
             {
-                if (Bootstrap.IsRecipientChannel(command.Event.Recipient))
+                if (IrcValidation.IsChannelName(command.Event.Recipient))
                 {
                     channel = command.Event.Recipient;
 

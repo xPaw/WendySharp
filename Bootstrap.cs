@@ -26,12 +26,5 @@ namespace WendySharp
 
             Client.Close();
         }
-
-        private static readonly char[] ChannelCharacters = { '#', '!', '+', '&' };
-
-        public static bool IsRecipientChannel(string recipient)
-        {
-            return ChannelCharacters.Contains(recipient[0]);
-        }
     }
 }

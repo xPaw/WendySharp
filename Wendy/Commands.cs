@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using NetIrc2;
 using NetIrc2.Events;
+using NetIrc2.Parsing;
 
 namespace WendySharp
 {
@@ -63,7 +64,7 @@ namespace WendySharp
             {
                 message = message.Substring(1);
             }
-            else if(!Bootstrap.IsRecipientChannel(e.Recipient))
+            else if(!IrcValidation.IsChannelName(e.Recipient))
             {
                 // Direct messages don't need a prefix
             }
@@ -96,7 +97,35 @@ namespace WendySharp
             {
                 Event = e
             };
-            
+
+            if (command.Permission != null)
+            {
+                if (e.Sender.Username == null)
+                {
+                    arguments.Reply("This command needs permission '{0}', but you don't have a username (not authed).", command.Permission);
+
+                    return;
+                }
+
+                Log.WriteDebug("CommandHandler", "Trying to find user '{0}'", e.Sender.Username);
+
+                User user;
+
+                if (!Users.TryGetUser(e.Sender, out user))
+                {
+                    arguments.Reply("This command needs permission '{0}', but you don't have any special permissions (not in users.json).", command.Permission);
+
+                    return;
+                }
+
+                if (!user.HasPermission(e.Recipient, command.Permission))
+                {
+                    arguments.Reply("This command needs permission '{0}', but you don't have this permission in '{1}'.", command.Permission, e.Recipient);
+
+                    return;
+                }
+            }
+
             if (command.CompiledMatch != null)
             {
                 arguments.Arguments = command.CompiledMatch.Match(message);

@@ -1,6 +1,7 @@
 ﻿using System;
 using NetIrc2.Events;
 using System.Text.RegularExpressions;
+using NetIrc2.Parsing;
 
 namespace WendySharp
 {
@@ -22,7 +23,7 @@ namespace WendySharp
         private void Reply(string message, bool notice)
         {
             string recipient = Event.Recipient;
-            var isChannelMessage = Bootstrap.IsRecipientChannel(recipient);
+            var isChannelMessage = IrcValidation.IsChannelName(recipient);
 
             if (isChannelMessage)
             {
