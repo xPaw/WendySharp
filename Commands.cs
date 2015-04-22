@@ -20,6 +20,7 @@ namespace WendySharp
             RegisteredCommands.Add(new Kick());
             RegisteredCommands.Add(new Join());
             RegisteredCommands.Add(new Part());
+            RegisteredCommands.Add(new Echo());
             RegisteredCommands.Add(new Quit());
             RegisteredCommands.Add(new Help(RegisteredCommands));
 

@@ -40,7 +40,7 @@ namespace WendySharp
             {
                 Log.WriteInfo("Kick", "{0} tried to kick the bot in {1}", command.Event.Sender, command.Event.Recipient);
 
-                Bootstrap.Client.Client.Kick(ident.Nickname, command.Event.Recipient, "don't you even dare");
+                command.Reply("Don't you even dare");
 
                 return;
             }
