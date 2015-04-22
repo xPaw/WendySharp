@@ -59,7 +59,15 @@ namespace WendySharp
                 return;
             }
 
-            var pattern = string.Format("(?:{0}) (?:{1})", Match ?? Name, ArgumentMatch);
+            // Explanation of the (?: |\b):
+            // normally we want to match a space between the command and its
+            // arguments, but to support possibly empty arguments or fancier
+            // regular expressions, we also accept the empty string between the
+            // command and its arguments as long as it's a word boundary. This
+            // probably strictly isn't the right thing to do, but the only thing
+            // this really disallows is having no boundry between the command
+            // and its arguments.
+            var pattern = string.Format("(?:{0})(?: |\\b){1}", Match ?? Name, ArgumentMatch);
 
             Log.WriteDebug(Name, "Match with arguments: {0}", pattern);
 
