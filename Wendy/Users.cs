@@ -12,9 +12,9 @@ namespace WendySharp
         {
             user.VerifyAndCompile();
 
-            UsersList.Add(user.IrcIdentity.Username, user);
+            UsersList.Add(user.Username, user);
 
-            Log.WriteDebug("Users", "Added user '{0}'", user.IrcIdentity.Username);
+            Log.WriteDebug("Users", "Added user '{0}'", user.Username);
         }
 
         public static bool TryGetUser(IrcIdentity ident, out User user)
