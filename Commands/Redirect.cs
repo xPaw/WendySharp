@@ -83,11 +83,9 @@ namespace WendySharp
 
             var isNickInChannel = channel.HasUser(ident.Nickname);
 
-            nick = ident + "$" + targetChannel;
-
             var reason = string.Format("Redirected to {0} by {1}", targetChannel, command.Event.Sender.Nickname);
 
-            Bootstrap.Client.Client.Mode(command.Event.Recipient, "+b", new IrcString[1] { nick });
+            Bootstrap.Client.Client.Mode(command.Event.Recipient, "+b", new IrcString[1] { ident + "$" + targetChannel });
             Bootstrap.Client.Client.Kick(ident.Nickname, command.Event.Recipient, reason);
 
             command.Reply("Redirected {0} to {1} for 2 hours{2}", ident, targetChannel, isNickInChannel ? "" : " (this nick doesn't appear to be in this channel)");
@@ -96,7 +94,7 @@ namespace WendySharp
                 new LateModeRequest
                 {
                     Channel = command.Event.Recipient,
-                    Recipient = nick,
+                    Recipient = ident.ToString(),
                     Mode = "-b",
                     Time = DateTime.Now.AddHours(2),
                     Reason = reason

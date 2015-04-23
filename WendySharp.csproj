@@ -68,6 +68,8 @@
     <Compile Include="Commands\Deop.cs" />
     <Compile Include="Commands\Devoice.cs" />
     <Compile Include="Commands\Voice.cs" />
+    <Compile Include="Commands\Bans.cs" />
+    <Compile Include="Utils\DateTimeExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -24,6 +24,7 @@ namespace WendySharp
             RegisteredCommands.Add(new Deop());
             RegisteredCommands.Add(new Voice());
             RegisteredCommands.Add(new Devoice());
+            RegisteredCommands.Add(new Bans());
             RegisteredCommands.Add(new Join());
             RegisteredCommands.Add(new Part());
             RegisteredCommands.Add(new Echo());

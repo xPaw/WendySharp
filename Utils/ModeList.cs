@@ -27,9 +27,33 @@ namespace WendySharp
                 }
 
                 Log.WriteInfo("ModeList", "Loaded {0} modes from file", LateModes.Count);
+
+                foreach (var mode in LateModes)
+                {
+                    if (mode.Time != null && DateTime.Now > mode.Time)
+                    {
+                        mode.Execute(client);
+                    }
+                }
             }
 
             client.GotMode += OnModeChange;
+        }
+
+        public void RecheckLateModes()
+        {
+            foreach (var mode in LateModes)
+            {
+                if (mode.Time != null && DateTime.Now > mode.Time)
+                {
+                    mode.Execute(Bootstrap.Client.Client);
+                }
+            }
+        }
+
+        public List<LateModeRequest> GetModes()
+        {
+            return LateModes;
         }
 
         public void AddLateModeRequest(LateModeRequest request)
@@ -37,6 +61,13 @@ namespace WendySharp
             // TODO: start a timer or some other magic
 
             LateModes.Add(request);
+
+            SaveToFile();
+        }
+
+        public void RemoveLateModeRequest(LateModeRequest request)
+        {
+            LateModes.Remove(request);
 
             SaveToFile();
         }
@@ -53,6 +84,7 @@ namespace WendySharp
             var parameters = e.GetParameterList();
             char currentState = ' ';
             int index = 0;
+            string ident;
 
             for (int i = 0; i < command.Length; i++)
             {
@@ -63,9 +95,11 @@ namespace WendySharp
                     continue;
                 }
 
-                Log.WriteDebug("Mode", "{0}{1} on {2}", currentState, command[i], parameters[index]);
+                ident = parameters[index++];
 
-                if (parameters[index] == Bootstrap.Client.TrueNickname)
+                Log.WriteDebug("Mode", "{0}{1} on {2}", currentState, command[i], ident);
+
+                if (ident == Bootstrap.Client.TrueNickname)
                 {
                     if (command[i] == 'o')
                     {
@@ -74,10 +108,38 @@ namespace WendySharp
                         channel.WeAreOpped = currentState == '+';
 
                         Log.WriteDebug("Mode", "Updated our op status in {0}", channel.Name);
+
+                        if (channel.WeAreOpped)
+                        {
+                            // We gained op, maybe we can remove some bans now
+                            RecheckLateModes();
+                        }
                     }
                 }
 
-                index++;
+                // Drop channel forward
+                if (command[i] == 'b')
+                {
+                    var temp = ident.Split(new char[] { '$' }, 2);
+
+                    if (temp.Length > 1)
+                    {
+                        ident = temp[0];
+                    }
+                }
+
+                var mode = LateModes.Find(x =>
+                                x.Channel == e.Recipient &&
+                                x.Recipient == ident &&
+                                x.Mode == string.Format("{0}{1}", currentState, command[i])
+                );
+
+                if (mode != null)
+                {
+                    Log.WriteInfo("Mode", "{0} in {1} was set {2}{3}, removing our late mode request", ident, e.Recipient, currentState, command[i]);
+
+                    RemoveLateModeRequest(mode);
+                }
             }
         }
 
