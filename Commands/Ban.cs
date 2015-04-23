@@ -4,17 +4,15 @@ using NetIrc2.Parsing;
 
 namespace WendySharp
 {
-    class Redirect : Command
+    class Ban : Command
     {
-        private const string TARGETCHANNEL = "##FIX_YOUR_CONNECTION";
-
-        public Redirect()
+        public Ban()
         {
-            Name = "redirect";
-            Match = "redirect|fixurshit|fixurconnection|fixyourshit|fixyourconnection";
-            Usage = "<nickname> [channel]";
-            ArgumentMatch = "(?<nick>[^ ]+)(?: (?<channel>[^ ]+))?";
-            HelpText = "Redirects a user to ##FIX_YOUR_CONNECTION or the given channel for a hard-coded length of time (2 hours)";
+            Name = "ban";
+            Match = "ban|BAN|kban|kb|kickban";
+            Usage = "<nick or hostmask> [for <duration>]";
+            ArgumentMatch = "(?<nick>[^ ]+)(?: (?<duration>.+))?$"; // TODO: implement [reason]
+            HelpText = "Bans a user";
             Permission = "irc.op.ban";
         }
 
@@ -22,7 +20,7 @@ namespace WendySharp
         {
             if (!IrcValidation.IsChannelName(command.Event.Recipient))
             {
-                command.Reply("Can't redirect here, silly.");
+                command.Reply("Can't ban here, silly.");
 
                 return;
             }
@@ -51,25 +49,15 @@ namespace WendySharp
 
             if (ident.Nickname.ToString().ToLowerInvariant() == Bootstrap.Client.TrueNickname.ToLowerInvariant())
             {
-                Log.WriteInfo("Redirect", "{0} tried to redirect the bot in {1}", command.Event.Sender, command.Event.Recipient);
+                Log.WriteInfo("Ban", "{0} tried to ban the bot in {1}", command.Event.Sender, command.Event.Recipient);
 
                 command.Reply("Don't you even dare");
 
                 return;
             }
 
-            var targetChannel = command.Arguments.Groups["channel"].Value.Trim();
-
-            if (targetChannel.Length == 0)
-            {
-                targetChannel = TARGETCHANNEL;
-            }
-            else if (!IrcValidation.IsChannelName(targetChannel))
-            {
-                command.Reply("Invalid target channel.");
-
-                return;
-            }
+            var duration = command.Arguments.Groups["duration"].Value;
+            DateTime durationTime = default(DateTime);
 
             if (ident.Hostname == null)
             {
@@ -88,16 +76,26 @@ namespace WendySharp
                 return;
             }
 
-            Log.WriteInfo("Redirect", "{0} redirected {1} from {2} to {3}", command.Event.Sender, ident, command.Event.Recipient, targetChannel);
+            Log.WriteInfo("Ban", "{0} banned {1} from {2}", command.Event.Sender, ident, command.Event.Recipient);
 
             var isNickInChannel = channel.HasUser(ident.Nickname);
+            var reason = string.Format("Banned by {0}", command.Event.Sender.Nickname);
 
-            var reason = string.Format("Redirected to {0} by {1}", targetChannel, command.Event.Sender.Nickname);
+            if (duration.Length > 0)
+            {
+                // TODO: get some parsedatetime
 
-            Bootstrap.Client.Client.Mode(command.Event.Recipient, "+b", new IrcString[1] { ident + "$" + targetChannel });
+                durationTime = DateTime.UtcNow.AddMinutes(1);
+            }
+
+            Bootstrap.Client.Client.Mode(command.Event.Recipient, "+b", new IrcString[1] { ident });
             Bootstrap.Client.Client.Kick(ident.Nickname, command.Event.Recipient, reason);
 
-            command.Reply("Redirected {0} to {1} for 2 hours{2}", ident, targetChannel, isNickInChannel ? "" : " (this nick doesn't appear to be in this channel)");
+            command.Reply("Will unban {0} {1}{2}",
+                ident,
+                durationTime == default(DateTime) ? "never" : durationTime.ToRelativeString(),
+                isNickInChannel ? "" : " (this nick doesn't appear to be in this channel)"
+            );
 
             Bootstrap.Client.ModeList.AddLateModeRequest(
                 new LateModeRequest
@@ -105,7 +103,7 @@ namespace WendySharp
                     Channel = command.Event.Recipient,
                     Recipient = ident.ToString(),
                     Mode = "-b",
-                    Time = DateTime.UtcNow.AddHours(2),
+                    Time = durationTime,
                     Reason = reason
                 }
             );

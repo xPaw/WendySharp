@@ -24,6 +24,8 @@ namespace WendySharp
             {
                 StartNormalTimer();
 
+                Execute();
+
                 return;
             }
 
@@ -42,7 +44,12 @@ namespace WendySharp
 
         public void Dispose()
         {
-            Timer.Dispose();
+            if (Timer != null)
+            {
+                Timer.Dispose();
+
+                Timer = null;
+            }
         }
 
         public void Execute()

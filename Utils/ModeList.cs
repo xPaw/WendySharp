@@ -46,6 +46,15 @@ namespace WendySharp
             return LateModes;
         }
 
+        public LateModeRequest Find(string channel, string recipient, string mode)
+        {
+            return LateModes.Find(x =>
+                x.Channel == channel &&
+                x.Recipient == recipient &&
+                x.Mode == mode
+            );
+        }
+
         public void AddLateModeRequest(LateModeRequest mode)
         {
             mode.Check();
@@ -120,11 +129,7 @@ namespace WendySharp
                     }
                 }
 
-                var mode = LateModes.Find(x =>
-                                x.Channel == e.Recipient &&
-                                x.Recipient == ident &&
-                                x.Mode == string.Format("{0}{1}", currentState, command[i])
-                );
+                var mode = Find(e.Recipient, ident, string.Format("{0}{1}", currentState, command[i]));
 
                 if (mode != null)
                 {

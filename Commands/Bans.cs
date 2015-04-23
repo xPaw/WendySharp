@@ -16,9 +16,17 @@ namespace WendySharp
 
         public override void OnCommand(CommandArguments command)
         {
+            // TODO: implement mask search
             //var mask = command.Arguments.Groups["mask"].Value;
 
-            var modes = Bootstrap.Client.ModeList.GetModes().OrderBy(x => x.Time);
+            var modes = Bootstrap.Client.ModeList.GetModes().Where(x => x.Time != default(DateTime)).OrderBy(x => x.Time);
+
+            if (!modes.Any())
+            {
+                command.Reply("No pending unbans in this channel.");
+
+                return;
+            }
 
             foreach (var mode in modes)
             {

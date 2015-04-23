@@ -19,6 +19,7 @@ namespace WendySharp
 
             RegisteredCommands = new List<Command>();
             RegisteredCommands.Add(new Kick());
+            RegisteredCommands.Add(new Ban());
             RegisteredCommands.Add(new Redirect());
             RegisteredCommands.Add(new Op());
             RegisteredCommands.Add(new Deop());
@@ -36,7 +37,7 @@ namespace WendySharp
                 cmd.Compile();
             }
 
-            string pattern = @"^(?:" + string.Join("|", RegisteredCommands.Select(x => string.Format("({0})", x.Match ?? x.Name))) + @")";
+            string pattern = @"^(?:" + string.Join("|", RegisteredCommands.Select(x => string.Format("({0})", x.Match ?? x.Name))) + @")(?: |$)";
 
             Log.WriteDebug("Commands", "Match: {0}", pattern);
 

@@ -9,7 +9,7 @@ namespace WendySharp
     class BaseClient
     {
         public readonly IrcClient Client;
-        public readonly ModeList ModeList;
+        public ModeList ModeList;
         public readonly Channels ChannelList;
         public string TrueNickname;
 
@@ -23,7 +23,6 @@ namespace WendySharp
             Client.Closed += OnDisconnected;
             Client.GotIrcError += OnError;
 
-            ModeList = new ModeList(Client);
             ChannelList = new Channels(Client);
 
             new Permissions();
@@ -59,6 +58,11 @@ namespace WendySharp
 
             Client.LogIn("WendySharp", "WendySharp", "WendySharp", "4", null, null);
             Client.Join("#xpaw-test");
+
+            if (ModeList == null)
+            {
+                ModeList = new ModeList(Client);
+            }
         }
 
         private async void OnDisconnected(object sender, EventArgs e)
