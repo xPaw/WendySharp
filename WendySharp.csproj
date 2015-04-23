@@ -70,6 +70,9 @@
     <Compile Include="Commands\Bans.cs" />
     <Compile Include="Utils\DateTimeExtensions.cs" />
     <Compile Include="Commands\Ban.cs" />
+    <Compile Include="Commands\Unban.cs" />
+    <Compile Include="Wendy\Spam.cs" />
+    <Compile Include="Wendy\SpamConfig.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

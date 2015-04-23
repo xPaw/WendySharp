@@ -27,6 +27,7 @@ namespace WendySharp
 
             new Permissions();
             new Commands(Client);
+            new Spam(Client);
         }
 
         public void Connect()

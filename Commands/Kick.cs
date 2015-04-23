@@ -9,7 +9,7 @@ namespace WendySharp
         public Kick()
         {
             Name = "kick";
-            Match = "kick|KICK|gtfo";
+            Match = "kick|gtfo";
             Usage = "<nickname> [reason]";
             ArgumentMatch = "(?<nick>[^ ]+)( (?<reason>.*))?$";
             HelpText = "Kicks a user from the current channel";

@@ -15,11 +15,12 @@ namespace WendySharp
 
         public Commands(IrcClient client)
         {
-            client.GotMessage += OnIRCMessage;
+            client.GotMessage += OnMessage;
 
             RegisteredCommands = new List<Command>();
             RegisteredCommands.Add(new Kick());
             RegisteredCommands.Add(new Ban());
+            RegisteredCommands.Add(new Unban());
             RegisteredCommands.Add(new Redirect());
             RegisteredCommands.Add(new Op());
             RegisteredCommands.Add(new Deop());
@@ -44,7 +45,7 @@ namespace WendySharp
             CompiledCommandMatch = new Regex(pattern, RegexOptions.Compiled | RegexOptions.CultureInvariant);
         }
 
-        private void OnIRCMessage(object obj, ChatMessageEventArgs e)
+        private void OnMessage(object obj, ChatMessageEventArgs e)
         {
             if (e.Sender == null)
             {

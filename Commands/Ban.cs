@@ -9,7 +9,7 @@ namespace WendySharp
         public Ban()
         {
             Name = "ban";
-            Match = "ban|BAN|kban|kb|kickban";
+            Match = "ban|kban|kb|kickban";
             Usage = "<nick or hostmask> [for <duration>]";
             ArgumentMatch = "(?<nick>[^ ]+)(?: (?<duration>.+))?$"; // TODO: implement [reason]
             HelpText = "Bans a user";
