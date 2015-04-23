@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Timers;
 using LitJson;
 using NetIrc2;
 using NetIrc2.Events;
@@ -28,13 +27,7 @@ namespace WendySharp
 
                 Log.WriteInfo("ModeList", "Loaded {0} modes from file", LateModes.Count);
 
-                foreach (var mode in LateModes)
-                {
-                    if (mode.Time != null && DateTime.Now > mode.Time)
-                    {
-                        mode.Execute(client);
-                    }
-                }
+                RecheckLateModes();
             }
 
             client.GotMode += OnModeChange;
@@ -44,10 +37,7 @@ namespace WendySharp
         {
             foreach (var mode in LateModes)
             {
-                if (mode.Time != null && DateTime.Now > mode.Time)
-                {
-                    mode.Execute(Bootstrap.Client.Client);
-                }
+                mode.Check();
             }
         }
 
@@ -56,17 +46,19 @@ namespace WendySharp
             return LateModes;
         }
 
-        public void AddLateModeRequest(LateModeRequest request)
+        public void AddLateModeRequest(LateModeRequest mode)
         {
-            // TODO: start a timer or some other magic
+            mode.Check();
 
-            LateModes.Add(request);
+            LateModes.Add(mode);
 
             SaveToFile();
         }
 
         public void RemoveLateModeRequest(LateModeRequest request)
         {
+            request.Dispose();
+
             LateModes.Remove(request);
 
             SaveToFile();

@@ -96,7 +96,7 @@ namespace WendySharp
                     Channel = command.Event.Recipient,
                     Recipient = ident.ToString(),
                     Mode = "-b",
-                    Time = DateTime.Now.AddHours(2),
+                    Time = DateTime.UtcNow.AddHours(2),
                     Reason = reason
                 }
             );
