@@ -33,9 +33,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="NetIrc2">
-      <HintPath>packages\NetIrc2.1.0.0.0\lib\NetIrc2.dll</HintPath>
-    </Reference>
     <Reference Include="LitJson">
       <HintPath>packages\LitJson.0.7.0\lib\LitJson.dll</HintPath>
     </Reference>
@@ -82,5 +79,11 @@
     <Folder Include="Commands\" />
     <Folder Include="Wendy\" />
     <Folder Include="Utils\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="NetIrc2\NetIrc2.csproj">
+      <Project>{5D817056-BCD1-4423-BEFB-7838338DC6CF}</Project>
+      <Name>NetIrc2</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

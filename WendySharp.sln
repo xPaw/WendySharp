@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WendySharp", "WendySharp.csproj", "{3DD07412-0413-4B88-965C-D0EE3338DA84}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetIrc2", "NetIrc2\NetIrc2.csproj", "{5D817056-BCD1-4423-BEFB-7838338DC6CF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -13,5 +15,9 @@ Global
 		{3DD07412-0413-4B88-965C-D0EE3338DA84}.Debug|x86.Build.0 = Debug|x86
 		{3DD07412-0413-4B88-965C-D0EE3338DA84}.Release|x86.ActiveCfg = Release|x86
 		{3DD07412-0413-4B88-965C-D0EE3338DA84}.Release|x86.Build.0 = Release|x86
+		{5D817056-BCD1-4423-BEFB-7838338DC6CF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5D817056-BCD1-4423-BEFB-7838338DC6CF}.Debug|x86.Build.0 = Debug|Any CPU
+		{5D817056-BCD1-4423-BEFB-7838338DC6CF}.Release|x86.ActiveCfg = Release|Any CPU
+		{5D817056-BCD1-4423-BEFB-7838338DC6CF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

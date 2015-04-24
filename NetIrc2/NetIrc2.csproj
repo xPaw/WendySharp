@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5D817056-BCD1-4423-BEFB-7838338DC6CF}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>NetIrc2</RootNamespace>
+    <AssemblyName>NetIrc2</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\bin\NetIrc2.XML</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Events\ChannelListEntryEventArgs.cs" />
+    <Compile Include="Events\ChatMessageEventArgs.cs" />
+    <Compile Include="Events\ChannelTopicChangeEventArgs.cs" />
+    <Compile Include="Events\QuitEventArgs.cs" />
+    <Compile Include="Events\IrcErrorEventArgs.cs" />
+    <Compile Include="Events\JoinLeaveEventArgs.cs" />
+    <Compile Include="Events\ModeEventArgs.cs" />
+    <Compile Include="Events\NameListReplyEventArgs.cs" />
+    <Compile Include="Events\NameChangeEventArgs.cs" />
+    <Compile Include="Events\NameListEndEventArgs.cs" />
+    <Compile Include="Events\PingReplyEventArgs.cs" />
+    <Compile Include="Events\KickEventArgs.cs" />
+    <Compile Include="Events\InvitationEventArgs.cs" />
+    <Compile Include="Events\SimpleMessageEventArgs.cs" />
+    <Compile Include="Events\TargetedMessageEventArgs.cs" />
+    <Compile Include="IrcClient.Commands.cs" />
+    <Compile Include="IrcClient.cs" />
+    <Compile Include="IrcClient.Ctcp.cs" />
+    <Compile Include="IrcClient.CtcpTime.cs" />
+    <Compile Include="IrcClient.Events.cs" />
+    <Compile Include="IrcClient.IComponent.cs" />
+    <Compile Include="IrcClient.Messages.cs" />
+    <Compile Include="IrcClient.CtcpPing.cs" />
+    <Compile Include="IrcClientConnectionOptions.cs" />
+    <Compile Include="IrcConstants.cs" />
+    <Compile Include="IrcIdentity.cs" />
+    <Compile Include="IrcReplyCode.cs" />
+    <Compile Include="Details\IrcStringTypeConverter.cs" />
+    <Compile Include="Parsing\IrcStatement.cs" />
+    <Compile Include="Parsing\IrcStatementParseResult.cs" />
+    <Compile Include="Parsing\IrcStatementReceiver.cs" />
+    <Compile Include="IrcString.cs" />
+    <Compile Include="Parsing\IrcValidation.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Details\Throw.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
