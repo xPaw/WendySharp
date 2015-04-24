@@ -272,6 +272,10 @@ namespace NetIrc2
                     {
                         OnGotIrcError(new Events.IrcErrorEventArgs(statement.ReplyCode, statement));
                     }
+                    else
+                    {
+                        OnGotUnknownIrcStatement(new Events.IrcUnknownStatementEventArgs(statement.ReplyCode, statement));
+                    }
                     break;
             }
         }

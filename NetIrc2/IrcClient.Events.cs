@@ -79,6 +79,11 @@ namespace NetIrc2
         public event EventHandler<IrcErrorEventArgs> GotIrcError;
 
         /// <summary>
+        /// Called when an unknown statement occurs.
+        /// </summary>
+        public event EventHandler<IrcUnknownStatementEventArgs> GotUnknownIrcStatement;
+
+        /// <summary>
         /// Called when someone joins a channel.
         /// </summary>
         public event EventHandler<JoinLeaveEventArgs> GotJoinChannel;
@@ -244,6 +249,16 @@ namespace NetIrc2
         protected void RaiseGotIrcError(IrcErrorEventArgs e)
         {
             Dispatch(GotIrcError, e);
+        }
+
+        protected virtual void OnGotUnknownIrcStatement(IrcUnknownStatementEventArgs e)
+        {
+            RaiseGotUnknownIrcStatement(e);
+        }
+
+        protected void RaiseGotUnknownIrcStatement(IrcUnknownStatementEventArgs e)
+        {
+            Dispatch(GotUnknownIrcStatement, e);
         }
 
         protected virtual void OnGotJoinChannel(JoinLeaveEventArgs e)

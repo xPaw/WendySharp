@@ -70,6 +70,8 @@
     <Compile Include="Parsing\IrcValidation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Details\Throw.cs" />
+    <Compile Include="IrcClient.Whois.cs" />
+    <Compile Include="Events\IrcUnknownStatementEventArgs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
