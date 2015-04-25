@@ -17,9 +17,9 @@ namespace WendySharp
             Log.WriteDebug("Users", "Added user '{0}'", user.Username);
         }
 
-        public static bool TryGetUser(IrcIdentity ident, out User user)
+        public static bool TryGetUser(string account, out User user)
         {
-            return UsersList.TryGetValue(ident.Username, out user);
+            return UsersList.TryGetValue(account, out user);
         }
     }
 }

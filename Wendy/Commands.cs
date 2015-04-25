@@ -66,7 +66,7 @@ namespace WendySharp
 
                 message = message.Substring(length + 2);
             }
-            else if (message[0] == Settings.BotPrefix)
+            else if (message[0] == Bootstrap.Client.Settings.Prefix)
             {
                 message = message.Substring(1);
             }
@@ -99,36 +99,9 @@ namespace WendySharp
 
             var arguments = new CommandArguments
             {
+                MatchedCommand = match.Value.Trim(),
                 Event = e
             };
-
-            if (command.Permission != null)
-            {
-                if (e.Sender.Username == null)
-                {
-                    arguments.Reply("This command needs permission '{0}', but you don't have a username (not authed).", command.Permission);
-
-                    return;
-                }
-
-                User user;
-
-                if (!Users.TryGetUser(e.Sender, out user))
-                {
-                    arguments.Reply("This command needs permission '{0}', but you don't have any special permissions (not in users.json).", command.Permission);
-
-                    return;
-                }
-
-                if (!user.HasPermission(e.Recipient, command.Permission))
-                {
-                    arguments.Reply("This command needs permission '{0}', but you don't have this permission in '{1}'.", command.Permission, e.Recipient);
-
-                    return;
-                }
-
-                Log.WriteDebug("CommandHandler", "'{0}' is authorized to perform '{1}' ({2}).", e.Sender, command.Name, command.Permission);
-            }
 
             if (command.CompiledMatch != null)
             {
@@ -136,6 +109,7 @@ namespace WendySharp
 
                 if (!arguments.Arguments.Success)
                 {
+                    // TODO: This will print usage to users that don't have access to this command
                     arguments.Reply(true, "Usage: {0} {1}", command.Name, command.Usage);
                     arguments.Reply(true, "{0}", command.HelpText);
 
@@ -143,7 +117,55 @@ namespace WendySharp
                 }
             }
 
-            command.OnCommand(arguments);
+            if (command.Permission != null)
+            {
+                Bootstrap.Client.Whois.QueryAccount(e.Sender,
+                    whoisData =>
+                    {
+                        if (whoisData.Identity.Nickname == null)
+                        {
+                            Log.WriteInfo("CommandHandler", "Failed whois lookup for {0}", e.Sender);
+
+                            arguments.Reply("Whois lookup failed.");
+
+                            return;
+                        }
+
+                        if (whoisData.Account == null)
+                        {
+                            Log.WriteInfo("CommandHandler", "{0} is not authorized with NickServ", e.Sender);
+
+                            arguments.Reply("You are not authorized with NickServ.");
+
+                            return;
+                        }
+
+                        User user;
+
+                        if (!Users.TryGetUser(whoisData.Account, out user))
+                        {
+                            arguments.Reply("This command needs permission '{0}', but you don't have any special permissions (not in users.json).", command.Permission);
+
+                            return;
+                        }
+
+                        if (!user.HasPermission(e.Recipient, command.Permission))
+                        {
+                            arguments.Reply("This command needs permission '{0}', but you don't have this permission in '{1}'.", command.Permission, e.Recipient);
+
+                            return;
+                        }
+
+                        Log.WriteDebug("CommandHandler", "'{0}' (as {1}) is authorized to perform '{2}' ({3}).", e.Sender, whoisData.Account, command.Name, command.Permission);
+
+                        command.OnCommand(arguments);
+                    }
+                );
+            }
+            else
+            {
+                command.OnCommand(arguments);
+            }
         }
     }
 }

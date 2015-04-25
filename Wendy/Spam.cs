@@ -61,7 +61,7 @@ namespace WendySharp
                 return;
             }
 
-            if (e.Sender.Username != null)
+            /*if (e.Sender.Username != null)
             {
                 User user;
 
@@ -70,7 +70,7 @@ namespace WendySharp
                 {
                     //return;
                 }
-            }
+            }*/
 
             var channel = Channels[e.Recipient];
 

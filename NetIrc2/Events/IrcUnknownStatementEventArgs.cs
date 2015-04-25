@@ -42,20 +42,11 @@ namespace NetIrc2.Events
         /// </summary>
         /// <param name="error">The type of statement that has occured.</param>
         /// <param name="data">The raw IRC statement data. This can be used to garner more information about the statement.</param>
-        public IrcUnknownStatementEventArgs(IrcReplyCode error, IrcStatement data)
+        public IrcUnknownStatementEventArgs(IrcStatement data)
         {
-            Throw.If.Null(error, "error").Null(data, "data");
+            Throw.If.Null(data, "data");
 
-            ReplyCode = error; Data = data;
-        }
-
-        /// <summary>
-        /// The type of error that has occured.
-        /// </summary>
-        public IrcReplyCode ReplyCode
-        {
-            get;
-            private set;
+            Data = data;
         }
 
         /// <summary>

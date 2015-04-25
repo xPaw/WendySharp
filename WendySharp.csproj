@@ -70,6 +70,7 @@
     <Compile Include="Commands\Unban.cs" />
     <Compile Include="Wendy\Spam.cs" />
     <Compile Include="Wendy\SpamConfig.cs" />
+    <Compile Include="Utils\Whois.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

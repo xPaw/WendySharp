@@ -1,10 +1,14 @@
-﻿using System;
+﻿using System.Collections.Generic;
 
 namespace WendySharp
 {
-    static class Settings
+    class Settings
     {
-        public readonly static string BotNick = "WendySharp";
-        public readonly static char BotPrefix = '.';
+        public string Server { get; set; }
+        public int Port { get; set; }
+        public string Password { get; set; }
+        public string Nickname { get; set; }
+        public char Prefix { get; set; }
+        public List<string> Channels { get; set; }
     }
 }

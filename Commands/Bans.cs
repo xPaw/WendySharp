@@ -30,7 +30,7 @@ namespace WendySharp
 
             foreach (var mode in modes)
             {
-                command.Reply("In channel {0} setting {1} {2} {3}", mode.Channel, mode.Mode, mode.Recipient, mode.Time.ToRelativeString());
+                command.Reply("In {0} setting {1} {2} {3}", mode.Channel, mode.Mode, mode.Recipient, mode.Time.ToRelativeString());
             }
         }
     }

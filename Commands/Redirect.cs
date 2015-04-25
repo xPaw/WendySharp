@@ -46,67 +46,72 @@ namespace WendySharp
 
                 return;
             }
-
-            // TODO: implement whois
-
-            if (ident.Nickname.ToString().ToLowerInvariant() == Bootstrap.Client.TrueNickname.ToLowerInvariant())
-            {
-                Log.WriteInfo("Redirect", "{0} tried to redirect the bot in {1}", command.Event.Sender, command.Event.Recipient);
-
-                command.Reply("Don't you even dare");
-
-                return;
-            }
-
-            var targetChannel = command.Arguments.Groups["channel"].Value.Trim();
-
-            if (targetChannel.Length == 0)
-            {
-                targetChannel = TARGETCHANNEL;
-            }
-            else if (!IrcValidation.IsChannelName(targetChannel))
-            {
-                command.Reply("Invalid target channel.");
-
-                return;
-            }
-
-            if (ident.Hostname == null)
-            {
-                ident.Hostname = "*";
-            }
-
-            if (ident.Username == null)
-            {
-                ident.Username = "*";
-            }
-
-            if (Bootstrap.Client.ModeList.Find(command.Event.Recipient, ident.ToString(), "-b") != null)
-            {
-                command.Reply("{0} is already banned in this channel.", ident);
-
-                return;
-            }
-
-            Log.WriteInfo("Redirect", "{0} redirected {1} from {2} to {3}", command.Event.Sender, ident, command.Event.Recipient, targetChannel);
-
-            var isNickInChannel = channel.HasUser(ident.Nickname);
-
-            var reason = string.Format("Redirected to {0} by {1}", targetChannel, command.Event.Sender.Nickname);
-
-            Bootstrap.Client.Client.Mode(command.Event.Recipient, "+b", new IrcString[1] { ident + "$" + targetChannel });
-            Bootstrap.Client.Client.Kick(ident.Nickname, command.Event.Recipient, reason);
-
-            command.Reply("Redirected {0} to {1} for 2 hours{2}", ident, targetChannel, isNickInChannel ? "" : " (this nick doesn't appear to be in this channel)");
-
-            Bootstrap.Client.ModeList.AddLateModeRequest(
-                new LateModeRequest
+                
+            Bootstrap.Client.Whois.Query(ident,
+                whoisData =>
                 {
-                    Channel = command.Event.Recipient,
-                    Recipient = ident.ToString(),
-                    Mode = "-b",
-                    Time = DateTime.UtcNow.AddHours(2),
-                    Reason = reason
+                    if (whoisData.Identity.Nickname != null)
+                    {
+                        ident = whoisData.Identity;
+                    }
+
+                    if (ident.Nickname.ToString().ToLowerInvariant() == Bootstrap.Client.TrueNickname.ToLowerInvariant())
+                    {
+                        Log.WriteInfo("Redirect", "{0} tried to redirect the bot in {1}", command.Event.Sender, command.Event.Recipient);
+
+                        command.Reply("Don't you even dare");
+
+                        return;
+                    }
+
+                    if (whoisData.Identity.Nickname != null)
+                    {
+                        Whois.NormalizeIdentity(ident);
+                    }
+
+                    var targetChannel = command.Arguments.Groups["channel"].Value.Trim();
+
+                    if (targetChannel.Length == 0)
+                    {
+                        targetChannel = TARGETCHANNEL;
+                    }
+                    else if (!IrcValidation.IsChannelName(targetChannel))
+                    {
+                        command.Reply("Invalid target channel.");
+
+                        return;
+                    }
+
+                    if (Bootstrap.Client.ModeList.Find(command.Event.Recipient, ident.ToString(), "-b") != null)
+                    {
+                        command.Reply("{0} is already banned in this channel.", ident);
+
+                        return;
+                    }
+
+                    Log.WriteInfo("Redirect", "{0} redirected {1} from {2} to {3}", command.Event.Sender, ident, command.Event.Recipient, targetChannel);
+
+                    var reason = string.Format("Redirected to {0} by {1}", targetChannel, command.Event.Sender.Nickname);
+
+                    Bootstrap.Client.Client.Mode(command.Event.Recipient, "+b", new IrcString[1] { ident + "$" + targetChannel });
+
+                    if (channel.HasUser(ident.Nickname))
+                    {
+                        Bootstrap.Client.Client.Kick(ident.Nickname, command.Event.Recipient, reason);
+                    }
+
+                    command.Reply("Redirected {0} to {1} for 2 hours", ident, targetChannel);
+
+                    Bootstrap.Client.ModeList.AddLateModeRequest(
+                        new LateModeRequest
+                        {
+                            Channel = command.Event.Recipient,
+                            Recipient = ident.ToString(),
+                            Mode = "-b",
+                            Time = DateTime.UtcNow.AddHours(2),
+                            Reason = reason
+                        }
+                    );
                 }
             );
         }

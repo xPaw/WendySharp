@@ -1,23 +1,65 @@
 ﻿using System;
-using NetIrc2;
-using NetIrc2.Events;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using LitJson;
+using NetIrc2;
+using NetIrc2.Events;
+using NetIrc2.Parsing;
 
 namespace WendySharp
 {
     class BaseClient
     {
         public readonly IrcClient Client;
-        public ModeList ModeList;
+        public readonly Settings Settings;
         public readonly Channels ChannelList;
         public string TrueNickname;
+        public ModeList ModeList;
+        public Whois Whois;
 
         public BaseClient()
         {
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config", "settings.json");
+
+            if (File.Exists(path))
+            {
+                var data = File.ReadAllText(path);
+
+                try
+                {
+                    Settings = JsonMapper.ToObject<Settings>(data);
+
+                    if (!IrcValidation.IsNickname(Settings.Nickname))
+                    {
+                        throw new JsonException("Nickname is not valid.");
+                    }
+
+                    foreach (var channel in Settings.Channels)
+                    {
+                        if (!IrcValidation.IsChannelName(channel))
+                        {
+                            throw new JsonException(string.Format("Channel '{0}' is not valid.", channel));
+                        }
+                    }
+                }
+                catch (JsonException e)
+                {
+                    Log.WriteError("IRC", "Failed to parse settings.json file: {0}", e.Message);
+
+                    Environment.Exit(1);
+                }
+            }
+            else
+            {
+                Log.WriteWarn("IRC", "File config/settings.json doesn't exist");
+
+                Environment.Exit(1);
+            }
+
             Client = new IrcClient();
 
-            Client.ClientVersion = "Wendy";
+            Client.ClientVersion = "Wendy# -- https://github.com/xPaw/WendySharp";
 
             Client.Connected += OnConnected;
             Client.Closed += OnDisconnected;
@@ -28,23 +70,17 @@ namespace WendySharp
             new Permissions();
             new Commands(Client);
             new Spam(Client);
+            Whois = new Whois(Client);
         }
 
         public void Connect()
         {
-            TrueNickname = Settings.BotNick;
+            TrueNickname = Settings.Nickname;
 
-            try
-            {
-                var options = new IrcClientConnectionOptions();
-                options.SynchronizationContext = SynchronizationContext.Current;
+            var options = new IrcClientConnectionOptions();
+            options.SynchronizationContext = SynchronizationContext.Current;
 
-                Client.Connect("irc.freenode.net", 6665);
-            }
-            catch (Exception e)
-            {
-                Log.WriteError("IRC", "Failed to connect: {0}\n{1}", e.Message, e.StackTrace);
-            }
+            Client.Connect(Settings.Server, Settings.Port, options);
         }
 
         public void Close()
@@ -57,8 +93,12 @@ namespace WendySharp
         {
             Log.WriteInfo("IRC", "Connected to IRC successfully");
 
-            Client.LogIn("WendySharp", "WendySharp", "WendySharp", "4", null, null);
-            Client.Join("#xpaw-test");
+            Client.LogIn(Settings.Nickname, Settings.Nickname, Settings.Nickname, null, null, Settings.Password);
+
+            foreach (var channel in Settings.Channels)
+            {
+                Client.Join(channel);
+            }
 
             if (ModeList == null)
             {

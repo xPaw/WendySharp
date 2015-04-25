@@ -107,7 +107,6 @@ namespace NetIrc2
             IrcString ctcpCommand; IrcString[] ctcpParameters; IrcString ctcpRawParameter;
 
             var source = statement.Source;
-            var command = (string)statement.Command;
             var @params = statement.Parameters;
 #if DEBUG
             Console.Write("< " + (string)new IrcString(statement.ToByteArray()));
@@ -274,7 +273,7 @@ namespace NetIrc2
                     }
                     else
                     {
-                        OnGotUnknownIrcStatement(new Events.IrcUnknownStatementEventArgs(statement.ReplyCode, statement));
+                        OnGotUnknownIrcStatement(new Events.IrcUnknownStatementEventArgs(statement));
                     }
                     break;
             }
