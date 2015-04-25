@@ -64,7 +64,7 @@ namespace NetIrc2
             parts = @string.Split((byte)'!');
             if (parts.Length >= 2) { identity.Username = parts[1]; @string = parts[0]; }
 
-            identity.Nickname = parts[0];
+            identity.Nickname = @string;
 
             string errorMessage;
             if (!IrcValidation.ValidateIdentity(identity, out errorMessage)) { goto invalid; }
