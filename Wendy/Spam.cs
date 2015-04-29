@@ -101,7 +101,7 @@ namespace WendySharp
             Log.WriteInfo("Spam", "A line by {0} in {1} was detected as spam. Quieting for {2} seconds.", e.Sender, e.Recipient, channel.Duration);
 
             Bootstrap.Client.Client.Mode(e.Recipient, "+q", new IrcString[1] { e.Sender });
-            Bootstrap.Client.Client.Notice(e.Sender, channel.Message);
+            Bootstrap.Client.Client.Notice(e.Sender.Nickname, channel.Message);
 
             Bootstrap.Client.ModeList.AddLateModeRequest(
                 new LateModeRequest

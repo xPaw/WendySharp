@@ -18,7 +18,12 @@ namespace WendySharp
 
         public override void OnCommand(CommandArguments command)
         {
-            command.Reply(true, "Commands you have access to: {0}", string.Join(", ", RegisteredCommands.Select(x => x.Name)));
+            User user;
+            Users.TryGetUser(command.Event.Sender, out user);
+
+            var commands = RegisteredCommands.Where(x => x.Permission == null || user.HasPermission(command.Event.Recipient, x.Permission)).Select(x => x.Name);
+
+            command.Reply(true, "Commands you have access to in this channel: {0}", string.Join(", ", commands));
         }
     }
 }

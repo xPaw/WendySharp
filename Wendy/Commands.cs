@@ -102,22 +102,19 @@ namespace WendySharp
                 MatchedCommand = match.Value.Trim(),
                 Event = e
             };
-            
+
+            User user;
+
+            // If there is no such user, don't do anything
+            if (!Users.TryGetUser(e.Sender, out user))
+            {
+                return;
+            }
+
             if (command.Permission != null)
             {
-                User user;
-
-                if (!Users.TryGetUser(e.Sender, out user))
-                {
-                    arguments.Reply("This command needs permission '{0}', but you don't have any special permissions (not in users.json).", command.Permission);
-
-                    return;
-                }
-
                 if (!user.HasPermission(e.Recipient, command.Permission))
                 {
-                    arguments.Reply("This command needs permission '{0}', but you don't have this permission in '{1}'.", command.Permission, e.Recipient);
-
                     return;
                 }
 
