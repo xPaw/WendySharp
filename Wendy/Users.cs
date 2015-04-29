@@ -12,14 +12,14 @@ namespace WendySharp
         {
             user.VerifyAndCompile();
 
-            UsersList.Add(user.Username, user);
+            UsersList.Add(user.Identity, user);
 
-            Log.WriteDebug("Users", "Added user '{0}'", user.Username);
+            Log.WriteDebug("Users", "Added user '{0}'", user.Identity);
         }
 
-        public static bool TryGetUser(string account, out User user)
+        public static bool TryGetUser(IrcIdentity ident, out User user)
         {
-            return UsersList.TryGetValue(account, out user);
+            return UsersList.TryGetValue(string.Format("{0}@{1}", ident.Username, ident.Hostname), out user);
         }
     }
 }

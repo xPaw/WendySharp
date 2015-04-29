@@ -61,16 +61,13 @@ namespace WendySharp
                 return;
             }
 
-            /*if (e.Sender.Username != null)
-            {
-                User user;
+            User user;
 
-                // If this user has a "spam.whitelist" permission, allow them to spam
-                if (Users.TryGetUser(e.Sender, out user) && user.HasPermission(e.Recipient, "spam.whitelist"))
-                {
-                    //return;
-                }
-            }*/
+            // If this user has a "spam.whitelist" permission, allow them to spam
+            if (Users.TryGetUser(e.Sender, out user) && user.HasPermission(e.Recipient, "spam.whitelist"))
+            {
+                return;
+            }
 
             var channel = Channels[e.Recipient];
 

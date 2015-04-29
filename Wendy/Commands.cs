@@ -102,6 +102,27 @@ namespace WendySharp
                 MatchedCommand = match.Value.Trim(),
                 Event = e
             };
+            
+            if (command.Permission != null)
+            {
+                User user;
+
+                if (!Users.TryGetUser(e.Sender, out user))
+                {
+                    arguments.Reply("This command needs permission '{0}', but you don't have any special permissions (not in users.json).", command.Permission);
+
+                    return;
+                }
+
+                if (!user.HasPermission(e.Recipient, command.Permission))
+                {
+                    arguments.Reply("This command needs permission '{0}', but you don't have this permission in '{1}'.", command.Permission, e.Recipient);
+
+                    return;
+                }
+
+                Log.WriteDebug("CommandHandler", "'{0}' is authorized to perform '{1}' ({2})", e.Sender, command.Name, command.Permission);
+            }
 
             if (command.CompiledMatch != null)
             {
@@ -117,55 +138,7 @@ namespace WendySharp
                 }
             }
 
-            if (command.Permission != null)
-            {
-                Bootstrap.Client.Whois.QueryAccount(e.Sender,
-                    whoisData =>
-                    {
-                        if (whoisData.Identity.Nickname == null)
-                        {
-                            Log.WriteInfo("CommandHandler", "Failed whois lookup for {0}", e.Sender);
-
-                            arguments.Reply("Whois lookup failed.");
-
-                            return;
-                        }
-
-                        if (whoisData.Account == null)
-                        {
-                            Log.WriteInfo("CommandHandler", "{0} is not authorized with NickServ", e.Sender);
-
-                            arguments.Reply("You are not authorized with NickServ.");
-
-                            return;
-                        }
-
-                        User user;
-
-                        if (!Users.TryGetUser(whoisData.Account, out user))
-                        {
-                            arguments.Reply("This command needs permission '{0}', but you don't have any special permissions (not in users.json).", command.Permission);
-
-                            return;
-                        }
-
-                        if (!user.HasPermission(e.Recipient, command.Permission))
-                        {
-                            arguments.Reply("This command needs permission '{0}', but you don't have this permission in '{1}'.", command.Permission, e.Recipient);
-
-                            return;
-                        }
-
-                        Log.WriteDebug("CommandHandler", "'{0}' (as {1}) is authorized to perform '{2}' ({3}).", e.Sender, whoisData.Account, command.Name, command.Permission);
-
-                        command.OnCommand(arguments);
-                    }
-                );
-            }
-            else
-            {
-                command.OnCommand(arguments);
-            }
+            command.OnCommand(arguments);
         }
     }
 }
