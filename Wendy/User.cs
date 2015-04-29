@@ -10,19 +10,23 @@ namespace WendySharp
 {
     class User
     {
-        public string Identity; // Assigned from JSON
+        public string Identity = null; // Assigned from JSON
         public Dictionary<string, List<string>> Permissions; // Assigned from JSON
         public Dictionary<string, Regex> CompiledPermissionsMatch;
 
         public User()
         {
-            Identity = "Missing identity field";
             Permissions = new Dictionary<string, List<string>>();
             CompiledPermissionsMatch = new Dictionary<string, Regex>();
         }
 
         public void VerifyAndCompile()
         {
+            if (Identity == null)
+            {
+                throw new JsonException("Missing identity field");
+            }
+
             if (!Permissions.Any())
             {
                 throw new JsonException(string.Format("Permission list for '{0}' is empty.", Identity));
