@@ -38,7 +38,11 @@ namespace WendySharp
                 user = user.Substring(user[1] == '+' ? 2 : 1);
             }
 
-            if (!HasUser(user))
+            if (HasUser(user))
+            {
+                Users[user] = status;
+            }
+            else
             {
                 Users.Add(user, status);
             }

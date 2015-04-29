@@ -93,7 +93,7 @@ namespace WendySharp
         {
             Log.WriteInfo("IRC", "Connected to IRC successfully");
 
-            Client.LogIn(Settings.Nickname, Settings.Nickname, Settings.Nickname, null, null, Settings.Password);
+            Client.LogIn(Settings.Nickname, "https://github.com/xPaw/WendySharp", Settings.Nickname, null, null, Settings.Password);
 
             foreach (var channel in Settings.Channels)
             {
