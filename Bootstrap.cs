@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading;
-using System.Linq;
+using System.IO;
 
 namespace WendySharp
 {
@@ -11,6 +11,13 @@ namespace WendySharp
 
         public static void Main(string[] args)
         {
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config", "bugsnag.txt");
+
+            if (File.Exists(path))
+            {
+                new Bugsnag.Clients.BaseClient(File.ReadAllText(path).Trim());
+            }
+
             ResetEvent = new ManualResetEvent(false);
 
             Console.CancelKeyPress += (sender, eventArgs) =>
