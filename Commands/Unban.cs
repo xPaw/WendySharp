@@ -56,6 +56,18 @@ namespace WendySharp
 
                         Whois.NormalizeIdentity(ident);
                     }
+                    else
+                    {
+                        if (ident.Username == null)
+                        {
+                            ident.Username = "*";
+                        }
+
+                        if (ident.Hostname == null)
+                        {
+                            ident.Hostname = "*";
+                        }
+                    }
 
                     Log.WriteInfo("Unban", "{0} unbanned {1} in {2}", command.Event.Sender, ident, command.Event.Recipient);
 

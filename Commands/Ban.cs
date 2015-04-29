@@ -45,6 +45,16 @@ namespace WendySharp
                 return;
             }
 
+            var duration = command.Arguments.Groups["duration"].Value;
+            DateTime durationTime = default(DateTime);
+
+            if (duration.Length > 0)
+            {
+                command.Reply("Not yet implemented");
+
+                return;
+            }
+
             var isQuiet = command.MatchedCommand == "quiet" || command.MatchedCommand == "mute";
 
             Bootstrap.Client.Whois.Query(ident,
@@ -68,9 +78,18 @@ namespace WendySharp
                     {
                         Whois.NormalizeIdentity(ident);
                     }
+                    else
+                    {
+                        if (ident.Username == null)
+                        {
+                            ident.Username = "*";
+                        }
 
-                    var duration = command.Arguments.Groups["duration"].Value;
-                    DateTime durationTime = default(DateTime);
+                        if (ident.Hostname == null)
+                        {
+                            ident.Hostname = "*";
+                        }
+                    }
 
                     if (Bootstrap.Client.ModeList.Find(command.Event.Recipient, ident.ToString(), isQuiet ? "-q" : "-b") != null)
                     {
@@ -92,10 +111,6 @@ namespace WendySharp
 
                     if (duration.Length > 0)
                     {
-                        // TODO: get some parsedatetime
-
-                        durationTime = DateTime.UtcNow.AddMinutes(1);
-
                         command.Reply("Will {0} {1} {2}", isQuiet ? "unmute" : "unban", ident, durationTime.ToRelativeString());
 
                         Bootstrap.Client.ModeList.AddLateModeRequest(

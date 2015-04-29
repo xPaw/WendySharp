@@ -71,7 +71,7 @@ namespace WendySharp
         {
             ident.Nickname = "*";
 
-            if (string.IsNullOrEmpty(ident.Username))
+            if (ident.Username == null)
             {
                 ident.Username = "*";
             }

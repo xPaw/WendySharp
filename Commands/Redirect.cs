@@ -68,6 +68,18 @@ namespace WendySharp
                     {
                         Whois.NormalizeIdentity(ident);
                     }
+                    else
+                    {
+                        if (ident.Username == null)
+                        {
+                            ident.Username = "*";
+                        }
+
+                        if (ident.Hostname == null)
+                        {
+                            ident.Hostname = "*";
+                        }
+                    }
 
                     var targetChannel = command.Arguments.Groups["channel"].Value.Trim();
 
