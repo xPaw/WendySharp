@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using NetIrc2.Details;
+﻿using NetIrc2.Details;
 
 namespace NetIrc2
 {

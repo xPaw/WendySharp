@@ -9,7 +9,7 @@ namespace WendySharp
         public Kick()
         {
             Name = "kick";
-            Match = "kick|gtfo";
+            Match = "kick|gtfo|remove";
             Usage = "<nickname> [reason]";
             ArgumentMatch = "(?<nick>[^ ]+)( (?<reason>.*))?$";
             HelpText = "Kicks a user from the current channel";
@@ -50,7 +50,14 @@ namespace WendySharp
 
             Log.WriteInfo("Kick", "{0} kicked {1} in {2} (reason: {3})", command.Event.Sender, ident, command.Event.Recipient, reason.Length == 0 ? "no reason given" : reason);
 
-            Bootstrap.Client.Client.Kick(ident.Nickname, command.Event.Recipient, reason);
+            if (command.MatchedCommand == "remove")
+            {
+                Bootstrap.Client.Client.Remove(ident.Nickname, command.Event.Recipient, reason.Length == 0 ? null : reason);
+            }
+            else
+            {
+                Bootstrap.Client.Client.Kick(ident.Nickname, command.Event.Recipient, reason.Length == 0 ? null : reason);
+            }
         }
     }
 }
