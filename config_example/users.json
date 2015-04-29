@@ -1,0 +1,22 @@
+[
+	{
+		"Identity": "xPaw@unaffiliated/xpaw",
+		"Permissions":
+		{
+			"*":
+			[
+				"*"
+			]
+		}
+	},
+	{
+		"Username": "Timmy@tell.me.istimmystillbanned.info",
+		"Permissions":
+		{
+			"#test":
+			[
+				"irc.op.*"
+			]
+		}
+	}
+]

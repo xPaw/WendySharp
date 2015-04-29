@@ -1,0 +1,12 @@
+{
+	"Server": "irc.freenode.net",
+	"Port": 6665,
+	"Password": null,
+	"Prefix": ".",
+	"Nickname": "WendySharp",
+	"Channels":
+	[
+		"#test",
+		"#test2"
+	]
+}
