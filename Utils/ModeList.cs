@@ -100,27 +100,28 @@ namespace WendySharp
 
                 Log.WriteDebug("Mode", "{0}{1} on {2}", currentState, command[i], ident);
 
-                if (ident == Bootstrap.Client.TrueNickname)
+                var channel = Bootstrap.Client.ChannelList.GetChannel(e.Recipient);
+
+                if (command[i] == 'o')
                 {
-                    if (command[i] == 'o')
+                    if (currentState == '+')
                     {
-                        var channel = Bootstrap.Client.ChannelList.GetChannel(e.Recipient);
+                        channel.Users[ident] = Channel.Operator;
 
-                        channel.WeAreOpped = currentState == '+';
-
-                        Log.WriteDebug("Mode", "Updated our op status in {0}", channel.Name);
-
-                        if (channel.WeAreOpped)
+                        if (ident == Bootstrap.Client.TrueNickname)
                         {
                             // We gained op, maybe we can remove some bans now
                             RecheckLateModes();
                         }
                     }
+                    else
+                    {
+                        channel.Users[ident] = 0;
+                    }
                 }
-
-                // Drop channel forward
-                if (command[i] == 'b')
+                else if (command[i] == 'b')
                 {
+                    // Drop channel forward
                     var temp = ident.Split(new char[] { '$' }, 2);
 
                     if (temp.Length > 1)

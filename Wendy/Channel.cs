@@ -5,12 +5,17 @@ namespace WendySharp
 {
     class Channel
     {
-        private const byte Operator = (byte)'@';
-        private const byte Voice = (byte)'+';
+        public const byte Operator = (byte)'@';
 
         public string Name { get; private set; }
         public Dictionary<string, byte> Users;
-        public bool WeAreOpped;
+        public bool WeAreOpped
+        {
+            get
+            {
+                return Users[Bootstrap.Client.TrueNickname] == Operator;
+            }
+        }
 
         public Channel(string name)
         {
@@ -24,20 +29,13 @@ namespace WendySharp
 
             if (user[0] == '+')
             {
-                status = Voice;
-
                 user = user.Substring(1);
             }
             else if (user[0] == '@')
             {
                 status = Operator;
 
-                user = user.Substring(1);
-
-                if (user.ToLowerInvariant() == Bootstrap.Client.TrueNickname.ToLowerInvariant())
-                {
-                    WeAreOpped = true;
-                }
+                user = user.Substring(user[1] == '+' ? 2 : 1);
             }
 
             if (!HasUser(user))
