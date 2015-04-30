@@ -174,25 +174,31 @@ namespace WendySharp
                 using (var webClient = new WebClient())
                 {
                     webClient.DownloadDataCompleted += (object s, DownloadDataCompletedEventArgs youtube) =>
+                    {
+                        if (youtube.Error != null || youtube.Cancelled)
                         {
-                            if (youtube.Error != null || youtube.Cancelled)
-                            {
-                                return;
-                            }
+                            return;
+                        }
 
-                            var response = Encoding.UTF8.GetString(youtube.Result);
-                            var data = JsonMapper.ToObject(response);
+                        var response = Encoding.UTF8.GetString(youtube.Result);
+                        var data = JsonMapper.ToObject(response);
 
-                            Bootstrap.Client.Client.Message(e.Recipient,
-                                string.Format("{0}{1}{2} by {3}{4}",
-                                    Color.LIGHTGRAY,
-                                    data["title"],
-                                    Color.NORMAL,
-                                    Color.BLUE,
-                                    data["author_name"]
-                                )
-                            );
-                        };
+                        // If original message already contains video title, don't post it again
+                        if (e.Message.ToString().Contains(data["title"].ToString()))
+                        {
+                            return;
+                        }
+
+                        Bootstrap.Client.Client.Message(e.Recipient,
+                            string.Format("{0}{1}{2} by {3}{4}",
+                                Color.LIGHTGRAY,
+                                data["title"],
+                                Color.NORMAL,
+                                Color.BLUE,
+                                data["author_name"]
+                            )
+                        );
+                    };
 
                     webClient.DownloadDataAsync(new Uri(string.Format("https://www.youtube.com/oembed?format=json&url=youtu.be/{0}", id)));
                 }
