@@ -2,6 +2,7 @@
 
 namespace WendySharp
 {
+    #pragma warning disable 0649
     class LinkExpanderConfig
     {
         public class TwitterConfig
@@ -27,4 +28,5 @@ namespace WendySharp
 
         public List<string> Channels;
     }
+    #pragma warning restore 0649
 }
