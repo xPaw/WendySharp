@@ -232,7 +232,7 @@ namespace NetIrc2
 
             var buffer = statement.ToByteArray();
 #if DEBUG
-            Console.Write("> " + new IrcString(buffer));
+            Console.Write("< " + new IrcString(buffer));
 #endif
             lock (SyncRoot)
             {

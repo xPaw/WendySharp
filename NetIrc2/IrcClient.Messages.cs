@@ -109,7 +109,7 @@ namespace NetIrc2
             var source = statement.Source;
             var @params = statement.Parameters;
 #if DEBUG
-            Console.Write("< " + (string)new IrcString(statement.ToByteArray()));
+            Console.Write("> " + (string)new IrcString(statement.ToByteArray()));
 #endif
             switch ((string)statement.Command)
             {
@@ -263,6 +263,13 @@ namespace NetIrc2
                     if (@params.Count >= 3)
                     {
                         OnGotChannelTopicChange(new ChannelTopicChangeEventArgs(@params[1], @params[2]));
+                    }
+                    break;
+
+                case "TOPIC":
+                    if (@params.Count >= 2)
+                    {
+                        OnGotChannelTopicChange(new ChannelTopicChangeEventArgs(@params[0], @params[1]));
                     }
                     break;
 
