@@ -71,6 +71,7 @@ namespace WendySharp
             new Commands(Client);
             new Spam(Client);
             new Twitter(Client);
+            new FunActions(this);
             Whois = new Whois(Client);
         }
 

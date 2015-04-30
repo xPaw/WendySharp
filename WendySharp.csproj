@@ -83,6 +83,7 @@
     <Compile Include="Utils\FixedSizedQueue.cs" />
     <Compile Include="Utils\Color.cs" />
     <Compile Include="Commands\Flex.cs" />
+    <Compile Include="Wendy\FunActions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
