@@ -1,6 +1,5 @@
-﻿using System;
-using System.Text.RegularExpressions;
-using NetIrc2;
+﻿using System.Text.RegularExpressions;
+using NetIrc2.Events;
 using NetIrc2.Parsing;
 
 namespace WendySharp
@@ -43,7 +42,7 @@ namespace WendySharp
             client.Client.GotChatAction += OnChatAction;
         }
 
-        private void OnChatAction(object sender, NetIrc2.Events.ChatMessageEventArgs e)
+        private void OnChatAction(object sender, ChatMessageEventArgs e)
         {
             if (!IrcValidation.IsChannelName(e.Recipient))
             {

@@ -52,6 +52,7 @@ namespace WendySharp
             }
 
             client.GotMessage += OnMessage;
+            client.GotChatAction += OnMessage;
         }
 
         private void OnMessage(object obj, ChatMessageEventArgs e)
