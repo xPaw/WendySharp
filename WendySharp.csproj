@@ -77,6 +77,11 @@
     <Compile Include="Wendy\Spam.cs" />
     <Compile Include="Wendy\SpamConfig.cs" />
     <Compile Include="Utils\Whois.cs" />
+    <Compile Include="Twitter\TwitterAutherization.cs" />
+    <Compile Include="Twitter\Twitter.cs" />
+    <Compile Include="Twitter\TwitterConfig.cs" />
+    <Compile Include="Utils\FixedSizedQueue.cs" />
+    <Compile Include="Utils\Color.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -86,6 +91,7 @@
     <Folder Include="Commands\" />
     <Folder Include="Wendy\" />
     <Folder Include="Utils\" />
+    <Folder Include="Twitter\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="NetIrc2\NetIrc2.csproj">

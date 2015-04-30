@@ -75,7 +75,7 @@ namespace WendySharp
             }
 
             // Add time
-            return String.Format("{0} at {1:h:mmt}", format, dt);
+            return String.Format("{0} at {1:HH:mm}", format, dt);
         }
     }
 }

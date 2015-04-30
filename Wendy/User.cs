@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using LitJson;
-using NetIrc2;
 using NetIrc2.Parsing;
 
 namespace WendySharp
