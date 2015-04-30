@@ -1,0 +1,4 @@
+language: csharp
+solution: WendySharp.sln
+notifications:
+  email: false
