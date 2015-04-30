@@ -17,22 +17,25 @@ namespace WendySharp
         {
             client.GotMessage += OnMessage;
 
-            RegisteredCommands = new List<Command>();
-            RegisteredCommands.Add(new Kick());
-            RegisteredCommands.Add(new Ban());
-            RegisteredCommands.Add(new Unban());
-            RegisteredCommands.Add(new Redirect());
-            RegisteredCommands.Add(new Op());
-            RegisteredCommands.Add(new Deop());
-            RegisteredCommands.Add(new Voice());
-            RegisteredCommands.Add(new Devoice());
-            RegisteredCommands.Add(new Bans());
-            RegisteredCommands.Add(new Join());
-            RegisteredCommands.Add(new Part());
-            RegisteredCommands.Add(new Echo());
-            RegisteredCommands.Add(new Quit());
-            RegisteredCommands.Add(new Help(RegisteredCommands));
-
+            RegisteredCommands = new List<Command>
+            {
+                new Kick(),
+                new Ban(),
+                new Unban(),
+                new Redirect(),
+                new Op(),
+                new Deop(),
+                new Voice(),
+                new Devoice(),
+                new Bans(),
+                new Flex(),
+                new Join(),
+                new Part(),
+                new Echo(),
+                new Quit(),
+                new Help(this),
+            };
+            
             foreach (var cmd in RegisteredCommands)
             {
                 cmd.Compile();
@@ -43,6 +46,11 @@ namespace WendySharp
             Log.WriteDebug("Commands", "Match: {0}", pattern);
 
             CompiledCommandMatch = new Regex(pattern, RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        }
+
+        public List<Command> GetRegisteredCommands()
+        {
+            return RegisteredCommands;
         }
 
         private void OnMessage(object obj, ChatMessageEventArgs e)

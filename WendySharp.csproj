@@ -82,6 +82,7 @@
     <Compile Include="Twitter\TwitterConfig.cs" />
     <Compile Include="Utils\FixedSizedQueue.cs" />
     <Compile Include="Utils\Color.cs" />
+    <Compile Include="Commands\Flex.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

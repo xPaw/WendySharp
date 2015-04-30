@@ -39,7 +39,7 @@ namespace WendySharp
             Timer.Elapsed += OnRealTimerElapsed;
             Timer.Start();
 
-            Log.WriteDebug("late mode", "timer for {0} will run in {1}", Recipient, Time.Subtract(DateTime.UtcNow).TotalMinutes);
+            Log.WriteDebug("late mode", "timer for {0} will run {1}", Recipient, Time.ToRelativeString());
         }
 
         public void Dispose()
@@ -65,7 +65,7 @@ namespace WendySharp
         private void StartNormalTimer()
         {
             Timer = new Timer();
-            Timer.Interval = TimeSpan.FromMinutes(1).TotalMilliseconds;;
+            Timer.Interval = TimeSpan.FromMinutes(1).TotalMilliseconds;
             Timer.Elapsed += OnTimerElapsed;
             Timer.Start();
         }

@@ -5,11 +5,11 @@ namespace WendySharp
 {
     class Help : Command
     {
-        private readonly List<Command> RegisteredCommands; // TODO: duplication?
+        private readonly Commands Reference;
 
-        public Help(List<Command> commands)
+        public Help(Commands commands)
         {
-            RegisteredCommands = commands;
+            Reference = commands;
 
             Name = "help";
             HelpText = "Help on the help command. Displays a helpful help message about help, helps you help yourself use help. Helpful, huh?";
@@ -20,7 +20,10 @@ namespace WendySharp
             User user;
             Users.TryGetUser(command.Event.Sender, out user);
 
-            var commands = RegisteredCommands.Where(x => x.Permission == null || user.HasPermission(command.Event.Recipient, x.Permission)).Select(x => x.Name);
+            var commands = Reference
+                .GetRegisteredCommands()
+                .Where(x => x.Permission == null || user.HasPermission(command.Event.Recipient, x.Permission))
+                .Select(x => x.Name);
 
             command.ReplyAsNotice("Commands you have access to in this channel: {0}", string.Join(", ", commands));
         }
