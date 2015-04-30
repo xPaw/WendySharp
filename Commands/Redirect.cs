@@ -20,13 +20,6 @@ namespace WendySharp
 
         public override void OnCommand(CommandArguments command)
         {
-            if (!IrcValidation.IsChannelName(command.Event.Recipient))
-            {
-                command.Reply("Can't redirect here, silly.");
-
-                return;
-            }
-
             // TODO: If we're not op, we should try to gain op
             var channel = Bootstrap.Client.ChannelList.GetChannel(command.Event.Recipient);
 

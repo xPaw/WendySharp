@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using NetIrc2;
-using NetIrc2.Parsing;
 
 namespace WendySharp
 {
@@ -19,13 +18,6 @@ namespace WendySharp
 
         public override void OnCommand(CommandArguments command)
         {
-            if (!IrcValidation.IsChannelName(command.Event.Recipient))
-            {
-                command.Reply("Can't devoice here, silly.");
-
-                return;
-            }
-
             var nicks = new List<string>();
             var input = command.Arguments.Groups["nicks"].Value;
 

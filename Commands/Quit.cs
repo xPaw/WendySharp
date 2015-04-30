@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace WendySharp
+﻿namespace WendySharp
 {
     class Quit : Command
     {

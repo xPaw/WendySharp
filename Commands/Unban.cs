@@ -1,6 +1,5 @@
 ﻿using System;
 using NetIrc2;
-using NetIrc2.Parsing;
 
 namespace WendySharp
 {
@@ -18,13 +17,6 @@ namespace WendySharp
 
         public override void OnCommand(CommandArguments command)
         {
-            if (!IrcValidation.IsChannelName(command.Event.Recipient))
-            {
-                command.Reply("Can't unban here, silly.");
-
-                return;
-            }
-
             // TODO: If we're not op, we should try to gain op
             var channel = Bootstrap.Client.ChannelList.GetChannel(command.Event.Recipient);
 

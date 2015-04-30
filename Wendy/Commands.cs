@@ -60,6 +60,12 @@ namespace WendySharp
                 return;
             }
 
+            // Don't do anything in a private message
+            if (!IrcValidation.IsChannelName(e.Recipient))
+            {
+                return;
+            }
+
             var message = e.Message.ToString().TrimEnd();
 
             if (message.StartsWith(Bootstrap.Client.TrueNickname, StringComparison.InvariantCultureIgnoreCase))
@@ -77,10 +83,6 @@ namespace WendySharp
             else if (message[0] == Bootstrap.Client.Settings.Prefix)
             {
                 message = message.Substring(1);
-            }
-            else if(!IrcValidation.IsChannelName(e.Recipient))
-            {
-                // Direct messages don't need a prefix
             }
             else
             {
