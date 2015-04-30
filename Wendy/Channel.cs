@@ -8,6 +8,7 @@ namespace WendySharp
         public const byte Operator = (byte)'@';
 
         public string Name { get; private set; }
+        public string Topic { get; set; }
         public Dictionary<string, byte> Users;
         public bool WeAreOpped
         {

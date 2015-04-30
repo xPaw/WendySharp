@@ -19,6 +19,14 @@ namespace WendySharp
             client.GotUserKicked += OnUserKicked;
             client.GotUserQuit += OnUserQuit;
             client.GotNameChange += OnNameChange;
+            client.GotChannelTopicChange += OnChannelTopicChange;
+        }
+
+        private void OnChannelTopicChange(object sender, ChannelTopicChangeEventArgs e)
+        {
+            GetChannel(e.Channel).Topic = e.NewTopic;
+
+            Log.WriteDebug("Channels", "Topic in {0}: {1}", e.Channel, e.NewTopic);
         }
 
         private void OnNameChange(object sender, NameChangeEventArgs e)
