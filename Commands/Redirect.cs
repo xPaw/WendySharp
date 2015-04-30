@@ -55,7 +55,9 @@ namespace WendySharp
                         ident = whoisData.Identity;
                     }
 
-                    if (ident.Nickname.ToString().ToLowerInvariant() == Bootstrap.Client.TrueNickname.ToLowerInvariant())
+                    var nickname = ident.Nickname;
+
+                    if (nickname.ToString().ToLowerInvariant() == Bootstrap.Client.TrueNickname.ToLowerInvariant())
                     {
                         Log.WriteInfo("Redirect", "{0} tried to redirect the bot in {1}", command.Event.Sender, command.Event.Recipient);
 
@@ -107,12 +109,12 @@ namespace WendySharp
 
                     Bootstrap.Client.Client.Mode(command.Event.Recipient, "+b", new IrcString[1] { ident + "$" + targetChannel });
 
-                    if (channel.HasUser(ident.Nickname))
+                    if (channel.HasUser(nickname))
                     {
-                        Bootstrap.Client.Client.Kick(ident.Nickname, command.Event.Recipient, reason);
+                        Bootstrap.Client.Client.Kick(nickname, command.Event.Recipient, reason);
                     }
 
-                    command.Reply("Redirected {0} to {1} for 2 hours", ident, targetChannel);
+                    command.ReplyAsNotice("Redirected {0} to {1} for 2 hours", ident, targetChannel);
 
                     Bootstrap.Client.ModeList.AddLateModeRequest(
                         new LateModeRequest

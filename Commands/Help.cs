@@ -23,7 +23,7 @@ namespace WendySharp
 
             var commands = RegisteredCommands.Where(x => x.Permission == null || user.HasPermission(command.Event.Recipient, x.Permission)).Select(x => x.Name);
 
-            command.Reply(true, "Commands you have access to in this channel: {0}", string.Join(", ", commands));
+            command.ReplyAsNotice("Commands you have access to in this channel: {0}", string.Join(", ", commands));
         }
     }
 }

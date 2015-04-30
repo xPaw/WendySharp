@@ -90,8 +90,11 @@ namespace WendySharp
             }
             else if (ident.Hostname.StartsWith("gateway/"))
             {
-                //ident.Nickname = "*";
                 ident.Hostname = "gateway/*";
+            }
+            else
+            {
+                ident.Username = "*";
             }
 
             return ident;

@@ -65,7 +65,9 @@ namespace WendySharp
                         ident = whoisData.Identity;
                     }
 
-                    if (ident.Nickname.ToString().ToLowerInvariant() == Bootstrap.Client.TrueNickname.ToLowerInvariant())
+                    var nickname = ident.Nickname;
+
+                    if (nickname.ToString().ToLowerInvariant() == Bootstrap.Client.TrueNickname.ToLowerInvariant())
                     {
                         Log.WriteInfo("Ban", "{0} tried to ban the bot in {1}", command.Event.Sender, command.Event.Recipient);
 
@@ -104,14 +106,14 @@ namespace WendySharp
 
                     Bootstrap.Client.Client.Mode(command.Event.Recipient, isQuiet ? "+q" : "+b", new IrcString[1] { ident });
 
-                    if (!isQuiet && channel.HasUser(ident.Nickname))
+                    if (!isQuiet && channel.HasUser(nickname))
                     {
-                        Bootstrap.Client.Client.Kick(ident.Nickname, command.Event.Recipient, reason);
+                        Bootstrap.Client.Client.Kick(nickname, command.Event.Recipient, reason);
                     }
 
                     if (duration.Length > 0)
                     {
-                        command.Reply("Will {0} {1} {2}", isQuiet ? "unmute" : "unban", ident, durationTime.ToRelativeString());
+                        command.ReplyAsNotice("Will {0} {1} {2}", isQuiet ? "unmute" : "unban", ident, durationTime.ToRelativeString());
 
                         Bootstrap.Client.ModeList.AddLateModeRequest(
                             new LateModeRequest
@@ -126,7 +128,7 @@ namespace WendySharp
                     }
                     else
                     {
-                        command.Reply("{0} {1}", isQuiet ? "muted" : "banned", ident);
+                        command.ReplyAsNotice("{0} {1}", isQuiet ? "muted" : "banned", ident);
                     }
                 }
             );

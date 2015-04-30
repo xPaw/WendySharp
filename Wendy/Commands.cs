@@ -52,6 +52,14 @@ namespace WendySharp
                 return;
             }
 
+            User user;
+
+            // If there is no such user, don't do anything
+            if (!Users.TryGetUser(e.Sender, out user))
+            {
+                return;
+            }
+
             var message = e.Message.ToString().TrimEnd();
 
             if (message.StartsWith(Bootstrap.Client.TrueNickname, StringComparison.InvariantCultureIgnoreCase))
@@ -102,15 +110,7 @@ namespace WendySharp
                 MatchedCommand = match.Value.Trim(),
                 Event = e
             };
-
-            User user;
-
-            // If there is no such user, don't do anything
-            if (!Users.TryGetUser(e.Sender, out user))
-            {
-                return;
-            }
-
+            
             if (command.Permission != null)
             {
                 if (!user.HasPermission(e.Recipient, command.Permission))
@@ -128,8 +128,8 @@ namespace WendySharp
                 if (!arguments.Arguments.Success)
                 {
                     // TODO: This will print usage to users that don't have access to this command
-                    arguments.Reply(true, "Usage: {0} {1}", command.Name, command.Usage);
-                    arguments.Reply(true, "{0}", command.HelpText);
+                    arguments.ReplyAsNotice("Usage: {0} {1}", command.Name, command.Usage);
+                    arguments.ReplyAsNotice("{0}", command.HelpText);
 
                     return;
                 }

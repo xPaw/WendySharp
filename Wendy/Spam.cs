@@ -54,9 +54,9 @@ namespace WendySharp
             client.GotMessage += OnMessage;
         }
 
-        private void OnMessage(object sender, ChatMessageEventArgs e)
+        private void OnMessage(object obj, ChatMessageEventArgs e)
         {
-            if (!Channels.ContainsKey(e.Recipient) || e.Sender.Nickname == Bootstrap.Client.TrueNickname)
+            if (e.Sender == null || !Channels.ContainsKey(e.Recipient))
             {
                 return;
             }
@@ -100,14 +100,17 @@ namespace WendySharp
 
             Log.WriteInfo("Spam", "A line by {0} in {1} was detected as spam. Quieting for {2} seconds.", e.Sender, e.Recipient, channel.Duration);
 
-            Bootstrap.Client.Client.Mode(e.Recipient, "+q", new IrcString[1] { e.Sender });
+            var sender = e.Sender;
+            sender.Nickname = "*";
+
+            Bootstrap.Client.Client.Mode(e.Recipient, "+q", new IrcString[1] { sender });
             Bootstrap.Client.Client.Notice(e.Sender.Nickname, channel.Message);
 
             Bootstrap.Client.ModeList.AddLateModeRequest(
                 new LateModeRequest
                 {
                     Channel = e.Recipient,
-                    Recipient = e.Sender.ToString(),
+                    Recipient = sender.ToString(),
                     Mode = "-q",
                     Time = DateTime.UtcNow.AddSeconds(channel.Duration),
                     Reason = "Spam"

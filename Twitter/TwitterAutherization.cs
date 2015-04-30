@@ -7,16 +7,9 @@ using System.Text;
 
 namespace WendySharp
 {
-    class TwitterAuthorization
+    static class TwitterAuthorization
     {
-        private readonly TwitterConfig Config;
-
-        public TwitterAuthorization(TwitterConfig config)
-        {
-            Config = config;
-        }
-
-        public string GetHeader(string method, string uri)
+        public static string GetHeader(string method, string uri, TwitterConfig Config)
         {
             var nonce = Guid.NewGuid().ToString();
             var timestamp = Convert.ToInt64((DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds).ToString(CultureInfo.InvariantCulture);

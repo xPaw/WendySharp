@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Net;
@@ -14,7 +15,6 @@ namespace WendySharp
     class Twitter
     {
         private readonly Regex TwitterCompiledMatch;
-        private readonly TwitterAuthorization TwitterAuthorization;
         private readonly FixedSizedQueue<ulong> LastTweets;
         private readonly TwitterConfig Config;
 
@@ -42,6 +42,22 @@ namespace WendySharp
                 {
                     throw new JsonException("Twitter keys cannot be null");
                 }
+
+                if(Config.Channels == null)
+                {
+                    Config.Channels = new List<string>();
+                }
+                else
+                {
+                    foreach(var channel in Config.Channels)
+                    {
+                        if (!IrcValidation.IsChannelName(channel))
+                        {
+                            throw new JsonException(string.Format("Invalid channel '{0}'", channel));
+                        }
+
+                    }
+                }
             }
             catch (JsonException e)
             {
@@ -50,7 +66,6 @@ namespace WendySharp
                 Environment.Exit(1);
             }
 
-            TwitterAuthorization = new TwitterAuthorization(Config);
             LastTweets = new FixedSizedQueue<ulong>();
             LastTweets.Limit = Config.DontRepeatLastCount;
             TwitterCompiledMatch = new Regex(@"(^|/|\.)twitter\.com/(.+?)/status/(?<status>[0-9]+)", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
@@ -60,12 +75,10 @@ namespace WendySharp
 
         private void OnMessage(object sender, ChatMessageEventArgs e)
         {
-            if (e.Sender.Nickname == Bootstrap.Client.TrueNickname || !IrcValidation.IsChannelName(e.Recipient))
+            if (!Config.Channels.Contains(e.Recipient))
             {
                 return;
             }
-
-            // TODO: Configure which channels we can process
 
             var matches = TwitterCompiledMatch.Matches(e.Message);
 
@@ -83,7 +96,7 @@ namespace WendySharp
                 using (var webClient = new WebClient())
                 {
                     var url = string.Format("https://api.twitter.com/1.1/statuses/show/{0}.json", status);
-                    var authHeader = TwitterAuthorization.GetHeader("GET", url);
+                    var authHeader = TwitterAuthorization.GetHeader("GET", url, Config);
 
                     webClient.DownloadDataCompleted += (object s, DownloadDataCompletedEventArgs twitter) =>
                     {

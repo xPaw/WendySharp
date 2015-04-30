@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 
 namespace WendySharp
 {
@@ -19,5 +19,7 @@ namespace WendySharp
         /// Don't repeat a tweet if it was already mentioned in the last N tweets.
         /// </summary>
         public uint DontRepeatLastCount { get; set; }
+
+        public List<string> Channels;
     }
 }

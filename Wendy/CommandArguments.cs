@@ -11,9 +11,9 @@ namespace WendySharp
         public ChatMessageEventArgs Event;
         public Match Arguments;
 
-        public void Reply(bool notice, string message, params object[] args)
+        public void ReplyAsNotice(string message, params object[] args)
         {
-            Reply(string.Format(message, args), notice);
+            Reply(string.Format(message, args), true);
         }
 
         public void Reply(string message, params object[] args)

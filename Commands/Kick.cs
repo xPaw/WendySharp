@@ -58,6 +58,8 @@ namespace WendySharp
             {
                 Bootstrap.Client.Client.Kick(ident.Nickname, command.Event.Recipient, reason.Length == 0 ? null : reason);
             }
+
+            command.ReplyAsNotice("Kicked {1}", ident);
         }
     }
 }
