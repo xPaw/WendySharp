@@ -9,7 +9,7 @@ namespace WendySharp
 {
     static class TwitterAuthorization
     {
-        public static string GetHeader(string method, string uri, TwitterConfig Config)
+        public static string GetHeader(string method, string uri, LinkExpanderConfig.TwitterConfig Config)
         {
             var nonce = Guid.NewGuid().ToString();
             var timestamp = Convert.ToInt64((DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds).ToString(CultureInfo.InvariantCulture);

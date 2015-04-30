@@ -12,19 +12,21 @@ using NetIrc2.Parsing;
 
 namespace WendySharp
 {
-    class Twitter
+    class LinkExpander
     {
         private readonly Regex TwitterCompiledMatch;
+        private readonly Regex YoutubeCompiledMatch;
+        private readonly FixedSizedQueue<string> LastVideos;
         private readonly FixedSizedQueue<ulong> LastTweets;
-        private readonly TwitterConfig Config;
+        private readonly LinkExpanderConfig Config;
 
-        public Twitter(IrcClient client)
+        public LinkExpander(IrcClient client)
         {
-            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config", "twitter.json");
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config", "services.json");
 
             if (!File.Exists(path))
             {
-                Log.WriteWarn("Twitter", "File config/twitter.json doesn't exist");
+                Log.WriteWarn("Twitter", "File config/services.json doesn't exist");
 
                 return;
             }
@@ -33,42 +35,46 @@ namespace WendySharp
 
             try
             {
-                Config = JsonMapper.ToObject<TwitterConfig>(data);
+                Config = JsonMapper.ToObject<LinkExpanderConfig>(data);
 
-                if (Config.AccessSecret == null ||
-                    Config.AccessToken == null ||
-                    Config.ConsumerKey == null ||
-                    Config.ConsumerSecret == null)
+                if (Config.Twitter.AccessSecret == null ||
+                    Config.Twitter.AccessToken == null ||
+                    Config.Twitter.ConsumerKey == null ||
+                    Config.Twitter.ConsumerSecret == null)
                 {
                     throw new JsonException("Twitter keys cannot be null");
                 }
 
-                if(Config.Channels == null)
+                if (Config.Channels == null)
                 {
                     Config.Channels = new List<string>();
                 }
                 else
                 {
-                    foreach(var channel in Config.Channels)
+                    foreach (var channel in Config.Channels)
                     {
                         if (!IrcValidation.IsChannelName(channel))
                         {
                             throw new JsonException(string.Format("Invalid channel '{0}'", channel));
                         }
-
                     }
                 }
             }
             catch (JsonException e)
             {
-                Log.WriteError("Twitter", "Failed to parse twitter.json file: {0}", e.Message);
+                Log.WriteError("Twitter", "Failed to parse services.json file: {0}", e.Message);
 
                 Environment.Exit(1);
             }
 
             LastTweets = new FixedSizedQueue<ulong>();
             LastTweets.Limit = Config.DontRepeatLastCount;
+
+            LastVideos = new FixedSizedQueue<string>();
+            LastVideos.Limit = Config.DontRepeatLastCount;
+
             TwitterCompiledMatch = new Regex(@"(^|/|\.)twitter\.com/(.+?)/status/(?<status>[0-9]+)", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
+            YoutubeCompiledMatch = new Regex(@"(^|/|\.)(youtube\.com/watch\?v=|youtu\.be/)(?<id>[a-zA-Z0-9\-_]+)", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
 
             client.GotMessage += OnMessage;
         }
@@ -80,6 +86,12 @@ namespace WendySharp
                 return;
             }
 
+            ProcessTwitter(e);
+            ProcessYoutube(e);
+        }
+
+        private void ProcessTwitter(ChatMessageEventArgs e)
+        {
             var matches = TwitterCompiledMatch.Matches(e.Message);
 
             foreach (Match match in matches)
@@ -96,7 +108,7 @@ namespace WendySharp
                 using (var webClient = new WebClient())
                 {
                     var url = string.Format("https://api.twitter.com/1.1/statuses/show/{0}.json", status);
-                    var authHeader = TwitterAuthorization.GetHeader("GET", url, Config);
+                    var authHeader = TwitterAuthorization.GetHeader("GET", url, Config.Twitter);
 
                     webClient.DownloadDataCompleted += (object s, DownloadDataCompletedEventArgs twitter) =>
                     {
@@ -111,7 +123,7 @@ namespace WendySharp
 
                         var text = WebUtility.HtmlDecode(tweet["text"].ToString()).Replace('\n', ' ').Trim();
 
-                        if (Config.ExpandURLs)
+                        if (Config.Twitter.ExpandURLs)
                         {
                             foreach (JsonData entityUrl in tweet["entities"]["urls"])
                             {
@@ -137,9 +149,52 @@ namespace WendySharp
                             )
                         );
                     };
-                    
+
                     webClient.Headers.Add(HttpRequestHeader.Authorization, string.Format("OAuth {0}", authHeader));
                     webClient.DownloadDataAsync(new Uri(url));
+                }
+            }
+        }
+
+        private void ProcessYoutube(ChatMessageEventArgs e)
+        {
+            var matches = YoutubeCompiledMatch.Matches(e.Message);
+
+            foreach (Match match in matches)
+            {
+                var id = match.Groups["id"].Value;
+
+                if (LastVideos.Contains(id))
+                {
+                    continue;
+                }
+
+                LastVideos.Enqueue(id);
+
+                using (var webClient = new WebClient())
+                {
+                    webClient.DownloadDataCompleted += (object s, DownloadDataCompletedEventArgs youtube) =>
+                        {
+                            if (youtube.Error != null || youtube.Cancelled)
+                            {
+                                return;
+                            }
+
+                            var response = Encoding.UTF8.GetString(youtube.Result);
+                            var data = JsonMapper.ToObject(response);
+
+                            Bootstrap.Client.Client.Message(e.Recipient,
+                                string.Format("{0}{1}{2} by {3}{4}",
+                                    Color.LIGHTGRAY,
+                                    data["title"],
+                                    Color.NORMAL,
+                                    Color.BLUE,
+                                    data["author_name"]
+                                )
+                            );
+                        };
+
+                    webClient.DownloadDataAsync(new Uri(string.Format("https://www.youtube.com/oembed?format=json&url=youtu.be/{0}", id)));
                 }
             }
         }

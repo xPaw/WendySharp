@@ -1,0 +1,17 @@
+{
+	"DontRepeatLastCount": 5,
+	
+	"Channels":
+	[
+		"#test"
+	],
+	
+	"Twitter":
+	{
+		"AccessToken": "",
+		"AccessSecret": "",
+		"ConsumerKey": "",
+		"ConsumerSecret": "",
+		"ExpandURLs": true
+	}
+}

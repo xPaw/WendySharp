@@ -70,7 +70,7 @@ namespace WendySharp
             new Permissions();
             new Commands(Client);
             new Spam(Client);
-            new Twitter(Client);
+            new LinkExpander(Client);
             new FunActions(this);
             Whois = new Whois(Client);
         }
