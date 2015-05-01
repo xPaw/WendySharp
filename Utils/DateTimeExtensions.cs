@@ -67,11 +67,11 @@ namespace WendySharp
             else if (dt.Year == DateTime.Now.Year)
             {
                 // Absolute date
-                format = dt.ToString(@"MMM d");
+                format = dt.ToString(@"\o\n MMM d");
             }
             else
             {
-                format = dt.ToString(@"MMM d, yyyy");
+                format = dt.ToString(@"\o\n MMM d, yyyy");
             }
 
             // Add time

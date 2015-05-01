@@ -42,6 +42,7 @@ namespace WendySharp
                 {
                     Channel = command.Event.Recipient,
                     Recipient = command.Event.Sender.Nickname,
+                    Sender = command.Event.Sender.ToString(),
                     Mode = "-o",
                     Time = DateTime.UtcNow.AddSeconds(10),
                     Reason = "Used flex command"

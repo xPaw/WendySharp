@@ -34,7 +34,13 @@ namespace WendySharp
 
             foreach (var mode in modes)
             {
-                command.ReplyAsNotice("In {0} setting {1} {2} {3}", mode.Channel, mode.Mode, mode.Recipient, mode.Time.ToRelativeString());
+                command.ReplyAsNotice("In {0} setting {1} {2} {3}{4}",
+                    mode.Channel,
+                    mode.Mode,
+                    mode.Recipient,
+                    mode.Time.ToRelativeString(),
+                    mode.Sender == null ? "" : string.Format(" (from {0})", mode.Sender)
+                );
             }
         }
     }

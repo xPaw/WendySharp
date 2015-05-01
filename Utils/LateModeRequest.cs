@@ -11,6 +11,7 @@ namespace WendySharp
         public string Reason { get; set; }
         public DateTime Time { get; set; }
         public string Mode { get; set; }
+        public string Sender { get; set; }
         private Timer Timer;
 
         public void Check()

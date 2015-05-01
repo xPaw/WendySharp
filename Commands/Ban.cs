@@ -50,9 +50,16 @@ namespace WendySharp
 
             if (duration.Length > 0)
             {
-                command.Reply("Not yet implemented");
+                try
+                {
+                    durationTime = DateTimeParser.Parse(duration);
+                }
+                catch (Exception e)
+                {
+                    command.Reply("{0}", e.Message);
 
-                return;
+                    return;
+                }
             }
 
             var isQuiet = command.MatchedCommand == "quiet" || command.MatchedCommand == "mute";
@@ -120,6 +127,7 @@ namespace WendySharp
                             {
                                 Channel = command.Event.Recipient,
                                 Recipient = ident.ToString(),
+                                Sender = command.Event.Sender.ToString(),
                                 Mode = isQuiet ? "-q" : "-b",
                                 Time = durationTime,
                                 Reason = reason
@@ -128,7 +136,7 @@ namespace WendySharp
                     }
                     else
                     {
-                        command.ReplyAsNotice("{0} {1}", isQuiet ? "muted" : "banned", ident);
+                        command.ReplyAsNotice("{0} {1}", isQuiet ? "Muted" : "Banned", ident);
                     }
                 }
             );

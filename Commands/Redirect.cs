@@ -121,6 +121,7 @@ namespace WendySharp
                         {
                             Channel = command.Event.Recipient,
                             Recipient = ident.ToString(),
+                            Sender = command.Event.Sender.ToString(),
                             Mode = "-b",
                             Time = DateTime.UtcNow.AddHours(2),
                             Reason = reason
