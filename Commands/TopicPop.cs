@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace WendySharp
@@ -7,8 +8,11 @@ namespace WendySharp
     {
         public TopicPop()
         {
-            Name = "topicpop";
-            Match = "topicpop|tpop";
+            Match = new List<string>
+            {
+                "topicpop",
+                "tpop",
+            };
             HelpText = "Removes the last topic item.";
             Permission = "irc.op.topic";
         }

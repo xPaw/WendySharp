@@ -1,22 +1,15 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace WendySharp
 {
     abstract class Command
     {
         /// <summary>
-        /// Name of the command, used in command listing and usage text.
+        /// Command triggers.
+        /// First entry is used in command listing and usage text.
         /// </summary>
-        public string Name { get; protected set; }
-
-        /// <summary>
-        /// If specified, is a regular expression string specifying how
-        /// to match just the command name (not the arguments). If it is not
-        /// specified, the cmdname string is used to match the command. It should
-        /// not have any capturing parenthesis since this will be concatenated with
-        /// the argument matching regular expression.
-        /// </summary>
-        public string Match { get; protected set; }
+        public List<string> Match { get; protected set; }
 
         /// <summary>
         /// This is a regular expression string that matches the arguments of
@@ -67,9 +60,7 @@ namespace WendySharp
             // probably strictly isn't the right thing to do, but the only thing
             // this really disallows is having no boundry between the command
             // and its arguments.
-            var pattern = string.Format(@"({0})( |\b){1}", Match ?? Name, ArgumentMatch);
-
-            Log.WriteDebug(Name, "Match with arguments: {0}", pattern);
+            var pattern = string.Format(@"({0})( |\b){1}", string.Join("|", Match), ArgumentMatch);
 
             CompiledMatch = new Regex(pattern, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
         }

@@ -45,8 +45,6 @@ namespace WendySharp
 
                 string pattern = @"^(" + string.Join("|", channel.Value.Select(x => Regex.Escape(x))).Replace(@"\*", @".*") + @")$";
 
-                Log.WriteDebug("User", "'{0}' permissions in {1}: {2}", Identity, channel.Key, pattern);
-
                 CompiledPermissionsMatch.Add(channel.Key, new Regex(pattern, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture));
             }
 

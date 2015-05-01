@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using NetIrc2;
 
 namespace WendySharp
@@ -7,8 +8,15 @@ namespace WendySharp
     {
         public Ban()
         {
-            Name = "ban";
-            Match = "ban|kban|kb|kickban|quiet|mute";
+            Match = new List<string>
+            {
+                "ban",
+                "kban",
+                "kb",
+                "kickban",
+                "quiet",
+                "mute",
+            };
             Usage = "<nick or hostmask> [for <duration>]";
             ArgumentMatch = "(?<nick>[^ ]+)(?: (?<duration>.+))?$"; // TODO: implement [reason]
             HelpText = "Bans or quiets a user.";

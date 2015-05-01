@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using NetIrc2;
 
 namespace WendySharp
@@ -14,7 +13,7 @@ namespace WendySharp
 
             UsersList.Add(user.Identity, user);
 
-            Log.WriteDebug("Users", "Added user '{0}'", user.Identity);
+            Log.WriteInfo("Users", "Added user '{0}'", user.Identity);
         }
 
         public static bool TryGetUser(IrcIdentity ident, out User user)

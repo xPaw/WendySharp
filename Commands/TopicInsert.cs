@@ -1,5 +1,6 @@
 ﻿using System;
 using NetIrc2;
+using System.Collections.Generic;
 
 namespace WendySharp
 {
@@ -7,8 +8,11 @@ namespace WendySharp
     {
         public TopicInsert()
         {
-            Name = "topicinsert";
-            Match = "topicinsert|tinsert";
+            Match = new List<string>
+            {
+                "topicinsert",
+                "tinsert",
+            };
             Usage = "<pos> <text>";
             ArgumentMatch = "(?<pos>-?\\d+) (?<text>.+)$";
             HelpText = "Set a topic in a channel.";

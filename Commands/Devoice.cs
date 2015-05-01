@@ -8,8 +8,12 @@ namespace WendySharp
     {
         public Devoice()
         {
-            Name = "devoice";
-            Match = "devoice|dehat|unhat";
+            Match = new List<string>
+            {
+                "devoice",
+                "dehat",
+                "unhat"
+            };
             Usage = "[nick] ...";
             ArgumentMatch = "(?<nicks>.+)?";
             HelpText = "Takes voice from the specified user.";
@@ -51,7 +55,7 @@ namespace WendySharp
                 {
                     Bootstrap.Client.Client.Mode(command.Event.Recipient, "-v", new IrcString[1] { nick });
                 }
-                else if(channel.HasUser("ChanServ"))
+                else if (channel.HasUser("ChanServ"))
                 {
                     Bootstrap.Client.Client.Message("ChanServ", string.Format("devoice {0} {1}", channel.Name, nick));
                 }

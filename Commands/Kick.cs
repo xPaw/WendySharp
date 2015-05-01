@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using NetIrc2;
 
 namespace WendySharp
@@ -7,8 +8,12 @@ namespace WendySharp
     {
         public Kick()
         {
-            Name = "kick";
-            Match = "kick|gtfo|remove";
+            Match = new List<string>
+            {
+                "kick",
+                "gtfo",
+                "remove"
+            };
             Usage = "<nickname> [reason]";
             ArgumentMatch = "(?<nick>[^ ]+)( (?<reason>.*))?$";
             HelpText = "Kicks a user from the current channel.";

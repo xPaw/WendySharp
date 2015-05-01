@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using NetIrc2.Parsing;
 
 namespace WendySharp
@@ -7,8 +8,11 @@ namespace WendySharp
     {
         public Part()
         {
-            Name = "part";
-            Match = "part|leave";
+            Match = new List<string>
+            {
+                "part",
+                "leave",
+            };
             Usage = "[channel]";
             ArgumentMatch = "(?<channel>#+[\\w-]+)?$";
             HelpText = "Leaves the current or specified IRC channel.";

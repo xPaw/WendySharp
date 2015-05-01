@@ -11,7 +11,10 @@ namespace WendySharp
         {
             Reference = commands;
 
-            Name = "help";
+            Match = new List<string>
+            {
+                "help"
+            };
             HelpText = "Help on the help command. Displays a helpful help message about help, helps you help yourself use help. Helpful, huh?";
         }
 
@@ -23,7 +26,7 @@ namespace WendySharp
             var commands = Reference
                 .GetRegisteredCommands()
                 .Where(x => x.Permission == null || user.HasPermission(command.Event.Recipient, x.Permission))
-                .Select(x => x.Name);
+                .Select(x => x.Match.First());
 
             command.ReplyAsNotice("Commands you have access to in this channel: {0}", string.Join(", ", commands));
         }

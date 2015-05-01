@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using NetIrc2;
 using NetIrc2.Parsing;
 
@@ -10,8 +11,14 @@ namespace WendySharp
 
         public Redirect()
         {
-            Name = "redirect";
-            Match = "redirect|fixurshit|fixurconnection|fixyourshit|fixyourconnection";
+            Match = new List<string>
+            {
+                "redirect",
+                "fixurshit",
+                "fixurconnection",
+                "fixyourshit",
+                "fixyourconnection",
+            };
             Usage = "<nickname> [channel]";
             ArgumentMatch = "(?<nick>[^ ]+)(?: (?<channel>[^ ]+))?";
             HelpText = "Redirects a user to ##FIX_YOUR_CONNECTION or the given channel for a hard-coded length of time (2 hours).";

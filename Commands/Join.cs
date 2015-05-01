@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace WendySharp
 {
@@ -6,7 +7,10 @@ namespace WendySharp
     {
         public Join()
         {
-            Name = "join";
+            Match = new List<string>
+            {
+                "join"
+            };
             Usage = "<channel>";
             ArgumentMatch = "(?<channel>#+[\\w-]+)$";
             HelpText = "Joins an IRC channel.";

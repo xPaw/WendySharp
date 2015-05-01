@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using NetIrc2;
 
 namespace WendySharp
@@ -7,7 +8,10 @@ namespace WendySharp
     {
         public Flex()
         {
-            Name = "flex";
+            Match = new List<string>
+            {
+                "flex"
+            };
             HelpText = "OPs you for a few seconds, to show off your powah!";
             Permission = "irc.op.flex";
         }

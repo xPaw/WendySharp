@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace WendySharp
@@ -7,7 +8,10 @@ namespace WendySharp
     {
         public Bans()
         {
-            Name = "bans";
+            Match = new List<string>
+            {
+                "bans"
+            };
             Usage = "<mask> | all";
             ArgumentMatch = "(?<mask>[^ ])?";
             HelpText = "Lists the time until given mask is unbanned.";
@@ -23,14 +27,14 @@ namespace WendySharp
 
             if (!modes.Any())
             {
-                command.Reply("No pending unbans in this channel.");
+                command.ReplyAsNotice("No pending unbans in this channel.");
 
                 return;
             }
 
             foreach (var mode in modes)
             {
-                command.Reply("In {0} setting {1} {2} {3}", mode.Channel, mode.Mode, mode.Recipient, mode.Time.ToRelativeString());
+                command.ReplyAsNotice("In {0} setting {1} {2} {3}", mode.Channel, mode.Mode, mode.Recipient, mode.Time.ToRelativeString());
             }
         }
     }

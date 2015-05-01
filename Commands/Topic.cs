@@ -1,10 +1,15 @@
-﻿namespace WendySharp
+﻿using System.Collections.Generic;
+
+namespace WendySharp
 {
     class Topic : Command
     {
         public Topic()
         {
-            Name = "topic";
+            Match = new List<string>
+            {
+                "topic"
+            };
             Usage = "<text>";
             ArgumentMatch = "(?<text>.+)$";
             HelpText = "Set a topic in a channel.";

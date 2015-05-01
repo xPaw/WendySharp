@@ -1,5 +1,6 @@
 ﻿using System;
 using NetIrc2;
+using System.Collections.Generic;
 
 namespace WendySharp
 {
@@ -7,8 +8,11 @@ namespace WendySharp
     {
         public TopicRemove()
         {
-            Name = "topicremove";
-            Match = "topicremove|tremove";
+            Match = new List<string>
+            {
+                "topicremove",
+                "tremove",
+            };
             Usage = "<pos>";
             ArgumentMatch = "(?<pos>-?\\d+)$";
             HelpText = "Removes the pos'th topic selection.";

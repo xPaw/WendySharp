@@ -46,9 +46,7 @@ namespace WendySharp
                 cmd.Compile();
             }
 
-            string pattern = @"^(?:" + string.Join("|", RegisteredCommands.Select(x => string.Format("({0})", x.Match ?? x.Name))) + @")(?: |$)";
-
-            Log.WriteDebug("Commands", "Match: {0}", pattern);
+            string pattern = @"^(?:" + string.Join("|", RegisteredCommands.Select(x => string.Format("({0})", string.Join("|", x.Match)))) + @")(?: |$)";
 
             CompiledCommandMatch = new Regex(pattern, RegexOptions.Compiled | RegexOptions.CultureInvariant);
         }
@@ -118,7 +116,7 @@ namespace WendySharp
 
             var command = RegisteredCommands[i - 1];
 
-            Log.WriteDebug("CommandHandler", "Matched command '{0}' (as {2}) for {1}", command.Name, e.Sender, match.Value);
+            Log.WriteDebug("CommandHandler", "Matched command '{0}' (as {2}) for {1}", command.Match.First(), e.Sender, match.Value);
 
             var arguments = new CommandArguments
             {
@@ -133,7 +131,7 @@ namespace WendySharp
                     return;
                 }
 
-                Log.WriteDebug("CommandHandler", "'{0}' is authorized to perform '{1}' ({2})", e.Sender, command.Name, command.Permission);
+                Log.WriteDebug("CommandHandler", "'{0}' is authorized to perform '{1}' ({2})", e.Sender, arguments.MatchedCommand, command.Permission);
             }
 
             if (command.CompiledMatch != null)
@@ -143,7 +141,7 @@ namespace WendySharp
                 if (!arguments.Arguments.Success)
                 {
                     // TODO: This will print usage to users that don't have access to this command
-                    arguments.ReplyAsNotice("Usage: {0} {1}", command.Name, command.Usage);
+                    arguments.ReplyAsNotice("Usage: {0} {1}", command.Match.First(), command.Usage);
                     arguments.ReplyAsNotice("{0}", command.HelpText);
 
                     return;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace WendySharp
 {
@@ -6,7 +7,10 @@ namespace WendySharp
     {
         public Echo()
         {
-            Name = "echo";
+            Match = new List<string>
+            {
+                "echo"
+            };
             Usage = "<text to echo>";
             ArgumentMatch = "(?<message>.+)$";
             HelpText = "Echos text back to where it came from.";

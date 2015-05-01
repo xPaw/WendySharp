@@ -1,11 +1,17 @@
-﻿namespace WendySharp
+﻿using System.Collections.Generic;
+
+namespace WendySharp
 {
     class Quit : Command
     {
         public Quit()
         {
-            Name = "shutdown";
-            Match = "kill|die|stop|quit|shutdown";
+            Match = new List<string>
+            {
+                "shutdown",
+                "stop",
+                "quit",
+            };
             HelpText = "Shuts down.";
             Permission = "core.shutdown";
         }

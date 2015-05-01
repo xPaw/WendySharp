@@ -1,11 +1,17 @@
-﻿namespace WendySharp
+﻿using System.Collections.Generic;
+
+namespace WendySharp
 {
     class TopicAppend : Command
     {
         public TopicAppend()
         {
-            Name = "topicappend";
-            Match = "topicappend|tappend|tadd";
+            Match = new List<string>
+            {
+                "topicappend",
+                "tappend",
+                "tadd",
+            };
             Usage = "<text>";
             ArgumentMatch = "(?<text>.+)$";
             HelpText = "Appends text to the end of the channel topic.";

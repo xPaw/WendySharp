@@ -8,8 +8,11 @@ namespace WendySharp
     {
         public Voice()
         {
-            Name = "voice";
-            Match = "voice|hat";
+            Match = new List<string>
+            {
+                "voice",
+                "hat",
+            };
             Usage = "[nick] ...";
             ArgumentMatch = "(?<nicks>.+)?";
             HelpText = "Gives voice to the specified user.";
@@ -51,7 +54,7 @@ namespace WendySharp
                 {
                     Bootstrap.Client.Client.Mode(command.Event.Recipient, "+v", new IrcString[1] { nick });
                 }
-                else if(channel.HasUser("ChanServ"))
+                else if (channel.HasUser("ChanServ"))
                 {
                     Bootstrap.Client.Client.Message("ChanServ", string.Format("voice {0} {1}", channel.Name, nick));
                 }

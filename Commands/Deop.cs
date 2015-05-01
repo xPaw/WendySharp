@@ -8,7 +8,10 @@ namespace WendySharp
     {
         public Deop()
         {
-            Name = "deop";
+            Match = new List<string>
+            {
+                "deop"
+            };
             Usage = "[nick] ...";
             ArgumentMatch = "(?<nicks>.+)?";
             HelpText = "Takes op from the specified user.";
@@ -50,7 +53,7 @@ namespace WendySharp
                 {
                     Bootstrap.Client.Client.Mode(command.Event.Recipient, "-o", new IrcString[1] { nick });
                 }
-                else if(channel.HasUser("ChanServ"))
+                else if (channel.HasUser("ChanServ"))
                 {
                     Bootstrap.Client.Client.Message("ChanServ", string.Format("deop {0} {1}", channel.Name, nick));
                 }
