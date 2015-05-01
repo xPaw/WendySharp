@@ -10,11 +10,20 @@ namespace WendySharp
         public string Name { get; private set; }
         public string Topic { get; set; }
         public Dictionary<string, byte> Users;
+
         public bool WeAreOpped
         {
             get
             {
                 return Users[Bootstrap.Client.TrueNickname] == Operator;
+            }
+        }
+
+        public bool HasChanServ
+        {
+            get
+            {
+                return Bootstrap.Client.Settings.UsesChanServ && HasUser("ChanServ");
             }
         }
 

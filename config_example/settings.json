@@ -4,6 +4,7 @@
 	"Password": null,
 	"Prefix": ".",
 	"Nickname": "WendySharp",
+	"UsesChanServ": true,
 	"Channels":
 	[
 		"#test",

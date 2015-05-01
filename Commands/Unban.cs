@@ -23,16 +23,6 @@ namespace WendySharp
 
         public override void OnCommand(CommandArguments command)
         {
-            // TODO: If we're not op, we should try to gain op
-            var channel = Bootstrap.Client.ChannelList.GetChannel(command.Event.Recipient);
-
-            if (!channel.WeAreOpped)
-            {
-                command.Reply("I'm not opped, send help.");
-
-                return;
-            }
-
             var nick = command.Arguments.Groups["nick"].Value;
             IrcIdentity ident;
 
@@ -41,6 +31,22 @@ namespace WendySharp
                 command.Reply("Invalid identity.");
 
                 return;
+            }
+
+            var channel = Bootstrap.Client.ChannelList.GetChannel(command.Event.Recipient);
+
+            if (!channel.WeAreOpped)
+            {
+                if (channel.HasChanServ)
+                {
+                    Bootstrap.Client.Client.Message("ChanServ", string.Format("op {0}", channel.Name));
+                }
+                else
+                {
+                    command.Reply("I'm not opped, send help.");
+
+                    return;
+                }
             }
 
             var isQuiet = command.MatchedCommand != "unban";

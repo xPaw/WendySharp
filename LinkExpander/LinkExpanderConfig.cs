@@ -2,7 +2,6 @@
 
 namespace WendySharp
 {
-    #pragma warning disable 0649
     class LinkExpanderConfig
     {
         public class TwitterConfig
@@ -19,7 +18,7 @@ namespace WendySharp
             public bool ExpandURLs { get; set; }
         }
 
-        public TwitterConfig Twitter;
+        public TwitterConfig Twitter { get; set; }
 
         /// <summary>
         /// Don't repeat a tweet if it was already mentioned in the last N tweets.
@@ -28,5 +27,4 @@ namespace WendySharp
 
         public List<string> Channels;
     }
-    #pragma warning restore 0649
 }

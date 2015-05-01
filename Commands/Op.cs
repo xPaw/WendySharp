@@ -51,7 +51,7 @@ namespace WendySharp
             {
                 Bootstrap.Client.Client.Mode(command.Event.Recipient, "+" + new string('o', nicks.Count), nicks.ToArray());
             }
-            else if (channel.HasUser("ChanServ"))
+            else if (channel.HasChanServ)
             {
                 Bootstrap.Client.Client.Message("ChanServ", string.Format("op {0} {1}", channel.Name, string.Join(" ", nicks)));
             }

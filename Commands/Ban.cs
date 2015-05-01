@@ -25,16 +25,6 @@ namespace WendySharp
 
         public override void OnCommand(CommandArguments command)
         {
-            // TODO: If we're not op, we should try to gain op
-            var channel = Bootstrap.Client.ChannelList.GetChannel(command.Event.Recipient);
-
-            if (!channel.WeAreOpped)
-            {
-                command.Reply("I'm not opped, send help.");
-
-                return;
-            }
-
             var nick = command.Arguments.Groups["nick"].Value;
             IrcIdentity ident;
 
@@ -62,6 +52,22 @@ namespace WendySharp
                 }
             }
 
+            var channel = Bootstrap.Client.ChannelList.GetChannel(command.Event.Recipient);
+
+            if (!channel.WeAreOpped)
+            {
+                if (channel.HasChanServ)
+                {
+                    Bootstrap.Client.Client.Message("ChanServ", string.Format("op {0}", channel.Name));
+                }
+                else
+                {
+                    command.Reply("I'm not opped, send help.");
+
+                    return;
+                }
+            }
+
             var isQuiet = command.MatchedCommand == "quiet" || command.MatchedCommand == "mute";
 
             Bootstrap.Client.Whois.Query(ident,
@@ -76,9 +82,7 @@ namespace WendySharp
 
                     if (nickname.ToString().ToLowerInvariant() == Bootstrap.Client.TrueNickname.ToLowerInvariant())
                     {
-                        Log.WriteInfo("Ban", "{0} tried to ban the bot in {1}", command.Event.Sender, command.Event.Recipient);
-
-                        command.Reply("Don't you even dare");
+                        command.Reply("Don't you even dare.");
 
                         return;
                     }

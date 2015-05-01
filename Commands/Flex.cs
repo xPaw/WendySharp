@@ -18,21 +18,27 @@ namespace WendySharp
 
         public override void OnCommand(CommandArguments command)
         {
-            // TODO: If we're not op, we should try to gain op
             var channel = Bootstrap.Client.ChannelList.GetChannel(command.Event.Recipient);
-
-            if (!channel.WeAreOpped)
-            {
-                command.Reply("I'm not opped, send help.");
-
-                return;
-            }
 
             if (channel.Users[command.Event.Sender.Nickname] == Channel.Operator)
             {
                 command.Reply("Silly billy, you're already an operator.");
 
                 return;
+            }
+
+            if (!channel.WeAreOpped)
+            {
+                if (channel.HasChanServ)
+                {
+                    Bootstrap.Client.Client.Message("ChanServ", string.Format("op {0}", channel.Name));
+                }
+                else
+                {
+                    command.Reply("I'm not opped, send help.");
+
+                    return;
+                }
             }
 
             Bootstrap.Client.Client.Mode(command.Event.Recipient, "+o", new IrcString[1] { command.Event.Sender.Nickname });

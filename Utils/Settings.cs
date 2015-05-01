@@ -9,6 +9,7 @@ namespace WendySharp
         public string Password { get; set; }
         public string Nickname { get; set; }
         public char Prefix { get; set; }
+        public bool UsesChanServ { get; set; } // Needs +o on ChanServ
         public List<string> Channels { get; set; }
     }
 }
