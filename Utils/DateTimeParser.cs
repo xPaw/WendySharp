@@ -1,27 +1,64 @@
 ﻿using System;
-using Chronic;
 
 namespace WendySharp
 {
     static class DateTimeParser
     {
-        public static DateTime Parse(string input)
+        /// <exception cref="ArgumentException">Invalid input.</exception>
+        public static DateTime Parse(string input, string inputUnit)
         {
-            var options = new Options
-            {
-                EndianPrecedence = EndianPrecedence.Little,
-                FirstDayOfWeek = DayOfWeek.Monday,
-                Clock = () => DateTime.UtcNow,
-            };
-            var parser = new Parser(options);
-            var span = parser.Parse(input);
+            var i = int.Parse(input);
 
-            if (span == null)
+            if (i <= 0)
             {
-                throw new Exception("Failed to parse specified duration.");
+                throw new ArgumentException("Duration can not be zero.");
             }
 
-            return span.ToTime();
+            var time = DateTime.UtcNow;
+
+            switch (inputUnit[0])
+            {
+                case 'h':
+                    time = time.AddHours(i);
+                    break;
+
+                case 'w':
+                    time = time.AddDays(i * 7);
+                    break;
+
+                case 'd':
+                    time = time.AddDays(i);
+                    break;
+
+                case 'm':
+                    if (inputUnit.Length < 2)
+                    {
+                        throw new ArgumentException("Ambiguous unit. Specify if it's [mi]nutes or [mo]nths.");
+                    }
+
+                    switch (inputUnit[1])
+                    {
+                        case 'o':
+                            time = time.AddMonths(i);
+                            break;
+
+                        case 'i':
+                            time = time.AddMinutes(i);
+                            break;
+
+                        default:
+                            throw new ArgumentException("Invalid unit.");
+                    }
+
+                    break;
+
+                default:
+                    throw new ArgumentException("Invalid unit.");
+            }
+
+            Log.WriteDebug("test", "{0} - {1}", DateTime.UtcNow, time);
+
+            return time;
         }
     }
 }

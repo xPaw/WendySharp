@@ -71,7 +71,7 @@ namespace WendySharp
 
                     Bootstrap.Client.Client.Mode(command.Event.Recipient, isQuiet ? "-q" : "-b", new IrcString[1] { ident });
 
-                    command.Reply("{0} {1}", isQuiet ? "Unmuted" : "Unbanned", ident);
+                    command.ReplyAsNotice("{0} {1}", isQuiet ? "Unmuted" : "Unbanned", ident);
                 }
             );
         }

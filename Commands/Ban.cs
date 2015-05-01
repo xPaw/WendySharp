@@ -17,8 +17,8 @@ namespace WendySharp
                 "quiet",
                 "mute",
             };
-            Usage = "<nick or hostmask> [for <duration>]";
-            ArgumentMatch = "(?<nick>[^ ]+)(?: (?<duration>.+))?$"; // TODO: implement [reason]
+            Usage = "<nick or hostmask> [for <duration>m|h|d|w] [reason]";
+            ArgumentMatch = "(?<nick>[^ ]+)( (?<duration>[0-9]+)(?<durationUnit>[a-z]+))?( (?<reason>.*))?$";
             HelpText = "Bans or quiets a user.";
             Permission = "irc.op.ban";
         }
@@ -52,9 +52,9 @@ namespace WendySharp
             {
                 try
                 {
-                    durationTime = DateTimeParser.Parse(duration);
+                    durationTime = DateTimeParser.Parse(duration, command.Arguments.Groups["durationUnit"].Value);
                 }
-                catch (Exception e)
+                catch (ArgumentException e)
                 {
                     command.Reply("{0}", e.Message);
 
@@ -109,7 +109,12 @@ namespace WendySharp
 
                     Log.WriteInfo("Ban", "{0} banned {1} from {2}", command.Event.Sender, ident, command.Event.Recipient);
 
-                    var reason = string.Format("Banned by {0}", command.Event.Sender.Nickname);
+                    var reason = command.Arguments.Groups["reason"].Value.Trim();
+
+                    if(reason.Length == 0)
+                    {
+                        reason = string.Format("Banned by {0}", command.Event.Sender.Nickname);
+                    }
 
                     Bootstrap.Client.Client.Mode(command.Event.Recipient, isQuiet ? "+q" : "+b", new IrcString[1] { ident });
 

@@ -35,8 +35,17 @@ namespace WendySharp
                 return;
             }
 
+            var time = Time.Subtract(DateTime.UtcNow).TotalMilliseconds;
+
+            if (time > Int32.MaxValue)
+            {
+                Log.WriteError("Late mode", "TODO: Timers can't have a big interval, timer for {0} not started.", Recipient);
+
+                return;
+            }
+
             Timer = new Timer();
-            Timer.Interval = Time.Subtract(DateTime.UtcNow).TotalMilliseconds;
+            Timer.Interval = time;
             Timer.Elapsed += OnRealTimerElapsed;
             Timer.Start();
 
@@ -65,6 +74,8 @@ namespace WendySharp
 
         private void StartNormalTimer()
         {
+            Dispose();
+
             Timer = new Timer();
             Timer.Interval = TimeSpan.FromMinutes(1).TotalMilliseconds;
             Timer.Elapsed += OnTimerElapsed;
@@ -73,8 +84,6 @@ namespace WendySharp
 
         private void OnRealTimerElapsed(object sender, ElapsedEventArgs e)
         {
-            Timer.Dispose();
-
             StartNormalTimer();
 
             Log.WriteDebug("late mode", "timer ran for {0}", Recipient);

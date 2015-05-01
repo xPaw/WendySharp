@@ -58,19 +58,6 @@ namespace WendySharp
 
         private void OnMessage(object obj, ChatMessageEventArgs e)
         {
-            if (e.Sender == null)
-            {
-                return;
-            }
-
-            User user;
-
-            // If there is no such user, don't do anything
-            if (!Users.TryGetUser(e.Sender, out user))
-            {
-                return;
-            }
-
             // Don't do anything in a private message
             if (!IrcValidation.IsChannelName(e.Recipient))
             {
@@ -79,7 +66,7 @@ namespace WendySharp
 
             var message = e.Message.ToString().TrimEnd();
 
-            if (message.StartsWith(Bootstrap.Client.TrueNickname, StringComparison.InvariantCultureIgnoreCase))
+            if (message.StartsWith(Bootstrap.Client.TrueNickname, StringComparison.InvariantCulture))
             {
                 var length = Bootstrap.Client.TrueNickname.Length; // "Wendy: "
 
@@ -104,6 +91,16 @@ namespace WendySharp
 
             if (!match.Success)
             {
+                return;
+            }
+
+            User user;
+
+            // If there is no such user, don't do anything
+            if (!Users.TryGetUser(e.Sender, out user))
+            {
+                Bootstrap.Client.Client.ChatAction(e.Recipient, string.Format("slaps {0}", e.Sender.Nickname));
+
                 return;
             }
 
@@ -140,7 +137,6 @@ namespace WendySharp
 
                 if (!arguments.Arguments.Success)
                 {
-                    // TODO: This will print usage to users that don't have access to this command
                     arguments.ReplyAsNotice("Usage: {0} {1}", command.Match.First(), command.Usage);
                     arguments.ReplyAsNotice("{0}", command.HelpText);
 
