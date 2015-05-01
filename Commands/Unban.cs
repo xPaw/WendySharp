@@ -11,7 +11,7 @@ namespace WendySharp
             Match = "unban|unquiet|unmute|dequiet";
             Usage = "<nick or hostmask>";
             ArgumentMatch = "(?<nick>[^ ]+)$";
-            HelpText = "Un-bans or un-quiets a user";
+            HelpText = "Un-bans or un-quiets a user.";
             Permission = "irc.op.ban";
         }
 

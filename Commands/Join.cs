@@ -9,7 +9,7 @@ namespace WendySharp
             Name = "join";
             Usage = "<channel>";
             ArgumentMatch = "(?<channel>#+[\\w-]+)$";
-            HelpText = "Joins an IRC channel";
+            HelpText = "Joins an IRC channel.";
             Permission = "irc.control";
         }
 

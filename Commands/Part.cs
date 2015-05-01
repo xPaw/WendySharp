@@ -11,7 +11,7 @@ namespace WendySharp
             Match = "part|leave";
             Usage = "[channel]";
             ArgumentMatch = "(?<channel>#+[\\w-]+)?$";
-            HelpText = "Leaves the current or specified IRC channel";
+            HelpText = "Leaves the current or specified IRC channel.";
             Permission = "irc.control";
         }
 

@@ -14,7 +14,7 @@ namespace WendySharp
             Match = "redirect|fixurshit|fixurconnection|fixyourshit|fixyourconnection";
             Usage = "<nickname> [channel]";
             ArgumentMatch = "(?<nick>[^ ]+)(?: (?<channel>[^ ]+))?";
-            HelpText = "Redirects a user to ##FIX_YOUR_CONNECTION or the given channel for a hard-coded length of time (2 hours)";
+            HelpText = "Redirects a user to ##FIX_YOUR_CONNECTION or the given channel for a hard-coded length of time (2 hours).";
             Permission = "irc.op.ban";
         }
 

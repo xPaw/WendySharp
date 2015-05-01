@@ -12,7 +12,7 @@ namespace WendySharp
             Match = "voice|hat";
             Usage = "[nick] ...";
             ArgumentMatch = "(?<nicks>.+)?";
-            HelpText = "Gives voice to the specified user";
+            HelpText = "Gives voice to the specified user.";
             Permission = "irc.op.voice";
         }
 

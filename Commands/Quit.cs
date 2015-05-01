@@ -6,7 +6,7 @@
         {
             Name = "shutdown";
             Match = "kill|die|stop|quit|shutdown";
-            HelpText = "Shuts down";
+            HelpText = "Shuts down.";
             Permission = "core.shutdown";
         }
 

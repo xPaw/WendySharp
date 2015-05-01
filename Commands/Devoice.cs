@@ -12,7 +12,7 @@ namespace WendySharp
             Match = "devoice|dehat|unhat";
             Usage = "[nick] ...";
             ArgumentMatch = "(?<nicks>.+)?";
-            HelpText = "Takes voice from the specified user";
+            HelpText = "Takes voice from the specified user.";
             Permission = "irc.op.voice";
         }
 

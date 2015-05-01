@@ -9,7 +9,7 @@ namespace WendySharp
             Name = "echo";
             Usage = "<text to echo>";
             ArgumentMatch = "(?<message>.+)$";
-            HelpText = "Echos text back to where it came from";
+            HelpText = "Echos text back to where it came from.";
             Permission = "irc.echo";
         }
 

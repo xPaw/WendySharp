@@ -84,6 +84,11 @@
     <Compile Include="LinkExpander\TwitterAutherization.cs" />
     <Compile Include="LinkExpander\LinkExpanderConfig.cs" />
     <Compile Include="LinkExpander\LinkExpander.cs" />
+    <Compile Include="Commands\Topic.cs" />
+    <Compile Include="Commands\TopicAppend.cs" />
+    <Compile Include="Commands\TopicPop.cs" />
+    <Compile Include="Commands\TopicInsert.cs" />
+    <Compile Include="Commands\TopicRemove.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

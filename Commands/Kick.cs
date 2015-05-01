@@ -11,7 +11,7 @@ namespace WendySharp
             Match = "kick|gtfo|remove";
             Usage = "<nickname> [reason]";
             ArgumentMatch = "(?<nick>[^ ]+)( (?<reason>.*))?$";
-            HelpText = "Kicks a user from the current channel";
+            HelpText = "Kicks a user from the current channel.";
             Permission = "irc.op.kick";
         }
 

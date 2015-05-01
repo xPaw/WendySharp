@@ -11,7 +11,7 @@ namespace WendySharp
             Name = "op";
             Usage = "[nick] ...";
             ArgumentMatch = "(?<nicks>.+)?";
-            HelpText = "Gives op to the specified user";
+            HelpText = "Gives op to the specified user.";
             Permission = "irc.op.op";
         }
 

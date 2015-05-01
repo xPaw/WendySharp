@@ -10,7 +10,7 @@ namespace WendySharp
             Name = "bans";
             Usage = "<mask> | all";
             ArgumentMatch = "(?<mask>[^ ])?";
-            HelpText = "Lists the time until given mask is unbanned";
+            HelpText = "Lists the time until given mask is unbanned.";
             Permission = "irc.op.bans";
         }
 
