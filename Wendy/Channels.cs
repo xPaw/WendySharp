@@ -33,14 +33,7 @@ namespace WendySharp
         {
             foreach (var channel in ChannelList)
             {
-                if (channel.Value.HasUser(e.Identity.Nickname))
-                {
-                    Log.WriteDebug("chan", "{0} changed their name to {1} in {2}", e.Identity, e.NewName, channel.Key);
-
-                    // TODO: Doing this will lose their op status
-                    channel.Value.RemoveUser(e.Identity.Nickname);
-                    channel.Value.AddUser(e.NewName);
-                }
+                channel.Value.RenameUser(e.Identity.Nickname, e.NewName);
             }
 
             if (e.Identity.Nickname == Bootstrap.Client.TrueNickname)

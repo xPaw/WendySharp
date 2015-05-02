@@ -66,6 +66,19 @@ namespace WendySharp
             }
         }
 
+        public void RenameUser(string oldName, string newName)
+        {
+            if (!HasUser(oldName))
+            {
+                return;
+            }
+
+            byte status = Users[oldName];
+
+            Users.Remove(oldName);
+            Users.Add(newName, status);
+        }
+
         public bool HasUser(string user)
         {
             return Users.ContainsKey(user);
