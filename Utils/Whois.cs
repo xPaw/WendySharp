@@ -24,7 +24,7 @@ namespace WendySharp
 
         public Whois(IrcClient client)
         {
-            Pending = new Dictionary<string, WhoisData>();
+            Pending = new Dictionary<string, WhoisData>(StringComparer.InvariantCultureIgnoreCase);
 
             client.GotIrcError += OnIrcError;
             client.GotUnknownIrcStatement += OnIrcStatement;
@@ -155,16 +155,16 @@ namespace WendySharp
         {
             if (e.Error == IrcReplyCode.NoSuchNickname)
             {
-                var nick = e.Data.Parameters[1];
+                var nickname = e.Data.Parameters[1];
 
                 WhoisData data;
 
-                if (!Pending.TryGetValue(nick, out data))
+                if (!Pending.TryGetValue(nickname, out data))
                 {
                     return;
                 }
 
-                Pending.Remove(nick);
+                Pending.Remove(nickname);
 
                 foreach (var callback in data.Callbacks)
                 {
