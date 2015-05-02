@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using NetIrc2;
 
 namespace WendySharp
@@ -19,12 +18,17 @@ namespace WendySharp
         public uint LinesThresholdSeconds { get; set; }
         public uint RepeatThreshold { get; set; }
         public uint RepeatThresholdSeconds { get; set; }
+        public uint QuitsThreshold { get; set; }
+        public uint QuitsThresholdSeconds { get; set; }
+        public uint QuitsBanMinutes { get; set; }
 
         public readonly FixedSizedQueue<ChatAction> LastActions;
+        public readonly FixedSizedQueue<ChatAction> LastQuits;
 
         public SpamConfig()
         {
             LastActions = new FixedSizedQueue<ChatAction>();
+            LastQuits = new FixedSizedQueue<ChatAction>();
         }
 
         public void AddAction(IrcIdentity sender, string message)
@@ -34,6 +38,18 @@ namespace WendySharp
                 {
                     Identity = sender,
                     Message = message.ToLowerInvariant(),
+                    Time = DateTime.UtcNow,
+                }
+            );
+        }
+
+        public void AddQuit(IrcIdentity sender, string channel)
+        {
+            LastQuits.Enqueue(
+                new ChatAction
+                {
+                    Identity = sender,
+                    Message = channel,
                     Time = DateTime.UtcNow,
                 }
             );

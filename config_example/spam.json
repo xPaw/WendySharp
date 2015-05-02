@@ -3,9 +3,15 @@
 	{
 		"Message": "You're talking too fast. Please be mindful and don't flood the channel.",
 		"Duration": 30,
+		
 		"LinesThreshold": 6,
 		"LinesThresholdSeconds": 6,
+		
 		"RepeatThreshold": 3,
-		"RepeatThresholdSeconds": 4
+		"RepeatThresholdSeconds": 4,
+		
+		"QuitsThreshold": 4,
+		"QuitsThresholdSeconds": 100,
+		"QuitsBanMinutes": 30
 	}
 }

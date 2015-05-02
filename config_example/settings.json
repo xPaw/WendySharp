@@ -3,8 +3,9 @@
 	"Port": 6665,
 	"Password": null,
 	"Prefix": ".",
-	"Nickname": "WendySharp",
+	"Nickname": "WendySharpExample",
 	"UsesChanServ": true,
+	"RedirectChannel": "##FIX_YOUR_CONNECTION",
 	"Channels":
 	[
 		"#test",

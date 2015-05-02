@@ -7,8 +7,6 @@ namespace WendySharp
 {
     class Redirect : Command
     {
-        private const string TARGETCHANNEL = "##FIX_YOUR_CONNECTION";
-
         public Redirect()
         {
             Match = new List<string>
@@ -91,7 +89,7 @@ namespace WendySharp
 
                     if (targetChannel.Length == 0)
                     {
-                        targetChannel = TARGETCHANNEL;
+                        targetChannel = Bootstrap.Client.Settings.RedirectChannel;
                     }
                     else if (!IrcValidation.IsChannelName(targetChannel))
                     {

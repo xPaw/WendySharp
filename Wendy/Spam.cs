@@ -18,7 +18,7 @@ namespace WendySharp
     /// </summary>
     class Spam
     {
-        private Dictionary<string, SpamConfig> Channels;
+        private readonly Dictionary<string, SpamConfig> Channels;
 
         public Spam(IrcClient client)
         {
@@ -37,6 +37,7 @@ namespace WendySharp
                     foreach(var channel in Channels)
                     {
                         channel.Value.LastActions.Limit = Math.Max(channel.Value.LinesThreshold, channel.Value.RepeatThreshold) * 2;
+                        channel.Value.LastQuits.Limit = channel.Value.QuitsThreshold * 4;
                     }
                 }
                 catch (JsonException e)
@@ -53,19 +54,14 @@ namespace WendySharp
 
             client.GotMessage += OnMessage;
             client.GotChatAction += OnMessage;
+
+            client.GotLeaveChannel += OnLeaveChannel;
+            client.GotUserQuit += OnUserQuit;
         }
 
         private void OnMessage(object obj, ChatMessageEventArgs e)
         {
-            if (e.Sender == null || !Channels.ContainsKey(e.Recipient))
-            {
-                return;
-            }
-
-            User user;
-
-            // If this user has a "spam.whitelist" permission, allow them to spam
-            if (Users.TryGetUser(e.Sender, out user) && user.HasPermission(e.Recipient, "spam.whitelist"))
+            if (e.Sender == null || !Channels.ContainsKey(e.Recipient) || IsWhitelisted(e.Sender, e.Recipient))
             {
                 return;
             }
@@ -117,6 +113,84 @@ namespace WendySharp
                     Reason = "Spam"
                 }
             );
+        }
+
+        private void OnLeaveChannel(object sender, JoinLeaveEventArgs e)
+        {
+            var channels = e.GetChannelList();
+
+            foreach (var channel in channels)
+            {
+                if (!Channels.ContainsKey(channel) || IsWhitelisted(e.Identity, channel))
+                {
+                    continue;
+                }
+
+                ProcessQuit(e.Identity, channel, Channels[channel]);
+            }
+        }
+
+        private void OnUserQuit(object sender, QuitEventArgs e)
+        {
+            foreach (var channel in Channels)
+            {
+                if (IsWhitelisted(e.Identity, channel.Key))
+                {
+                    continue;
+                }
+
+                ProcessQuit(e.Identity, channel.Key, channel.Value);
+            }
+        }
+
+        private void ProcessQuit(IrcIdentity ident, string channelName, SpamConfig channel)
+        {
+            channel.AddQuit(ident, channelName);
+
+            var quits = channel.LastQuits.Count(x =>
+                x.Identity == ident &&
+                x.Message == channelName &&
+                x.Time.AddSeconds(channel.QuitsThresholdSeconds) >= DateTime.UtcNow
+            );
+
+            Log.WriteDebug("spam", "{0} quit {1} ({2})", ident, channelName, quits);
+
+            if (quits < channel.QuitsThreshold)
+            {
+                return;
+            }
+
+            channel.LastQuits.Clear(); // TODO: FIX
+
+            Log.WriteInfo("Spam", "{0} is spamming joins/quits in {1}. Redirecting for {2} minutes.", ident, channelName, channel.QuitsBanMinutes);
+
+            var nickname = ident.Nickname;
+
+            ident.Nickname = "*";
+
+            Bootstrap.Client.Client.Mode(channelName, "+b", new IrcString[1] { ident + "$" + Bootstrap.Client.Settings.RedirectChannel });
+
+            // In case they manage to come back before ban takes place
+            Bootstrap.Client.Client.Kick(nickname, channelName, "Join flood");
+
+            Bootstrap.Client.ModeList.AddLateModeRequest(
+                new LateModeRequest
+                {
+                    Channel = channelName,
+                    Recipient = ident.ToString(),
+                    Mode = "-b",
+                    Time = DateTime.UtcNow.AddMinutes(channel.QuitsBanMinutes),
+                    Reason = "Quit/leave flood"
+                }
+            );
+        }
+
+        private static bool IsWhitelisted(IrcIdentity ident, string channel)
+        {
+            User user;
+
+            // If this user has a "spam.whitelist" permission, allow them to spam
+            return Users.TryGetUser(ident, out user) && user.HasPermission(channel, "spam.whitelist");
         }
     }
 }

@@ -37,6 +37,7 @@ namespace WendySharp
                 {
                     Log.WriteDebug("chan", "{0} changed their name to {1} in {2}", e.Identity, e.NewName, channel.Key);
 
+                    // TODO: Doing this will lose their op status
                     channel.Value.RemoveUser(e.Identity.Nickname);
                     channel.Value.AddUser(e.NewName);
                 }
@@ -46,7 +47,7 @@ namespace WendySharp
             {
                 Bootstrap.Client.TrueNickname = e.NewName;
 
-                Log.WriteDebug("Channels", "Bot's name changed to '{0}'", e.NewName);
+                Log.WriteInfo("IRC", "Bot's name changed to '{0}'", e.NewName);
             }
         }
 
@@ -68,8 +69,6 @@ namespace WendySharp
             foreach (var channel in channels)
             {
                 GetChannel(channel).AddUser(e.Identity.Nickname);
-
-                Log.WriteDebug("chan", "{0} joined {1}", e.Identity, channel);
             }
         }
 
@@ -80,8 +79,6 @@ namespace WendySharp
             foreach (var channel in channels)
             {
                 GetChannel(channel).RemoveUser(e.Identity.Nickname);
-
-                Log.WriteDebug("chan", "{0} left {1}", e.Identity, channel);
             }
         }
 
@@ -89,20 +86,13 @@ namespace WendySharp
         {
             foreach (var channel in ChannelList)
             {
-                if (channel.Value.HasUser(e.Identity.Nickname))
-                {
-                    Log.WriteDebug("chan", "{0} quit {1}", e.Identity.Nickname, channel.Key);
-
-                    channel.Value.RemoveUser(e.Identity.Nickname);
-                }
+                channel.Value.RemoveUser(e.Identity.Nickname);
             }
         }
 
         private void OnUserKicked(object sender, KickEventArgs e)
         {
             GetChannel(e.Channel).RemoveUser(e.Recipient);
-
-            Log.WriteDebug("chan", "{0} kicked from {1}", e.Recipient, e.Channel);
         }
 
         public Channel GetChannel(string channel)
