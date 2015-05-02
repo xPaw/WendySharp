@@ -145,6 +145,11 @@ namespace WendySharp
 
         private void ProcessQuit(IrcIdentity ident, string channelName, SpamConfig channel)
         {
+            var nickname = ident.Nickname;
+
+            // They might be rejoining with an alt nick
+            ident.Nickname = "*";
+
             channel.AddQuit(ident, channelName);
 
             var quits = channel.LastQuits.Count(x =>
@@ -162,11 +167,7 @@ namespace WendySharp
 
             channel.LastQuits.Clear(); // TODO: FIX
 
-            Log.WriteInfo("Spam", "{0} is spamming joins/quits in {1}. Redirecting for {2} minutes.", ident, channelName, channel.QuitsBanMinutes);
-
-            var nickname = ident.Nickname;
-
-            ident.Nickname = "*";
+            Log.WriteInfo("Spam", "{0} {1} is spamming joins/quits in {2}. Redirecting for {3} minutes.", nickname, ident, channelName, channel.QuitsBanMinutes);
 
             Bootstrap.Client.Client.Mode(channelName, "+b", new IrcString[1] { ident + "$" + Bootstrap.Client.Settings.RedirectChannel });
 
