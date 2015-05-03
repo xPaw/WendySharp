@@ -73,7 +73,7 @@ namespace WendySharp
                         }
                     }
 
-                    Log.WriteInfo("Unban", "{0} unbanned {1} in {2}", command.Event.Sender, ident, command.Event.Recipient);
+                    Log.WriteInfo("Unban", "'{0}' unbanned '{1}' in {2}", command.Event.Sender, ident, command.Event.Recipient);
 
                     Bootstrap.Client.Client.Mode(command.Event.Recipient, isQuiet ? "-q" : "-b", new IrcString[1] { ident });
 

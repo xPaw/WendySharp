@@ -64,7 +64,7 @@ namespace WendySharp
                 return;
             }
 
-            Log.WriteInfo("Deop", "{0} took voice from {1} in {2}", command.Event.Sender, string.Join(", ", nicks), command.Event.Recipient);
+            Log.WriteInfo("Deop", "'{0}' took voice from {1} in {2}", command.Event.Sender, string.Join(", ", nicks), command.Event.Recipient);
         }
     }
 }

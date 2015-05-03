@@ -95,7 +95,7 @@ namespace WendySharp
 
             channel.LastActions.Clear(); // TODO: FIX
 
-            Log.WriteInfo("Spam", "A line by {0} in {1} was detected as spam. Quieting for {2} seconds.", e.Sender, e.Recipient, channel.Duration);
+            Log.WriteInfo("Spam", "A line by '{0}' in {1} was detected as spam. Quieting for {2} seconds.", e.Sender, e.Recipient, channel.Duration);
 
             var sender = e.Sender;
             sender.Nickname = "*";
@@ -167,7 +167,7 @@ namespace WendySharp
 
             channel.LastQuits.Clear(); // TODO: FIX
 
-            Log.WriteInfo("Spam", "{0} {1} is spamming joins/quits in {2}. Redirecting for {3} minutes.", nickname, ident, channelName, channel.QuitsBanMinutes);
+            Log.WriteInfo("Spam", "'{1}' ({0}) is spamming joins/quits in {2}. Redirecting for {3} minutes.", nickname, ident, channelName, channel.QuitsBanMinutes);
 
             Bootstrap.Client.Client.Mode(channelName, "+b", new IrcString[1] { ident + "$" + Bootstrap.Client.Settings.RedirectChannel });
 

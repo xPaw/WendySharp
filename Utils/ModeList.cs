@@ -134,7 +134,7 @@ namespace WendySharp
 
                 if (mode != null)
                 {
-                    Log.WriteInfo("Mode", "{0} in {1} was set {2}{3}, removing our late mode request", ident, e.Recipient, currentState, command[i]);
+                    Log.WriteInfo("Mode", "'{0}' in {1} was set {2}{3}, removing our late mode request", ident, e.Recipient, currentState, command[i]);
 
                     RemoveLateModeRequest(mode);
                 }

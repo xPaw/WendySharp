@@ -105,7 +105,7 @@ namespace WendySharp
                         return;
                     }
 
-                    Log.WriteInfo("Redirect", "{0} redirected {1} from {2} to {3}", command.Event.Sender, ident, command.Event.Recipient, targetChannel);
+                    Log.WriteInfo("Redirect", "'{0}' redirected '{1}' from {2} to {3}", command.Event.Sender, ident, command.Event.Recipient, targetChannel);
 
                     var reason = string.Format("Redirected to {0} by {1}", targetChannel, command.Event.Sender.Nickname);
 

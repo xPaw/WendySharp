@@ -63,7 +63,7 @@ namespace WendySharp
                 return;
             }
 
-            Log.WriteInfo("Op", "{0} gave voice to {1} in {2}", command.Event.Sender, string.Join(", ", nicks), command.Event.Recipient);
+            Log.WriteInfo("Voice", "'{0}' gave voice to {1} in {2}", command.Event.Sender, string.Join(", ", nicks), command.Event.Recipient);
         }
     }
 }

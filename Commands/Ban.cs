@@ -111,7 +111,7 @@ namespace WendySharp
                         return;
                     }
 
-                    Log.WriteInfo("Ban", "{0} banned {1} from {2}", command.Event.Sender, ident, command.Event.Recipient);
+                    Log.WriteInfo("Ban", "'{0}' banned '{1}' from {2}", command.Event.Sender, ident, command.Event.Recipient);
 
                     var reason = command.Arguments.Groups["reason"].Value.Trim();
 

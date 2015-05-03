@@ -62,7 +62,7 @@ namespace WendySharp
                 return;
             }
 
-            Log.WriteInfo("Op", "{0} gave channel operator to {1} in {2}", command.Event.Sender, string.Join(", ", nicks), command.Event.Recipient);
+            Log.WriteInfo("Op", "'{0}' gave channel operator to {1} in {2}", command.Event.Sender, string.Join(", ", nicks), command.Event.Recipient);
         }
     }
 }

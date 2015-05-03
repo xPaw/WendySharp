@@ -31,7 +31,7 @@ namespace WendySharp
                 return;
             }
 
-            Log.WriteInfo("Say", "'{0}' said to '{1}': '{2}'", command.Event.Sender, target, text);
+            Log.WriteInfo("Say", "'{0}' said to '{1}': {2}", command.Event.Sender, target, text);
 
             Bootstrap.Client.Client.Message(target, text);
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using NetIrc2.Parsing;
 
 namespace WendySharp
 {
@@ -21,7 +22,14 @@ namespace WendySharp
         {
             var channel = command.Arguments.Groups["channel"].Value;
 
-            Log.WriteInfo("Join", "{0} made us join channel {1}", command.Event.Sender, channel);
+            if (!IrcValidation.IsChannelName(channel))
+            {
+                command.Reply("That doesn't look like a valid channel name.");
+
+                return;
+            }
+
+            Log.WriteInfo("Join", "'{0}' made us join channel {1}", command.Event.Sender, channel);
 
             Bootstrap.Client.Client.Join(channel);
 

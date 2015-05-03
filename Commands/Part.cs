@@ -25,28 +25,18 @@ namespace WendySharp
 
             if (string.IsNullOrEmpty(channel))
             {
-                if (IrcValidation.IsChannelName(command.Event.Recipient))
-                {
-                    channel = command.Event.Recipient;
+                channel = command.Event.Recipient;
 
-                    Bootstrap.Client.Client.Message(channel, string.Format("Farewell, {0}!", channel));
-                }
-                else
-                {
-                    command.Reply("Tell me which channel to leave.");
-
-                    return;
-                }
+                Bootstrap.Client.Client.Message(channel, string.Format("Farewell, {0}!", channel));
             }
-
-            Log.WriteInfo("Part", "{0} made us leave channel {1}", command.Event.Sender, channel);
-
-            Bootstrap.Client.Client.Leave(channel);
-
-            if (channel != command.Event.Recipient)
+            else
             {
                 command.Reply("Left {0}", channel);
             }
+
+            Log.WriteInfo("Part", "'{0}' made us leave channel {1}", command.Event.Sender, channel);
+
+            Bootstrap.Client.Client.Leave(channel);
         }
     }
 }

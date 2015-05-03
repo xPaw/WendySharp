@@ -63,7 +63,6 @@ namespace WendySharp
 
             Client.Connected += OnConnected;
             Client.Closed += OnDisconnected;
-            Client.GotIrcError += OnError;
 
             ChannelList = new Channels(Client);
 
@@ -93,7 +92,7 @@ namespace WendySharp
 
         private void OnConnected(object sender, EventArgs e)
         {
-            Log.WriteInfo("IRC", "Connected to IRC successfully");
+            Log.WriteInfo("IRC", "Connected successfully");
 
             Client.LogIn(Settings.Nickname, "https://github.com/xPaw/WendySharp", Settings.Nickname, null, null, Settings.Password);
 
@@ -110,7 +109,7 @@ namespace WendySharp
 
         private async void OnDisconnected(object sender, EventArgs e)
         {
-            Log.WriteInfo("IRC", "Disconnected from IRC");
+            Log.WriteInfo("IRC", "Disconnected");
 
             if (!Bootstrap.ResetEvent.WaitOne(0))
             {
@@ -124,21 +123,6 @@ namespace WendySharp
             {
                 Log.WriteInfo("IRC", "Exiting");
             }
-        }
-
-        private void OnError(object sender, IrcErrorEventArgs e)
-        {
-            switch (e.Error)
-            {
-                case IrcReplyCode.MissingMOTD:
-                    return;
-
-                case IrcReplyCode.NotChannelOperator:
-
-                    return;
-            }
-
-            Log.WriteError("IRC", "Error: {0} ({1})", e.Error.ToString(), string.Join(", ", e.Data.Parameters));
         }
 
         public void SendReply(string recipient, string message, bool notice)

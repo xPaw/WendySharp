@@ -56,8 +56,6 @@ namespace WendySharp
                     throw new ArgumentException("Invalid unit.");
             }
 
-            Log.WriteDebug("test", "{0} - {1}", DateTime.UtcNow, time);
-
             return time;
         }
     }
