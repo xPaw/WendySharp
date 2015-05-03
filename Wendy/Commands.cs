@@ -36,7 +36,7 @@ namespace WendySharp
                 new TopicRemove(),
                 new Join(),
                 new Part(),
-                new Echo(),
+                new Say(),
                 new Quit(),
                 new Help(this),
             };
