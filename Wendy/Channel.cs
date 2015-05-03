@@ -48,35 +48,28 @@ namespace WendySharp
                 user = user.Substring(user[1] == '+' ? 2 : 1);
             }
 
-            if (HasUser(user))
-            {
-                Users[user] = status;
-            }
-            else
-            {
-                Users.Add(user, status);
-            }
+            Users[user] = status;
         }
 
         public void RemoveUser(string user)
         {
-            if (HasUser(user))
-            {
-                Users.Remove(user);
-            }
+            Users.Remove(user);
         }
 
         public void RenameUser(string oldName, string newName)
         {
-            if (!HasUser(oldName))
+            lock (Users)
             {
-                return;
+                if (!HasUser(oldName))
+                {
+                    return;
+                }
+
+                byte status = Users[oldName];
+
+                Users.Remove(oldName);
+                Users.Add(newName, status);
             }
-
-            byte status = Users[oldName];
-
-            Users.Remove(oldName);
-            Users.Add(newName, status);
         }
 
         public bool HasUser(string user)

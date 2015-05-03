@@ -134,7 +134,7 @@ namespace WendySharp
         {
             foreach (var channel in Channels)
             {
-                if (IsWhitelisted(e.Identity, channel.Key))
+                if (!Bootstrap.Client.ChannelList.GetChannel(channel.Key).HasUser(e.Identity.Nickname) || IsWhitelisted(e.Identity, channel.Key))
                 {
                     continue;
                 }
@@ -172,7 +172,7 @@ namespace WendySharp
             Bootstrap.Client.Client.Mode(channelName, "+b", new IrcString[1] { ident + "$" + Bootstrap.Client.Settings.RedirectChannel });
 
             // In case they manage to come back before ban takes place
-            Bootstrap.Client.Client.Kick(nickname, channelName, "Join flood");
+            Bootstrap.Client.Client.Kick(nickname, channelName, "Please fix your connection");
 
             Bootstrap.Client.ModeList.AddLateModeRequest(
                 new LateModeRequest

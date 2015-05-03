@@ -25,8 +25,6 @@ namespace WendySharp
         private void OnChannelTopicChange(object sender, ChannelTopicChangeEventArgs e)
         {
             GetChannel(e.Channel).Topic = e.NewTopic;
-
-            Log.WriteDebug("Channels", "Topic in {0}: {1}", e.Channel, e.NewTopic);
         }
 
         private void OnNameChange(object sender, NameChangeEventArgs e)

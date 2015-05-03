@@ -64,13 +64,12 @@ namespace WendySharp
             Client.Connected += OnConnected;
             Client.Closed += OnDisconnected;
 
-            ChannelList = new Channels(Client);
-
             new Permissions();
             new Commands(Client);
             new Spam(Client);
             new LinkExpander(Client);
             new FunActions(this);
+            ChannelList = new Channels(Client);
             Whois = new Whois(Client);
         }
 
