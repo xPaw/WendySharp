@@ -66,6 +66,11 @@ namespace WendySharp
 
             var message = e.Message.ToString().TrimEnd();
 
+            if (string.IsNullOrEmpty(message))
+            {
+                return;
+            }
+
             if (message.StartsWith(Bootstrap.Client.TrueNickname, StringComparison.InvariantCulture))
             {
                 var length = Bootstrap.Client.TrueNickname.Length; // "Wendy: "

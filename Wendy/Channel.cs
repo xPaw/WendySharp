@@ -67,8 +67,8 @@ namespace WendySharp
 
                 byte status = Users[oldName];
 
-                Users.Remove(oldName);
-                Users.Add(newName, status);
+                RemoveUser(oldName);
+                Users[newName] = status;
             }
         }
 

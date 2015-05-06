@@ -30,7 +30,7 @@ namespace WendySharp
             );
 
             MatchDeath = new Regex(
-                string.Format("^(murders|kills|stabs) {0}", client.Settings.Nickname),
+                string.Format("^(murders|kills|stabs|shoots) {0}", client.Settings.Nickname),
                 RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture | RegexOptions.IgnoreCase
             );
 
