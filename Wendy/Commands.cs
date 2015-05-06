@@ -64,6 +64,14 @@ namespace WendySharp
                 return;
             }
 
+            User user;
+
+            // If there is no such user, don't do anything
+            if (!Users.TryGetUser(e.Sender, out user))
+            {
+                return;
+            }
+
             var message = e.Message.ToString().TrimEnd();
 
             if (string.IsNullOrEmpty(message))
@@ -96,16 +104,6 @@ namespace WendySharp
 
             if (!match.Success)
             {
-                return;
-            }
-
-            User user;
-
-            // If there is no such user, don't do anything
-            if (!Users.TryGetUser(e.Sender, out user))
-            {
-                Bootstrap.Client.Client.ChatAction(e.Recipient, string.Format("slaps {0}", e.Sender.Nickname));
-
                 return;
             }
 
@@ -142,8 +140,7 @@ namespace WendySharp
 
                 if (!arguments.Arguments.Success)
                 {
-                    arguments.ReplyAsNotice("Usage: {0} {1}", command.Match.First(), command.Usage);
-                    arguments.ReplyAsNotice("{0}", command.HelpText);
+                    Help.PrintUsage(arguments, command);
 
                     return;
                 }
