@@ -69,8 +69,6 @@ namespace WendySharp
 
         public static IrcIdentity NormalizeIdentity(IrcIdentity ident)
         {
-            ident.Nickname = "*";
-
             if (ident.Username == null)
             {
                 ident.Username = "*";
@@ -98,9 +96,15 @@ namespace WendySharp
                     ident.Username = "?" + ident.Username.Substring(1);
                 }
             }
-            else
+            else if (ident.Hostname != "*")
             {
                 ident.Username = "*";
+            }
+
+            // We don't want to accidentally ban *!*@*
+            if (ident.Username != "*" || ident.Hostname != "*")
+            {
+                ident.Nickname = "*";
             }
 
             return ident;

@@ -73,10 +73,14 @@ namespace WendySharp
             Bootstrap.Client.Whois.Query(ident,
                 whoisData =>
                 {
-                    if (whoisData.Identity.Nickname != null)
+                    if (whoisData.Identity.Nickname == null)
                     {
-                        ident = whoisData.Identity;
+                        command.Reply("There is no user by that nick on the network. Try {0}!*@* to {1} anyone with that nick, or specify a full hostmask.", ident.Nickname, isQuiet ? "quiet" : "ban");
+
+                        return;
                     }
+
+                    ident = whoisData.Identity;
 
                     var nickname = ident.Nickname;
 
@@ -111,7 +115,7 @@ namespace WendySharp
                         return;
                     }
 
-                    Log.WriteInfo("Ban", "'{0}' banned '{1}' from {2}", command.Event.Sender, ident, command.Event.Recipient);
+                    Log.WriteInfo("Ban", "'{0}' {1} '{2}' from {3}", command.Event.Sender, isQuiet ? "quieted" : "banned", ident, command.Event.Recipient);
 
                     var reason = command.Arguments.Groups["reason"].Value.Trim();
 
