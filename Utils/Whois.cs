@@ -91,6 +91,12 @@ namespace WendySharp
             else if (ident.Hostname.StartsWith("gateway/"))
             {
                 ident.Hostname = "gateway/*";
+
+                // IRCCloud: uid indicates a free account, paid accounts have the prefix sid.
+                if (ident.Username.StartsWith("uid") || ident.Username.StartsWith("sid"))
+                {
+                    ident.Username = "?" + ident.Username.Substring(1);
+                }
             }
             else
             {
