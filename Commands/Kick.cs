@@ -12,7 +12,8 @@ namespace WendySharp
             {
                 "kick",
                 "gtfo",
-                "remove"
+                "remove",
+                "duckoff"
             };
             Usage = "<nickname> [reason]";
             ArgumentMatch = "(?<nick>[^ ]+)( (?<reason>.*))?$";
