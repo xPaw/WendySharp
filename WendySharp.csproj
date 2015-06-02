@@ -42,6 +42,7 @@
     <Reference Include="BugsnagMono">
       <HintPath>packages\BugsnagMono.1.2.0.0\lib\Net45\BugsnagMono.dll</HintPath>
     </Reference>
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -90,6 +91,8 @@
     <Compile Include="Commands\TopicRemove.cs" />
     <Compile Include="Utils\DateTimeParser.cs" />
     <Compile Include="Commands\Say.cs" />
+    <Compile Include="Utils\SaneWebClient.cs" />
+    <Compile Include="Commands\RedAlert.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

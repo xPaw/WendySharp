@@ -158,7 +158,10 @@ namespace WendySharp
                 x.Time.AddSeconds(channel.QuitsThresholdSeconds) >= DateTime.UtcNow
             );
 
-            Log.WriteDebug("spam", "{0} quit {1} ({2})", ident, channelName, quits);
+            if (quits > 1)
+            {
+                Log.WriteDebug("spam", "{0} quit {1} ({2})", ident, channelName, quits);
+            }
 
             if (quits < channel.QuitsThreshold)
             {

@@ -38,6 +38,7 @@ namespace WendySharp
                 new Part(),
                 new Say(),
                 new Quit(),
+                new RedAlert(),
                 new Help(this),
             };
             
