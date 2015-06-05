@@ -25,11 +25,17 @@ namespace WendySharp
             User user;
             Users.TryGetUser(command.Event.Sender, out user);
 
-            var matchedCommand = command.Arguments.Groups["command"].Value;
             var commands = Reference
                 .GetRegisteredCommands()
                 .Where(x => x.Permission == null || user.HasPermission(command.Event.Recipient, x.Permission));
-            
+
+            if (!commands.Any())
+            {
+                return;
+            }
+
+            var matchedCommand = command.Arguments.Groups["command"].Value;
+
             if (matchedCommand.Length == 0)
             {
                 var allowedCommands = commands.Select(x => x.Match.First());
