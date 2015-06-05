@@ -20,7 +20,7 @@ namespace WendySharp
             );
 
             MatchLove = new Regex(
-                string.Format("^(hugs|loves|pats|pets) {0}", client.Settings.Nickname),
+                string.Format("^(hugs|loves|pats|pets|<3) {0}", client.Settings.Nickname),
                 RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture | RegexOptions.IgnoreCase
             );
 
@@ -44,11 +44,6 @@ namespace WendySharp
 
         private void OnChatAction(object sender, ChatMessageEventArgs e)
         {
-            if (!IrcValidation.IsChannelName(e.Recipient))
-            {
-                return;
-            }
-
             if (MatchNineties.IsMatch(e.Message))
             {
                 Bootstrap.Client.Client.Message(e.Recipient, string.Format("{0}: The 90s called. They want their IRC client back.", e.Sender.Nickname));
