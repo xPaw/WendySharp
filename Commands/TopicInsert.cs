@@ -14,8 +14,8 @@ namespace WendySharp
                 "tinsert",
             };
             Usage = "<pos> <text>";
-            ArgumentMatch = "(?<pos>-?\\d+) (?<text>.+)$";
-            HelpText = "Set a topic in a channel.";
+            ArgumentMatch = "(?<pos>[0-9]+) (?<text>.+)$";
+            HelpText = "Inserts text into the topic at the given position. Remember indexes start at 0.";
             Permission = "irc.op.topic";
         }
 

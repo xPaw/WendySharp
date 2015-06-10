@@ -32,6 +32,7 @@ namespace WendySharp
                 new Topic(),
                 new TopicAppend(),
                 new TopicPop(),
+                new TopicReplace(),
                 new TopicInsert(),
                 new TopicRemove(),
                 new Join(),

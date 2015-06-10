@@ -93,6 +93,7 @@
     <Compile Include="Commands\Say.cs" />
     <Compile Include="Utils\SaneWebClient.cs" />
     <Compile Include="Commands\RedAlert.cs" />
+    <Compile Include="Commands\TopicReplace.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

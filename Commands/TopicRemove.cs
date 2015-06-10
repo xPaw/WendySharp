@@ -14,8 +14,8 @@ namespace WendySharp
                 "tremove",
             };
             Usage = "<pos>";
-            ArgumentMatch = "(?<pos>-?\\d+)$";
-            HelpText = "Removes the pos'th topic selection.";
+            ArgumentMatch = "(?<pos>[0-9]+)$";
+            HelpText = "Removes the pos'th topic selection. Remember indexes start at 0.";
             Permission = "irc.op.topic";
         }
 
