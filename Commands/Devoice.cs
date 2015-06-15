@@ -51,7 +51,7 @@ namespace WendySharp
 
             if (channel.WeAreOpped)
             {
-                Bootstrap.Client.Client.Mode(command.Event.Recipient, "-" + new string('o', nicks.Count), nicks.ToArray());
+                Bootstrap.Client.Client.Mode(command.Event.Recipient, "-" + new string('v', nicks.Count), nicks.ToArray());
             }
             else if (channel.HasChanServ)
             {
@@ -64,7 +64,7 @@ namespace WendySharp
                 return;
             }
 
-            Log.WriteInfo("Deop", "'{0}' took voice from {1} in {2}", command.Event.Sender, string.Join(", ", nicks), command.Event.Recipient);
+            Log.WriteInfo("Devoice", "'{0}' took voice from {1} in {2}", command.Event.Sender, string.Join(", ", nicks), command.Event.Recipient);
         }
     }
 }
