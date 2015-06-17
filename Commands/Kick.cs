@@ -58,6 +58,11 @@ namespace WendySharp
 
             var reason = command.Arguments.Groups["reason"].Value.Trim();
 
+            if (command.MatchedCommand == "duckoff" && reason.Length == 0)
+            {
+                reason = "Quack, motherducker";
+            }
+
             Log.WriteInfo("Kick", "'{0}' kicked '{1}' in {2} (reason: {3})", command.Event.Sender, ident, command.Event.Recipient, reason.Length == 0 ? "no reason given" : reason);
 
             if (command.MatchedCommand == "remove")
