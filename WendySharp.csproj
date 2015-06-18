@@ -95,6 +95,7 @@
     <Compile Include="Commands\RedAlert.cs" />
     <Compile Include="Commands\TopicReplace.cs" />
     <Compile Include="Commands\Moderated.cs" />
+    <Compile Include="Commands\Whoami.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

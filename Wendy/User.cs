@@ -47,9 +47,6 @@ namespace WendySharp
 
                 CompiledPermissionsMatch.Add(channel.Key, new Regex(pattern, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture));
             }
-
-            // We no longer need these
-            Permissions = null;
         }
 
         public bool HasPermission(string channel, string permission)
