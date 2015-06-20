@@ -17,7 +17,7 @@ namespace WendySharp
                 "quiet",
                 "mute",
             };
-            Usage = "<nick or hostmask> [<duration>m|h|d|w] [reason]";
+            Usage = "<nick or hostmask> [<duration>mi|h|d|w|mo] [reason]";
             ArgumentMatch = "(?<nick>[^ ]+)( (?<duration>[0-9]+)(?<durationUnit>[a-z]+))?( (?<reason>.*))?$";
             HelpText = "Bans or quiets a user.";
             Permission = "irc.op.ban";
