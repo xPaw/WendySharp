@@ -33,9 +33,9 @@ namespace WendySharp
                 return;
             }
 
-            var pos = int.Parse(command.Arguments.Groups["pos"].Value);
+            uint pos;
 
-            if (pos >= count)
+            if (!uint.TryParse(command.Arguments.Groups["pos"].Value, out pos) || pos >= count)
             {
                 command.Reply("There are only {0} topic parts. Remember indexes start at 0.", count);
 
