@@ -13,5 +13,10 @@
 		"ConsumerKey": "",
 		"ConsumerSecret": "",
 		"ExpandURLs": true
+	},
+	
+	"YouTube":
+	{
+		"ApiKey": ""
 	}
 }

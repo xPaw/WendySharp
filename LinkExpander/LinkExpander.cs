@@ -5,6 +5,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml;
 using LitJson;
 using NetIrc2;
 using NetIrc2.Events;
@@ -16,8 +17,7 @@ namespace WendySharp
     {
         private readonly Regex TwitterCompiledMatch;
         private readonly Regex YoutubeCompiledMatch;
-        private readonly FixedSizedQueue<string> LastVideos;
-        private readonly FixedSizedQueue<ulong> LastTweets;
+        private readonly FixedSizedQueue<string> LastMatches;
         private readonly LinkExpanderConfig Config;
 
         public LinkExpander(IrcClient client)
@@ -67,11 +67,8 @@ namespace WendySharp
                 Environment.Exit(1);
             }
 
-            LastTweets = new FixedSizedQueue<ulong>();
-            LastTweets.Limit = Config.DontRepeatLastCount;
-
-            LastVideos = new FixedSizedQueue<string>();
-            LastVideos.Limit = Config.DontRepeatLastCount;
+            LastMatches = new FixedSizedQueue<string>();
+            LastMatches.Limit = Config.DontRepeatLastCount;
 
             TwitterCompiledMatch = new Regex(@"(^|/|\.)twitter\.com/(.+?)/status/(?<status>[0-9]+)", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
             YoutubeCompiledMatch = new Regex(@"(^|/|\.)(youtube\.com/watch\?v=|youtube\.com/embed/|youtu\.be/)(?<id>[a-zA-Z0-9\-_]+)", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
@@ -96,21 +93,21 @@ namespace WendySharp
 
             foreach (Match match in matches)
             {
-                var status = ulong.Parse(match.Groups["status"].Value);
+                var status = match.Groups["status"].Value;
 
-                if (LastTweets.Contains(status))
+                if (LastMatches.Contains(status))
                 {
                     continue;
                 }
 
-                LastTweets.Enqueue(status);
+                LastMatches.Enqueue(status);
 
-                using (var webClient = new WebClient())
+                using (var webClient = new SaneWebClient())
                 {
                     var url = string.Format("https://api.twitter.com/1.1/statuses/show/{0}.json", status);
                     var authHeader = TwitterAuthorization.GetHeader("GET", url, Config.Twitter);
 
-                    webClient.DownloadDataCompleted += (object s, DownloadDataCompletedEventArgs twitter) =>
+                    webClient.DownloadDataCompleted += (s, twitter) =>
                     {
                         if (twitter.Error != null || twitter.Cancelled)
                         {
@@ -123,11 +120,23 @@ namespace WendySharp
 
                         var text = WebUtility.HtmlDecode(tweet["text"].ToString()).Replace('\n', ' ').Trim();
 
+                        // Check if original message contains tweet text (with t.co links)
+                        if (e.Message.ToString().Contains(text))
+                        {
+                            return;
+                        }
+
                         if (Config.Twitter.ExpandURLs)
                         {
                             foreach (JsonData entityUrl in tweet["entities"]["urls"])
                             {
                                 text = text.Replace(WebUtility.HtmlDecode((string)entityUrl["url"]), WebUtility.HtmlDecode((string)entityUrl["expanded_url"]));
+                            }
+
+                            // Check if original message contains tweet text (with expanded links)
+                            if (e.Message.ToString().Contains(text))
+                            {
+                                return;
                             }
                         }
 
@@ -139,15 +148,18 @@ namespace WendySharp
                         }
 
                         Bootstrap.Client.Client.Message(e.Recipient,
-                            string.Format("{0}{1}{2} {3}:{4} {5}",
+                            string.Format("{0}» {1}{2}{3} {4}{5}: {6}",
+                                Color.OLIVE,
                                 Color.BLUE,
-                                tweet["user"]["name"].ToString(),
-                                Color.NORMAL,
-                                date.ToRelativeString(),
+                                tweet["user"]["name"],
                                 Color.LIGHTGRAY,
+                                date.ToRelativeString(),
+                                Color.NORMAL,
                                 text
                             )
                         );
+
+                        ProcessYoutube(new ChatMessageEventArgs(e.Sender, e.Recipient, text));
                     };
 
                     webClient.Headers.Add(HttpRequestHeader.Authorization, string.Format("OAuth {0}", authHeader));
@@ -164,16 +176,16 @@ namespace WendySharp
             {
                 var id = match.Groups["id"].Value;
 
-                if (LastVideos.Contains(id))
+                if (LastMatches.Contains(id))
                 {
                     continue;
                 }
 
-                LastVideos.Enqueue(id);
+                LastMatches.Enqueue(id);
 
-                using (var webClient = new WebClient())
+                using (var webClient = new SaneWebClient())
                 {
-                    webClient.DownloadDataCompleted += (object s, DownloadDataCompletedEventArgs youtube) =>
+                    webClient.DownloadDataCompleted += (s, youtube) =>
                     {
                         if (youtube.Error != null || youtube.Cancelled)
                         {
@@ -183,24 +195,39 @@ namespace WendySharp
                         var response = Encoding.UTF8.GetString(youtube.Result);
                         var data = JsonMapper.ToObject(response);
 
+                        if (data["items"].Count == 0)
+                        {
+                            return;
+                        }
+
+                        var item = data["items"][0];
+
                         // If original message already contains video title, don't post it again
-                        if (e.Message.ToString().Contains(data["title"].ToString()))
+                        if (e.Message.ToString().Contains(item["snippet"]["title"].ToString()))
                         {
                             return;
                         }
 
                         Bootstrap.Client.Client.Message(e.Recipient,
-                            string.Format("{0}{1}{2} by {3}{4}",
+                            string.Format("{0}» {1}{2}{3} ({4}) by {5}{6} {7}({8:N0} views, {9:N0} \ud83d\udc4d, {10:N0} \ud83d\udc4e){11}{12}",
+                                Color.OLIVE,
                                 Color.LIGHTGRAY,
-                                data["title"],
+                                item["snippet"]["title"],
                                 Color.NORMAL,
+                                XmlConvert.ToTimeSpan(item["contentDetails"]["duration"].ToString()),
                                 Color.BLUE,
-                                data["author_name"]
+                                item["snippet"]["channelTitle"],
+                                Color.DARKGRAY,
+                                int.Parse(item["statistics"]["viewCount"].ToString()),
+                                int.Parse(item["statistics"]["likeCount"].ToString()),
+                                int.Parse(item["statistics"]["dislikeCount"].ToString()),
+                                item["contentDetails"]["definition"].ToString() != "hd" ? string.Format(" {0}[{1}]", Color.RED, item["contentDetails"]["definition"].ToString().ToUpper()) : "",
+                                item["contentDetails"]["dimension"].ToString() != "2d" ? string.Format(" {0}[{1}]", Color.RED, item["contentDetails"]["dimension"].ToString().ToUpper()) : ""
                             )
                         );
                     };
 
-                    webClient.DownloadDataAsync(new Uri(string.Format("https://www.youtube.com/oembed?format=json&url=youtu.be/{0}", id)));
+                    webClient.DownloadDataAsync(new Uri(string.Format("https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics&id={0}&key={1}", id, Config.YouTube.ApiKey)));
                 }
             }
         }

@@ -18,7 +18,14 @@ namespace WendySharp
             public bool ExpandURLs { get; set; }
         }
 
+        public class YoutubeConfig
+        {
+            public string ApiKey { get; set; }
+        }
+
         public TwitterConfig Twitter { get; set; }
+
+        public YoutubeConfig YouTube { get; set; }
 
         /// <summary>
         /// Don't repeat a tweet if it was already mentioned in the last N tweets.
