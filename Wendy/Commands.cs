@@ -42,6 +42,7 @@ namespace WendySharp
                 new Moderated(),
                 new Whoami(),
                 new RedAlert(),
+                new Emojic8(),
                 new Help(this),
             };
             
@@ -64,14 +65,6 @@ namespace WendySharp
         {
             // Don't do anything in a private message
             if (!IrcValidation.IsChannelName(e.Recipient))
-            {
-                return;
-            }
-
-            User user;
-
-            // If there is no such user, don't do anything
-            if (!Users.TryGetUser(e.Sender, out user))
             {
                 return;
             }
@@ -130,8 +123,21 @@ namespace WendySharp
             
             if (command.Permission != null)
             {
+                User user;
+
+                // If there is no such user, don't pass
+                if (!Users.TryGetUser(e.Sender, out user))
+                {
+                    Log.WriteDebug("CommandHandler", "'{0}' is not a user I know of, can't perform '{1}' ({2})", e.Sender, arguments.MatchedCommand, command.Permission);
+
+                    return;
+                }
+
+                // If this user doesn't have required permission, don't pass
                 if (!user.HasPermission(e.Recipient, command.Permission))
                 {
+                    Log.WriteDebug("CommandHandler", "'{0}' has no permission to perform '{1}' ({2})", e.Sender, arguments.MatchedCommand, command.Permission);
+
                     return;
                 }
 
