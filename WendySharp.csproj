@@ -96,6 +96,7 @@
     <Compile Include="Commands\TopicReplace.cs" />
     <Compile Include="Commands\Moderated.cs" />
     <Compile Include="Commands\Whoami.cs" />
+    <Compile Include="Commands\Emojic8.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
