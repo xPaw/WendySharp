@@ -76,6 +76,8 @@ namespace WendySharp
                 return;
             }
 
+            var isDirect = false;
+
             if (message.StartsWith(Bootstrap.Client.TrueNickname, StringComparison.InvariantCulture))
             {
                 var length = Bootstrap.Client.TrueNickname.Length; // "Wendy: "
@@ -87,6 +89,8 @@ namespace WendySharp
                 }
 
                 message = message.Substring(length + 2);
+
+                isDirect = true;
             }
             else if (message[0] == Bootstrap.Client.Settings.Prefix)
             {
@@ -117,6 +121,7 @@ namespace WendySharp
 
             var arguments = new CommandArguments
             {
+                IsDirect = isDirect,
                 MatchedCommand = match.Value.Trim(),
                 Event = e
             };

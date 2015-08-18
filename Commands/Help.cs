@@ -22,6 +22,11 @@ namespace WendySharp
 
         public override void OnCommand(CommandArguments command)
         {
+            if (!command.IsDirect)
+            {
+                return;
+            }
+
             User user;
             Users.TryGetUser(command.Event.Sender, out user);
 

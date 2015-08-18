@@ -7,6 +7,7 @@ namespace WendySharp
 {
     class CommandArguments
     {
+        public bool IsDirect;
         public string MatchedCommand;
         public ChatMessageEventArgs Event;
         public Match Arguments;
