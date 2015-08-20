@@ -17,6 +17,7 @@ namespace WendySharp
     {
         private readonly Regex TwitterCompiledMatch;
         private readonly Regex YoutubeCompiledMatch;
+        private readonly Regex TwitchCompiledMatch;
         private readonly FixedSizedQueue<string> LastMatches;
         private readonly LinkExpanderConfig Config;
 
@@ -72,6 +73,7 @@ namespace WendySharp
 
             TwitterCompiledMatch = new Regex(@"(^|/|\.)twitter\.com/(.+?)/status/(?<status>[0-9]+)", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
             YoutubeCompiledMatch = new Regex(@"(^|/|\.)(youtube\.com/watch\?v=|youtube\.com/embed/|youtu\.be/)(?<id>[a-zA-Z0-9\-_]+)", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
+            TwitchCompiledMatch = new Regex(@"(^|/|\.)twitch\.tv/(?<channel>[a-zA-Z0-9_]+)", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
 
             client.GotMessage += OnMessage;
         }
@@ -85,6 +87,7 @@ namespace WendySharp
 
             ProcessTwitter(e);
             ProcessYoutube(e);
+            ProcessTwitch(e);
         }
 
         private void ProcessTwitter(ChatMessageEventArgs e)
@@ -159,7 +162,10 @@ namespace WendySharp
                             )
                         );
 
-                        ProcessYoutube(new ChatMessageEventArgs(e.Sender, e.Recipient, text));
+                        var fakeEvent = new ChatMessageEventArgs(e.Sender, e.Recipient, text);
+
+                        ProcessYoutube(fakeEvent);
+                        ProcessTwitch(fakeEvent);
                     };
 
                     webClient.Headers.Add(HttpRequestHeader.Authorization, string.Format("OAuth {0}", authHeader));
@@ -228,6 +234,55 @@ namespace WendySharp
                     };
 
                     webClient.DownloadDataAsync(new Uri(string.Format("https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics&id={0}&key={1}", id, Config.YouTube.ApiKey)));
+                }
+            }
+        }
+
+        private void ProcessTwitch(ChatMessageEventArgs e)
+        {
+            var matches = TwitchCompiledMatch.Matches(e.Message);
+
+            foreach (Match match in matches)
+            {
+                var channel = match.Groups["channel"].Value;
+
+                if (LastMatches.Contains(channel))
+                {
+                    continue;
+                }
+
+                LastMatches.Enqueue(channel);
+
+                using (var webClient = new SaneWebClient())
+                {
+                    webClient.DownloadDataCompleted += (s, twitch) =>
+                    {
+                        if (twitch.Error != null || twitch.Cancelled)
+                        {
+                            Log.WriteError("Twitch", "Exception: {0}", twitch.Error.Message);
+                            return;
+                        }
+
+                        var response = Encoding.UTF8.GetString(twitch.Result);
+                        var stream = JsonMapper.ToObject(response);
+
+                        if (stream["stream"] == null)
+                        {
+                            return;
+                        }
+
+                        Bootstrap.Client.Client.Message(e.Recipient,
+                            string.Format("{0}» {1}{2} {3}({4:N0} viewers)",
+                                Color.OLIVE,
+                                Color.LIGHTGRAY,
+                                stream["stream"]["channel"]["status"],
+                                Color.DARKGRAY,
+                                int.Parse(stream["stream"]["viewers"].ToString())
+                            )
+                        );
+                    };
+                    
+                    webClient.DownloadDataAsync(new Uri(string.Format("https://api.twitch.tv/kraken/streams/{0}", channel)));
                 }
             }
         }
