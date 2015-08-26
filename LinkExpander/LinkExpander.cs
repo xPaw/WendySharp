@@ -216,9 +216,9 @@ namespace WendySharp
 
                         string info = string.Empty;
 
-                        if (item["snippet"]["liveBroadcastContent"] != "none")
+                        if (item["snippet"]["liveBroadcastContent"].ToString() != "none")
                         {
-                            info += string.Format(" {0}[{1}]", Color.GREEN, item["snippet"]["liveBroadcastContent"] == "upcoming" ? "Upcoming Livestream" : "LIVE");
+                            info += string.Format(" {0}[{1}]", Color.GREEN, item["snippet"]["liveBroadcastContent"].ToString() == "upcoming" ? "Upcoming Livestream" : "LIVE");
                         }
                         else if (item["contentDetails"]["definition"].ToString() != "hd")
                         {
