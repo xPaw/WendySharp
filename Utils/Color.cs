@@ -20,7 +20,7 @@ namespace WendySharp
         //public static readonly string PURPLE = IrcConstants.IrcColor + "06";
         public static readonly string OLIVE = IrcConstants.IrcColor + "07";
         //public static readonly string YELLOW = IrcConstants.IrcColor + "08";
-        //public static readonly string GREEN = IrcConstants.IrcColor + "09";
+        public static readonly string GREEN = IrcConstants.IrcColor + "09";
         //public static readonly string TEAL = IrcConstants.IrcColor + "10";
         //public static readonly string CYAN = IrcConstants.IrcColor + "11";
         public static readonly string BLUE = IrcConstants.IrcColor + "12";

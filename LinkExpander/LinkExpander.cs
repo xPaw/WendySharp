@@ -214,8 +214,24 @@ namespace WendySharp
                             return;
                         }
 
+                        string info = string.Empty;
+
+                        if (item["snippet"]["liveBroadcastContent"] != "none")
+                        {
+                            info += string.Format(" {0}[{1}]", Color.GREEN, item["snippet"]["liveBroadcastContent"] == "upcoming" ? "Upcoming Livestream" : "LIVE");
+                        }
+                        else if (item["contentDetails"]["definition"].ToString() != "hd")
+                        {
+                            info += string.Format(" {0}[{1}]", Color.RED, item["contentDetails"]["definition"].ToString().ToUpper());
+                        }
+
+                        if (item["contentDetails"]["dimension"].ToString() != "2d")
+                        {
+                            info += string.Format(" {0}[{1}]", Color.RED, item["contentDetails"]["dimension"].ToString().ToUpper());
+                        }
+
                         Bootstrap.Client.Client.Message(e.Recipient,
-                            string.Format("{0}» {1}{2}{3} ({4}) by {5}{6} {7}({8:N0} views, {9:N0} \ud83d\udc4d, {10:N0} \ud83d\udc4e){11}{12}",
+                            string.Format("{0}» {1}{2}{3} ({4}) by {5}{6} {7}({8:N0} views, {9:N0} \ud83d\udc4d, {10:N0} \ud83d\udc4e){11}",
                                 Color.OLIVE,
                                 Color.LIGHTGRAY,
                                 item["snippet"]["title"],
@@ -227,8 +243,7 @@ namespace WendySharp
                                 int.Parse(item["statistics"]["viewCount"].ToString()),
                                 int.Parse(item["statistics"]["likeCount"].ToString()),
                                 int.Parse(item["statistics"]["dislikeCount"].ToString()),
-                                item["contentDetails"]["definition"].ToString() != "hd" ? string.Format(" {0}[{1}]", Color.RED, item["contentDetails"]["definition"].ToString().ToUpper()) : "",
-                                item["contentDetails"]["dimension"].ToString() != "2d" ? string.Format(" {0}[{1}]", Color.RED, item["contentDetails"]["dimension"].ToString().ToUpper()) : ""
+                                info
                             )
                         );
                     };
