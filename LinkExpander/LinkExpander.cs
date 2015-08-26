@@ -214,8 +214,10 @@ namespace WendySharp
                             return;
                         }
 
-                        string info = string.Empty;
-
+                        var info = string.Empty;
+                        var time = XmlConvert.ToTimeSpan(item["contentDetails"]["duration"].ToString());
+                        var duration = time == TimeSpan.Zero ? string.Empty : string.Format(" ({0})", time);
+                            
                         if (item["snippet"]["liveBroadcastContent"].ToString() != "none")
                         {
                             info += string.Format(" {0}[{1}]", Color.GREEN, item["snippet"]["liveBroadcastContent"].ToString() == "upcoming" ? "Upcoming Livestream" : "LIVE");
@@ -231,12 +233,12 @@ namespace WendySharp
                         }
 
                         Bootstrap.Client.Client.Message(e.Recipient,
-                            string.Format("{0}» {1}{2}{3} ({4}) by {5}{6} {7}({8:N0} views, {9:N0} \ud83d\udc4d, {10:N0} \ud83d\udc4e){11}",
+                            string.Format("{0}» {1}{2}{3}{4} by {5}{6} {7}({8:N0} views, {9:N0} \ud83d\udc4d, {10:N0} \ud83d\udc4e){11}",
                                 Color.OLIVE,
                                 Color.LIGHTGRAY,
                                 item["snippet"]["title"],
                                 Color.NORMAL,
-                                XmlConvert.ToTimeSpan(item["contentDetails"]["duration"].ToString()),
+                                duration,
                                 Color.BLUE,
                                 item["snippet"]["channelTitle"],
                                 Color.DARKGRAY,
