@@ -35,6 +35,15 @@ namespace WendySharp
                         throw new JsonException("Nickname is not valid.");
                     }
 
+                    if (string.IsNullOrWhiteSpace(Settings.RedirectChannel))
+                    {
+                        Settings.RedirectChannel = "##FIX_YOUR_CONNECTION";
+                    }
+                    else if (!IrcValidation.IsChannelName(Settings.RedirectChannel))
+                    {
+                        throw new JsonException("Invalid redirect channel.");
+                    }
+
                     foreach (var channel in Settings.Channels)
                     {
                         if (!IrcValidation.IsChannelName(channel))
