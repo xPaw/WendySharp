@@ -31,7 +31,14 @@ namespace WendySharp
                 return;
             }
 
-            Bootstrap.Client.Client.ChangeChannelTopic(command.Event.Recipient, string.Join(" | ", topic.Take(count - 1)).Trim());
+            var newTopic = string.Join(" | ", topic.Take(count - 1)).Trim();
+
+            if (newTopic == channel.Topic)
+            {
+                return;
+            }
+
+            Bootstrap.Client.Client.ChangeChannelTopic(command.Event.Recipient, newTopic);
         }
     }
 }

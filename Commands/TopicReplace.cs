@@ -44,7 +44,14 @@ namespace WendySharp
 
             topic[pos] = command.Arguments.Groups["text"].Value.Trim();
 
-            Bootstrap.Client.Client.ChangeChannelTopic(command.Event.Recipient, string.Join(" | ", topic).Trim());
+            var newTopic = string.Join(" | ", topic).Trim();
+
+            if (newTopic == channel.Topic)
+            {
+                return;
+            }
+
+            Bootstrap.Client.Client.ChangeChannelTopic(command.Event.Recipient, newTopic);
         }
     }
 }

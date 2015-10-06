@@ -18,7 +18,15 @@ namespace WendySharp
 
         public override void OnCommand(CommandArguments command)
         {
-            Bootstrap.Client.Client.ChangeChannelTopic(command.Event.Recipient, command.Arguments.Groups["text"].Value.Trim());
+            var channel = Bootstrap.Client.ChannelList.GetChannel(command.Event.Recipient);
+            var newTopic = command.Arguments.Groups["text"].Value.Trim();
+
+            if (newTopic == channel.Topic)
+            {
+                return;
+            }
+
+            Bootstrap.Client.Client.ChangeChannelTopic(command.Event.Recipient, newTopic);
         }
     }
 }
