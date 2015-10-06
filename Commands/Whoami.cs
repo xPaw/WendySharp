@@ -40,6 +40,13 @@ namespace WendySharp
 
                     ident = whoisData.Identity;
 
+                    if (ident.Nickname.ToString().ToLowerInvariant() == Bootstrap.Client.TrueNickname.ToLowerInvariant())
+                    {
+                        command.Reply("That's me, dummy.");
+
+                        return;
+                    }
+
                     User user;
 
                     if (!Users.TryGetUser(ident, out user))

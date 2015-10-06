@@ -35,7 +35,7 @@ namespace WendySharp
             );
 
             MatchChildAbuse = new Regex(
-                string.Format("^(kisses|licks) {0}", client.Settings.Nickname),
+                string.Format("^(kisses|licks|hates|touches) {0}", client.Settings.Nickname),
                 RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture | RegexOptions.IgnoreCase
             );
 
