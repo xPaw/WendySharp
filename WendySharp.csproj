@@ -92,7 +92,6 @@
     <Compile Include="Utils\DateTimeParser.cs" />
     <Compile Include="Commands\Say.cs" />
     <Compile Include="Utils\SaneWebClient.cs" />
-    <Compile Include="Commands\RedAlert.cs" />
     <Compile Include="Commands\TopicReplace.cs" />
     <Compile Include="Commands\Moderated.cs" />
     <Compile Include="Commands\Whoami.cs" />
@@ -102,7 +101,6 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="config_example\modes.json" />
-    <None Include="config_example\redalert.json" />
     <None Include="config_example\services.json" />
     <None Include="config_example\settings.json" />
     <None Include="config_example\spam.json" />

@@ -41,7 +41,6 @@ namespace WendySharp
                 new Quit(),
                 new Moderated(),
                 new Whoami(),
-                new RedAlert(),
                 new Emojic8(),
                 new Help(this),
             };
