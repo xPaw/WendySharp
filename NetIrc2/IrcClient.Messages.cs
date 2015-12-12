@@ -109,7 +109,9 @@ namespace NetIrc2
             var source = statement.Source;
             var @params = statement.Parameters;
 #if DEBUG
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
             Console.Write("> " + (string)new IrcString(statement.ToByteArray()));
+            Console.ResetColor();
 #endif
             switch ((string)statement.Command)
             {

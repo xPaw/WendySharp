@@ -231,11 +231,14 @@ namespace NetIrc2
             Throw.If.Null(statement, "statement");
 
             var buffer = statement.ToByteArray();
-#if DEBUG
-            Console.Write("< " + new IrcString(buffer));
-#endif
             lock (SyncRoot)
             {
+#if DEBUG
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                Console.Write("< " + new IrcString(buffer));
+                Console.ResetColor();
+#endif
+
                 var context = _context;
                 if (context == null) { return false; }
 
