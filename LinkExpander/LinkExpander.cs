@@ -121,6 +121,11 @@ namespace WendySharp
                         var response = Encoding.UTF8.GetString(twitter.Result);
                         var tweet = JsonMapper.ToObject(response);
 
+                        if (tweet["text"] == null)
+                        {
+                            return;
+                        }
+
                         var text = WebUtility.HtmlDecode(tweet["text"].ToString()).Replace('\n', ' ').Trim();
 
                         // Check if original message contains tweet text (with t.co links)
@@ -201,7 +206,7 @@ namespace WendySharp
                         var response = Encoding.UTF8.GetString(youtube.Result);
                         var data = JsonMapper.ToObject(response);
 
-                        if (data["items"].Count == 0)
+                        if (data["items"] == null || data["items"].Count == 0)
                         {
                             return;
                         }
