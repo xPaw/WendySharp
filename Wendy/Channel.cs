@@ -9,7 +9,7 @@ namespace WendySharp
 
         public string Name { get; private set; }
         public string Topic { get; set; }
-        public Dictionary<string, byte> Users;
+        public Dictionary<string, byte> Users { get; private set; }
 
         public bool WeAreOpped
         {

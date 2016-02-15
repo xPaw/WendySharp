@@ -107,7 +107,7 @@ namespace WendySharp
 
                     Log.WriteInfo("Redirect", "'{0}' redirected '{1}' from {2} to {3}", command.Event.Sender, ident, command.Event.Recipient, targetChannel);
 
-                    var reason = string.Format("Redirected to {0} by {1}", targetChannel, command.Event.Sender.Nickname);
+                    var reason = string.Format("Redirected to {0} by {1} for 2 hours", targetChannel, command.Event.Sender.Nickname);
 
                     Bootstrap.Client.Client.Mode(command.Event.Recipient, "+b", new IrcString[1] { ident + "$" + targetChannel });
 

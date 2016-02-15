@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using NetIrc2;
 
 namespace WendySharp
@@ -8,6 +9,18 @@ namespace WendySharp
         public IrcIdentity Identity;
         public DateTime Time;
         public string Message;
+    }
+
+    class UserAction
+    {
+        public DateTime LastPart;
+        public byte PartsCount;
+
+        public UserAction()
+        {
+            LastPart = DateTime.UtcNow;
+            PartsCount = 1;
+        }
     }
 
     class SpamConfig
@@ -23,12 +36,12 @@ namespace WendySharp
         public uint QuitsBanMinutes { get; set; }
 
         public readonly FixedSizedQueue<ChatAction> LastActions;
-        public readonly FixedSizedQueue<ChatAction> LastQuits;
+        private readonly Dictionary<string, UserAction> Users;
 
         public SpamConfig()
         {
             LastActions = new FixedSizedQueue<ChatAction>();
-            LastQuits = new FixedSizedQueue<ChatAction>();
+            Users = new Dictionary<string, UserAction>();
         }
 
         public void AddAction(IrcIdentity sender, string message)
@@ -43,16 +56,32 @@ namespace WendySharp
             );
         }
 
-        public void AddQuit(IrcIdentity sender, string channel)
+        public byte AddUserPart(string sender, string channel, uint thresholdSeconds)
         {
-            LastQuits.Enqueue(
-                new ChatAction
-                {
-                    Identity = sender,
-                    Message = channel,
-                    Time = DateTime.UtcNow,
-                }
-            );
+            if (!Users.ContainsKey(sender))
+            {
+                Users.Add(sender, new UserAction());
+                
+                return 1;
+            }
+
+            if (Users[sender].LastPart.AddSeconds(thresholdSeconds) >= DateTime.UtcNow)
+            {
+                Users[sender].PartsCount++;
+            }
+            else
+            {
+                Users[sender].PartsCount = 1;
+            }
+
+            Users[sender].LastPart = DateTime.UtcNow;
+
+            return Users[sender].PartsCount;
+        }
+
+        public void ResetUserPart(string sender)
+        {
+            Users.Remove(sender);
         }
     }
 }

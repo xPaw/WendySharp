@@ -37,7 +37,6 @@ namespace WendySharp
                     foreach(var channel in Channels)
                     {
                         channel.Value.LastActions.Limit = Math.Max(channel.Value.LinesThreshold, channel.Value.RepeatThreshold) * 2;
-                        channel.Value.LastQuits.Limit = channel.Value.QuitsThreshold * 4;
                     }
                 }
                 catch (JsonException e)
@@ -150,32 +149,23 @@ namespace WendySharp
             // They might be rejoining with an alt nick
             ident.Nickname = "*";
 
-            channel.AddQuit(ident, channelName);
-
-            var quits = channel.LastQuits.Count(x =>
-                x.Identity == ident &&
-                x.Message == channelName &&
-                x.Time.AddSeconds(channel.QuitsThresholdSeconds) >= DateTime.UtcNow
-            );
-
-            if (quits > 1)
-            {
-                Log.WriteDebug("spam", "{0} quit {1} ({2})", ident, channelName, quits);
-            }
+            var quits = channel.AddUserPart(ident.ToString(), channelName, channel.QuitsThresholdSeconds);
 
             if (quits < channel.QuitsThreshold)
             {
                 return;
             }
 
-            channel.LastQuits.Clear(); // TODO: FIX
+            channel.ResetUserPart(ident.ToString());
 
             Log.WriteInfo("Spam", "'{1}' ({0}) is spamming joins/quits in {2}. Redirecting for {3} minutes.", nickname, ident, channelName, channel.QuitsBanMinutes);
 
             Bootstrap.Client.Client.Mode(channelName, "+b", new IrcString[1] { ident + "$" + Bootstrap.Client.Settings.RedirectChannel });
 
             // In case they manage to come back before ban takes place
-            Bootstrap.Client.Client.Kick(nickname, channelName, "Please fix your connection");
+            Bootstrap.Client.Client.Kick(nickname, channelName, string.Format("Fix your connection. Banned for {0} minutes", channel.QuitsBanMinutes));
+
+            Bootstrap.Client.Client.Notice(nickname, string.Format("You have been from {0} for {1} minutes for rapidly rejoining the channel.", channelName, channel.QuitsBanMinutes));
 
             Bootstrap.Client.ModeList.AddLateModeRequest(
                 new LateModeRequest
