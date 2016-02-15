@@ -91,7 +91,7 @@ namespace WendySharp
 
                 isDirect = true;
             }
-            else if (message[0] == Bootstrap.Client.Settings.Prefix)
+            else if (message[0] == Bootstrap.Client.Settings.Prefix && Bootstrap.Client.Settings.Channels.Contains(e.Recipient))
             {
                 message = message.Substring(1);
             }
