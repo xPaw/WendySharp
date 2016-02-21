@@ -2,10 +2,9 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using LitJson;
 using NetIrc2;
-using NetIrc2.Events;
 using NetIrc2.Parsing;
+using Newtonsoft.Json;
 
 namespace WendySharp
 {
@@ -28,7 +27,7 @@ namespace WendySharp
 
                 try
                 {
-                    Settings = JsonMapper.ToObject<Settings>(data);
+                    Settings = JsonConvert.DeserializeObject<Settings>(data);
 
                     if (!IrcValidation.IsNickname(Settings.Nickname))
                     {

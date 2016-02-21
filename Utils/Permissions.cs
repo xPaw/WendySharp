@@ -1,7 +1,7 @@
 ﻿using System;
-using LitJson;
 using System.IO;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace WendySharp
 {
@@ -17,7 +17,7 @@ namespace WendySharp
 
                 try
                 {
-                    var users = JsonMapper.ToObject<List<User>>(data);
+                    var users = JsonConvert.DeserializeObject<List<User>>(data);
 
                     foreach (var user in users)
                     {

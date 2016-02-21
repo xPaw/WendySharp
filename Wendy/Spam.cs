@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using LitJson;
 using NetIrc2;
 using NetIrc2.Events;
+using Newtonsoft.Json;
 
 namespace WendySharp
 {
@@ -32,7 +32,7 @@ namespace WendySharp
 
                 try
                 {
-                    Channels = JsonMapper.ToObject<Dictionary<string, SpamConfig>>(data);
+                    Channels = JsonConvert.DeserializeObject<Dictionary<string, SpamConfig>>(data);
 
                     foreach(var channel in Channels)
                     {

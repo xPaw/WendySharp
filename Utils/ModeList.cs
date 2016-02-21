@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using LitJson;
 using NetIrc2;
 using NetIrc2.Events;
+using Newtonsoft.Json;
 
 namespace WendySharp
 {
@@ -20,10 +20,7 @@ namespace WendySharp
 
             if (File.Exists(FilePath))
             {
-                using (var file = new StreamReader(FilePath))
-                {
-                    LateModes = JsonMapper.ToObject<List<LateModeRequest>>(file);
-                }
+                LateModes = JsonConvert.DeserializeObject<List<LateModeRequest>>(File.ReadAllText(FilePath));
 
                 Log.WriteInfo("ModeList", "Loaded {0} modes from file", LateModes.Count);
 
@@ -143,12 +140,12 @@ namespace WendySharp
 
         private void SaveToFile()
         {
-            var writer = new JsonWriter();
-            writer.PrettyPrint = true;
+            var json = JsonConvert.SerializeObject(LateModes, new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented
+            });
 
-            JsonMapper.ToJson(LateModes, writer);
-
-            File.WriteAllText(FilePath, writer.ToString());
+            File.WriteAllText(FilePath, json);
         }
     }
 }

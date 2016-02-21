@@ -6,10 +6,10 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
-using LitJson;
 using NetIrc2;
 using NetIrc2.Events;
 using NetIrc2.Parsing;
+using Newtonsoft.Json;
 
 namespace WendySharp
 {
@@ -36,7 +36,7 @@ namespace WendySharp
 
             try
             {
-                Config = JsonMapper.ToObject<LinkExpanderConfig>(data);
+                Config = JsonConvert.DeserializeObject<LinkExpanderConfig>(data);
 
                 if (Config.Twitter.AccessSecret == null ||
                     Config.Twitter.AccessToken == null ||
@@ -119,14 +119,14 @@ namespace WendySharp
                         }
 
                         var response = Encoding.UTF8.GetString(twitter.Result);
-                        var tweet = JsonMapper.ToObject(response);
+                        dynamic tweet = JsonConvert.DeserializeObject(response);
 
-                        if (tweet["text"] == null)
+                        if (tweet.text == null)
                         {
                             return;
                         }
 
-                        var text = WebUtility.HtmlDecode(tweet["text"].ToString()).Replace('\n', ' ').Trim();
+                        var text = WebUtility.HtmlDecode(tweet.text.ToString()).Replace('\n', ' ').Trim();
 
                         // Check if original message contains tweet text (with t.co links)
                         if (e.Message.ToString().Contains(text))
@@ -136,9 +136,9 @@ namespace WendySharp
 
                         if (Config.Twitter.ExpandURLs)
                         {
-                            foreach (JsonData entityUrl in tweet["entities"]["urls"])
+                            foreach (var entityUrl in tweet.entities.urls)
                             {
-                                text = text.Replace(WebUtility.HtmlDecode((string)entityUrl["url"]), WebUtility.HtmlDecode((string)entityUrl["expanded_url"]));
+                                text = text.Replace(WebUtility.HtmlDecode((string)entityUrl.url), WebUtility.HtmlDecode((string)entityUrl.expanded_url));
                             }
 
                             // Check if original message contains tweet text (with expanded links)
@@ -150,7 +150,7 @@ namespace WendySharp
 
                         DateTime date;
 
-                        if (!DateTime.TryParseExact(tweet["created_at"].ToString(), "ddd MMM dd HH:mm:ss zz00 yyyy", CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal, out date))
+                        if (!DateTime.TryParseExact(tweet.created_at.ToString(), "ddd MMM dd HH:mm:ss zz00 yyyy", CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal, out date))
                         {
                             date = DateTime.UtcNow;
                         }
@@ -159,7 +159,7 @@ namespace WendySharp
                             string.Format("{0}» {1}{2}{3} {4}{5}: {6}",
                                 Color.OLIVE,
                                 Color.BLUE,
-                                tweet["user"]["name"],
+                                tweet.user.name,
                                 Color.LIGHTGRAY,
                                 date.ToRelativeString(),
                                 Color.NORMAL,
@@ -204,52 +204,52 @@ namespace WendySharp
                         }
 
                         var response = Encoding.UTF8.GetString(youtube.Result);
-                        var data = JsonMapper.ToObject(response);
+                        dynamic data = JsonConvert.DeserializeObject(response);
 
-                        if (data["items"] == null || data["items"].Count == 0)
+                        if (data.items == null || data.items.Count == 0)
                         {
                             return;
                         }
 
-                        var item = data["items"][0];
+                        var item = data.items[0];
 
                         // If original message already contains video title, don't post it again
-                        if (e.Message.ToString().Contains(item["snippet"]["title"].ToString()))
+                        if (e.Message.ToString().Contains(item.snippet.title.ToString()))
                         {
                             return;
                         }
 
                         var info = string.Empty;
-                        var time = XmlConvert.ToTimeSpan(item["contentDetails"]["duration"].ToString());
+                        var time = XmlConvert.ToTimeSpan(item.contentDetails.duration.ToString());
                         var duration = time == TimeSpan.Zero ? string.Empty : string.Format(" ({0})", time);
                             
-                        if (item["snippet"]["liveBroadcastContent"].ToString() != "none")
+                        if (item.snippet.liveBroadcastContent.ToString() != "none")
                         {
-                            info += string.Format(" {0}[{1}]", Color.GREEN, item["snippet"]["liveBroadcastContent"].ToString() == "upcoming" ? "Upcoming Livestream" : "LIVE");
+                            info += string.Format(" {0}[{1}]", Color.GREEN, item.snippet.liveBroadcastContent.ToString() == "upcoming" ? "Upcoming Livestream" : "LIVE");
                         }
-                        else if (item["contentDetails"]["definition"].ToString() != "hd")
+                        else if (item.contentDetails.definition.ToString() != "hd")
                         {
-                            info += string.Format(" {0}[{1}]", Color.RED, item["contentDetails"]["definition"].ToString().ToUpper());
+                            info += string.Format(" {0}[{1}]", Color.RED, item.contentDetails.definition.ToString().ToUpper());
                         }
 
-                        if (item["contentDetails"]["dimension"].ToString() != "2d")
+                        if (item.contentDetails.dimension.ToString() != "2d")
                         {
-                            info += string.Format(" {0}[{1}]", Color.RED, item["contentDetails"]["dimension"].ToString().ToUpper());
+                            info += string.Format(" {0}[{1}]", Color.RED, item.contentDetails.dimension.ToString().ToUpper());
                         }
 
                         Bootstrap.Client.Client.Message(e.Recipient,
                             string.Format("{0}» {1}{2}{3}{4} by {5}{6} {7}({8:N0} views, {9:N0} \ud83d\udc4d, {10:N0} \ud83d\udc4e){11}",
                                 Color.OLIVE,
                                 Color.LIGHTGRAY,
-                                item["snippet"]["title"],
+                                item.snippet.title,
                                 Color.NORMAL,
                                 duration,
                                 Color.BLUE,
-                                item["snippet"]["channelTitle"],
+                                item.snippet.channelTitle,
                                 Color.DARKGRAY,
-                                int.Parse(item["statistics"]["viewCount"].ToString()),
-                                int.Parse(item["statistics"]["likeCount"].ToString()),
-                                int.Parse(item["statistics"]["dislikeCount"].ToString()),
+                                int.Parse(item.statistics.viewCount.ToString()),
+                                int.Parse(item.statistics.likeCount.ToString()),
+                                int.Parse(item.statistics.dislikeCount.ToString()),
                                 info
                             )
                         );
@@ -286,9 +286,9 @@ namespace WendySharp
                         }
 
                         var response = Encoding.UTF8.GetString(twitch.Result);
-                        var stream = JsonMapper.ToObject(response);
+                        dynamic stream = JsonConvert.DeserializeObject(response);
 
-                        if (stream["stream"] == null)
+                        if (stream.stream == null)
                         {
                             return;
                         }
@@ -297,9 +297,9 @@ namespace WendySharp
                             string.Format("{0}» {1}{2} {3}({4:N0} viewers)",
                                 Color.OLIVE,
                                 Color.LIGHTGRAY,
-                                stream["stream"]["channel"]["status"],
+                                stream.stream.channel.status,
                                 Color.DARKGRAY,
-                                int.Parse(stream["stream"]["viewers"].ToString())
+                                int.Parse(stream.stream.viewers.ToString())
                             )
                         );
                     };
