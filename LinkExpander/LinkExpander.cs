@@ -98,12 +98,12 @@ namespace WendySharp
             {
                 var status = match.Groups["status"].Value;
 
-                if (LastMatches.Contains(status))
+                if (LastMatches.Contains(e.Recipient + status))
                 {
                     continue;
                 }
 
-                LastMatches.Enqueue(status);
+                LastMatches.Enqueue(e.Recipient + status);
 
                 using (var webClient = new SaneWebClient())
                 {
@@ -187,12 +187,12 @@ namespace WendySharp
             {
                 var id = match.Groups["id"].Value;
 
-                if (LastMatches.Contains(id))
+                if (LastMatches.Contains(e.Recipient + id))
                 {
                     continue;
                 }
 
-                LastMatches.Enqueue(id);
+                LastMatches.Enqueue(e.Recipient + id);
 
                 using (var webClient = new SaneWebClient())
                 {
@@ -268,12 +268,12 @@ namespace WendySharp
             {
                 var channel = match.Groups["channel"].Value;
 
-                if (LastMatches.Contains(channel))
+                if (LastMatches.Contains(e.Recipient + channel))
                 {
                     continue;
                 }
 
-                LastMatches.Enqueue(channel);
+                LastMatches.Enqueue(e.Recipient + channel);
 
                 using (var webClient = new SaneWebClient())
                 {
