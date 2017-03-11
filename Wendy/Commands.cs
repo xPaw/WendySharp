@@ -37,6 +37,7 @@ namespace WendySharp
                 new TopicRemove(),
                 new Join(),
                 new Part(),
+                new Parrot(),
                 new Say(),
                 new Quit(),
                 new Moderated(),
