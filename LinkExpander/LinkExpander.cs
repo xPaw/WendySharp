@@ -141,6 +141,14 @@ namespace WendySharp
                                 text = text.Replace(WebUtility.HtmlDecode((string)entityUrl.url), WebUtility.HtmlDecode((string)entityUrl.expanded_url));
                             }
 
+                            if (tweet.entities.media != null)
+                            {
+                                foreach (var entityUrl in tweet.entities.media)
+                                {
+                                    text = text.Replace(WebUtility.HtmlDecode((string)entityUrl.url), WebUtility.HtmlDecode((string)entityUrl.expanded_url));
+                                }
+                            }
+
                             // Check if original message contains tweet text (with expanded links)
                             if (e.Message.ToString().Contains(text))
                             {
