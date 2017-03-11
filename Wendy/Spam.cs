@@ -97,7 +97,7 @@ namespace WendySharp
             Log.WriteInfo("Spam", "A line by '{0}' in {1} was detected as spam. Quieting for {2} seconds.", e.Sender, e.Recipient, channel.Duration);
 
             var sender = e.Sender;
-            sender.Nickname = "*";
+            Whois.NormalizeIdentity(sender);
 
             Bootstrap.Client.Client.Mode(e.Recipient, "+q", new IrcString[1] { sender });
             Bootstrap.Client.Client.Notice(e.Sender.Nickname, channel.Message);
@@ -146,8 +146,7 @@ namespace WendySharp
         {
             var nickname = ident.Nickname;
 
-            // They might be rejoining with an alt nick
-            ident.Nickname = "*";
+            Whois.NormalizeIdentity(ident);
 
             var quits = channel.AddUserPart(ident.ToString(), channelName, channel.QuitsThresholdSeconds);
 
