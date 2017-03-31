@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -7,9 +7,10 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>WendySharp</RootNamespace>
     <AssemblyName>WendySharp</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <UseMSBuildEngine>False</UseMSBuildEngine>
     <StartupObject>WendySharp.Bootstrap</StartupObject>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -43,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\Parrot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Bootstrap.cs" />
     <Compile Include="Commands\Quit.cs" />
@@ -103,13 +105,6 @@
     <None Include="config_example\settings.json" />
     <None Include="config_example\spam.json" />
     <None Include="config_example\users.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Commands\" />
-    <Folder Include="Wendy\" />
-    <Folder Include="Utils\" />
-    <Folder Include="LinkExpander\" />
-    <Folder Include="config_example\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="NetIrc2\NetIrc2.csproj">
