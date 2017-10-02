@@ -4,12 +4,13 @@ using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Web;
 
 namespace WendySharp
 {
     static class TwitterAuthorization
     {
-        public static string GetHeader(string method, string uri, LinkExpanderConfig.TwitterConfig Config)
+        public static string GetHeader(string method, Uri uri, LinkExpanderConfig.TwitterConfig Config)
         {
             var nonce = Guid.NewGuid().ToString();
             var timestamp = Convert.ToInt64((DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds).ToString(CultureInfo.InvariantCulture);
@@ -26,24 +27,25 @@ namespace WendySharp
 
             var signingParameters = new SortedDictionary<string, string>(oauthParameters);
 
-            var builder = new UriBuilder(uri) { Query = "" };
-            var baseUrl = builder.Uri.AbsoluteUri;
+            var parsedQuery = HttpUtility.ParseQueryString(uri.Query);
+            foreach (var k in parsedQuery.AllKeys)
+            {
+                signingParameters.Add(k, parsedQuery[k]);
+            }
 
             var parameterString = string.Join("&",
-                from k in signingParameters.Keys
-                select Uri.EscapeDataString(k) + "=" +
-                Uri.EscapeDataString(signingParameters[k]));
+                signingParameters.Select(k => $"{Uri.EscapeDataString(k.Key)}={Uri.EscapeDataString(k.Value)}")
+            );
 
-            var stringToSign = string.Join("&", new[] { method, baseUrl, parameterString }.Select(Uri.EscapeDataString));
+            var stringToSign = string.Join("&", new[] { method, uri.AbsoluteUri.Replace(uri.Query, string.Empty), parameterString }.Select(Uri.EscapeDataString));
             var signingKey = Config.ConsumerSecret + "&" + Config.AccessSecret;
             var signature = Convert.ToBase64String(new HMACSHA1(Encoding.ASCII.GetBytes(signingKey)).ComputeHash(Encoding.ASCII.GetBytes(stringToSign)));
-
+            
             oauthParameters.Add("oauth_signature", signature);
 
-            var authHeader = string.Join(", ", from k in oauthParameters.Keys
-                select string.Format(@"{0}=""{1}""",
-                    Uri.EscapeDataString(k),
-                    Uri.EscapeDataString(oauthParameters[k])));
+            var authHeader = string.Join(", ",
+                oauthParameters.Select(k => $"{Uri.EscapeDataString(k.Key)}=\"{Uri.EscapeDataString(k.Value)}\"")
+            );
 
             return authHeader;
         }

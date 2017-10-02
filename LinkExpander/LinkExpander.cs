@@ -107,7 +107,10 @@ namespace WendySharp
 
                 using (var webClient = new SaneWebClient())
                 {
-                    var url = string.Format("https://api.twitter.com/1.1/statuses/show/{0}.json", status);
+                    var url = new UriBuilder("https://api.twitter.com/1.1/statuses/show.json")
+                    {
+                        Query = $"id={status}&tweet_mode=extended"
+                    }.Uri;
                     var authHeader = TwitterAuthorization.GetHeader("GET", url, Config.Twitter);
 
                     webClient.DownloadDataCompleted += (s, twitter) =>
@@ -121,12 +124,12 @@ namespace WendySharp
                         var response = Encoding.UTF8.GetString(twitter.Result);
                         dynamic tweet = JsonConvert.DeserializeObject(response);
 
-                        if (tweet.text == null)
+                        if (tweet.full_text == null)
                         {
                             return;
                         }
 
-                        var text = WebUtility.HtmlDecode(tweet.text.ToString()).Replace('\n', ' ').Trim();
+                        var text = WebUtility.HtmlDecode(tweet.full_text.ToString()).Replace('\n', ' ').Trim();
 
                         // Check if original message contains tweet text (with t.co links)
                         if (e.Message.ToString().Contains(text))
@@ -182,7 +185,7 @@ namespace WendySharp
                     };
 
                     webClient.Headers.Add(HttpRequestHeader.Authorization, string.Format("OAuth {0}", authHeader));
-                    webClient.DownloadDataAsync(new Uri(url));
+                    webClient.DownloadDataAsync(url);
                 }
             }
         }
