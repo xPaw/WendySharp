@@ -56,7 +56,7 @@ namespace WendySharp
                     {
                         if (!IrcValidation.IsChannelName(channel))
                         {
-                            throw new JsonException(string.Format("Invalid channel '{0}'", channel));
+                            throw new JsonException($"Invalid channel '{channel}'");
                         }
                     }
                 }
@@ -68,8 +68,10 @@ namespace WendySharp
                 Environment.Exit(1);
             }
 
-            LastMatches = new FixedSizedQueue<string>();
-            LastMatches.Limit = Config.DontRepeatLastCount;
+            LastMatches = new FixedSizedQueue<string>
+            {
+                Limit = Config.DontRepeatLastCount
+            };
 
             TwitterCompiledMatch = new Regex(@"(^|/|\.)twitter\.com/(.+?)/status/(?<status>[0-9]+)", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
             YoutubeCompiledMatch = new Regex(@"(^|/|\.)(youtube\.com/watch\?v=|youtube\.com/embed/|youtu\.be/)(?<id>[a-zA-Z0-9\-_]+)", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
@@ -117,7 +119,7 @@ namespace WendySharp
                     {
                         if (twitter.Error != null || twitter.Cancelled)
                         {
-                            Log.WriteError("Twitter", "Exception: {0}", twitter.Error.Message);
+                            Log.WriteError("Twitter", "Exception: {0}", twitter.Error?.Message);
                             return;
                         }
 
@@ -167,15 +169,7 @@ namespace WendySharp
                         }
 
                         Bootstrap.Client.Client.Message(e.Recipient,
-                            string.Format("{0}» {1}{2}{3} {4}{5}: {6}",
-                                Color.OLIVE,
-                                Color.BLUE,
-                                tweet.user.name,
-                                Color.LIGHTGRAY,
-                                date.ToRelativeString(),
-                                Color.NORMAL,
-                                text
-                            )
+                            $"{Color.OLIVE}» {Color.BLUE}{tweet.user.name}{Color.LIGHTGRAY} {date.ToRelativeString()}{Color.NORMAL}: {text}"
                         );
 
                         var fakeEvent = new ChatMessageEventArgs(e.Sender, e.Recipient, text);
@@ -184,7 +178,7 @@ namespace WendySharp
                         ProcessTwitch(fakeEvent);
                     };
 
-                    webClient.Headers.Add(HttpRequestHeader.Authorization, string.Format("OAuth {0}", authHeader));
+                    webClient.Headers.Add(HttpRequestHeader.Authorization, $"OAuth {authHeader}");
                     webClient.DownloadDataAsync(url);
                 }
             }
@@ -233,40 +227,32 @@ namespace WendySharp
                         var info = string.Empty;
                         var time = XmlConvert.ToTimeSpan(item.contentDetails.duration.ToString());
                         var duration = time == TimeSpan.Zero ? string.Empty : string.Format(" ({0})", time);
-                            
+
+                        if (item.statistics.viewCount != null)
+                        {
+                            info += $" {Color.DARKGRAY}({int.Parse(item.statistics.viewCount.ToString()):N0} views, {int.Parse(item.statistics.likeCount.ToString()):N0} \ud83d\udc4d, {int.Parse(item.statistics.dislikeCount.ToString()):N0} \ud83d\udc4e)";
+                        }
+
                         if (item.snippet.liveBroadcastContent.ToString() != "none")
                         {
-                            info += string.Format(" {0}[{1}]", Color.GREEN, item.snippet.liveBroadcastContent.ToString() == "upcoming" ? "Upcoming Livestream" : "LIVE");
+                            info += $" {Color.GREEN}[{(item.snippet.liveBroadcastContent.ToString() == "upcoming" ? "Upcoming Livestream" : "LIVE")}]";
                         }
                         else if (item.contentDetails.definition.ToString() != "hd")
                         {
-                            info += string.Format(" {0}[{1}]", Color.RED, item.contentDetails.definition.ToString().ToUpper());
+                            info += $" {Color.RED}[{item.contentDetails.definition.ToString().ToUpper()}]";
                         }
 
                         if (item.contentDetails.dimension.ToString() != "2d")
                         {
-                            info += string.Format(" {0}[{1}]", Color.RED, item.contentDetails.dimension.ToString().ToUpper());
+                            info += $" {Color.RED}[{item.contentDetails.dimension.ToString().ToUpper()}]";
                         }
-
+                        
                         Bootstrap.Client.Client.Message(e.Recipient,
-                            string.Format("{0}» {1}{2}{3}{4} by {5}{6} {7}({8:N0} views, {9:N0} \ud83d\udc4d, {10:N0} \ud83d\udc4e){11}",
-                                Color.OLIVE,
-                                Color.LIGHTGRAY,
-                                item.snippet.title,
-                                Color.NORMAL,
-                                duration,
-                                Color.BLUE,
-                                item.snippet.channelTitle,
-                                Color.DARKGRAY,
-                                int.Parse(item.statistics.viewCount.ToString()),
-                                int.Parse(item.statistics.likeCount.ToString()),
-                                int.Parse(item.statistics.dislikeCount.ToString()),
-                                info
-                            )
+                            $"{Color.OLIVE}» {Color.LIGHTGRAY}{item.snippet.title}{Color.NORMAL}{duration} by {Color.BLUE}{item.snippet.channelTitle}{info}"
                         );
                     };
 
-                    webClient.DownloadDataAsync(new Uri(string.Format("https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics&id={0}&key={1}", id, Config.YouTube.ApiKey)));
+                    webClient.DownloadDataAsync(new Uri($"https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics&id={id}&key={Config.YouTube.ApiKey}"));
                 }
             }
         }
@@ -292,7 +278,7 @@ namespace WendySharp
                     {
                         if (twitch.Error != null || twitch.Cancelled)
                         {
-                            Log.WriteError("Twitch", "Exception: {0}", twitch.Error.Message);
+                            Log.WriteError("Twitch", "Exception: {0}", twitch.Error?.Message);
                             return;
                         }
 
@@ -305,17 +291,11 @@ namespace WendySharp
                         }
 
                         Bootstrap.Client.Client.Message(e.Recipient,
-                            string.Format("{0}» {1}{2} {3}({4:N0} viewers)",
-                                Color.OLIVE,
-                                Color.LIGHTGRAY,
-                                stream.stream.channel.status,
-                                Color.DARKGRAY,
-                                int.Parse(stream.stream.viewers.ToString())
-                            )
+                            $"{Color.OLIVE}» {Color.LIGHTGRAY}{stream.stream.channel.status} {Color.DARKGRAY}({int.Parse(stream.stream.viewers.ToString()):N0} viewers)"
                         );
                     };
                     
-                    webClient.DownloadDataAsync(new Uri(string.Format("https://api.twitch.tv/kraken/streams/{0}", channel)));
+                    webClient.DownloadDataAsync(new Uri($"https://api.twitch.tv/kraken/streams/{channel}"));
                 }
             }
         }
