@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
+    <OutputType>Exe</OutputType>
+    <Authors>xPaw</Authors>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/xPaw/WendySharp</RepositoryUrl>
+    <PackageLicenseUrl>https://github.com/xPaw/WendySharp/blob/master/LICENSE</PackageLicenseUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <ProjectReference Include="..\NetIrc2\NetIrc2.csproj" />
+  </ItemGroup>
+</Project>
