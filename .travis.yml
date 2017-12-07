@@ -1,4 +1,14 @@
+sudo: required
+dist: trusty
+
 language: csharp
+mono: none
+dotnet: 2.0.0
+
 solution: WendySharp.sln
+
+install: dotnet restore
+script: dotnet build
+
 notifications:
   email: false
