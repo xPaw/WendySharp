@@ -11,13 +11,6 @@ namespace WendySharp
 
         public static void Main(string[] args)
         {
-            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config", "bugsnag.txt");
-
-            if (File.Exists(path))
-            {
-                new Bugsnag.Clients.BaseClient(File.ReadAllText(path).Trim());
-            }
-
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
             ResetEvent = new ManualResetEvent(false);
