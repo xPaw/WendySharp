@@ -299,7 +299,7 @@ namespace WendySharp
                         );
                     };
                     
-                    webClient.DownloadDataAsync(new Uri($"https://api.twitch.tv/kraken/streams/{channel}"));
+                    webClient.DownloadDataAsync(new Uri($"https://api.twitch.tv/kraken/streams/{channel}?client_id={Config.Twitch.ClientId}"));
                 }
             }
         }

@@ -23,9 +23,16 @@ namespace WendySharp
             public string ApiKey { get; set; }
         }
 
+        public class TwitchConfig
+        {
+            public string ClientId { get; set; }
+        }
+
         public TwitterConfig Twitter { get; set; }
 
         public YoutubeConfig YouTube { get; set; }
+
+        public TwitchConfig Twitch { get; set; }
 
         /// <summary>
         /// Don't repeat a tweet if it was already mentioned in the last N tweets.

@@ -18,5 +18,10 @@
 	"YouTube":
 	{
 		"ApiKey": ""
+	},
+	
+	"Twitch":
+	{
+		"ClientId": ""
 	}
 }
