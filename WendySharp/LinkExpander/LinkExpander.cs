@@ -219,7 +219,16 @@ namespace WendySharp
 
                         var item = data.items[0];
                         var info = new List<string>();
-                        var time = XmlConvert.ToTimeSpan(item.contentDetails.duration.ToString());
+                        var time = TimeSpan.Zero;
+
+                        try
+                        {
+                            time = XmlConvert.ToTimeSpan(item.contentDetails.duration.ToString());
+                        }
+                        catch (FormatException)
+                        {
+                            // "longest video on youtube" crashes it due to "W" not being parsed
+                        }
                         
                         if (time != TimeSpan.Zero)
                         {
