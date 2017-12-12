@@ -125,14 +125,15 @@ namespace WendySharp
                         }
 
                         var response = Encoding.UTF8.GetString(twitter.Result);
-                        dynamic tweet = JsonConvert.DeserializeObject(response);
+                        var tweet = JsonConvert.DeserializeObject<Twitter.TwitterStatus>(response);
 
-                        if (tweet.full_text == null)
+                        if (tweet.FullText == null)
                         {
                             return;
                         }
 
-                        var text = WebUtility.HtmlDecode(tweet.full_text.ToString()).Replace('\n', ' ').Trim();
+                        var text = tweet.FullText.Substring(tweet.DisplayTextRange[0]);
+                        text = WebUtility.HtmlDecode(text).Replace('\n', ' ').Trim();
 
                         // Check if original message contains tweet text (with t.co links)
                         if (e.Message.ToString().Contains(text))
@@ -140,37 +141,39 @@ namespace WendySharp
                             return;
                         }
 
-                        if (Config.Twitter.ExpandURLs)
+                        if (Config.Twitter.ExpandURLs && tweet.ExtendedEntities != null)
                         {
-                            foreach (var entityUrl in tweet.entities.urls)
+                            if (tweet.ExtendedEntities.Urls != null)
                             {
-                                text = text.Replace(WebUtility.HtmlDecode((string)entityUrl.url), WebUtility.HtmlDecode((string)entityUrl.expanded_url));
-                            }
-
-                            if (tweet.entities.media != null)
-                            {
-                                foreach (var entityUrl in tweet.entities.media)
+                                foreach (var entityUrl in tweet.ExtendedEntities.Urls)
                                 {
-                                    text = text.Replace(WebUtility.HtmlDecode((string)entityUrl.url), WebUtility.HtmlDecode((string)entityUrl.expanded_url));
+                                    text = text.Replace(WebUtility.HtmlDecode(entityUrl.Url), WebUtility.HtmlDecode(entityUrl.ExpandedUrl));
                                 }
                             }
 
-                            // Check if original message contains tweet text (with expanded links)
-                            if (e.Message.ToString().Contains(text))
+                            if (tweet.ExtendedEntities.Media != null)
                             {
-                                return;
+                                foreach (var entityUrl in tweet.ExtendedEntities.Media)
+                                {
+                                    text = text.Replace(WebUtility.HtmlDecode(entityUrl.Url), WebUtility.HtmlDecode(entityUrl.ExpandedUrl));
+                                }
                             }
                         }
 
                         DateTime date;
 
-                        if (!DateTime.TryParseExact(tweet.created_at.ToString(), "ddd MMM dd HH:mm:ss zz00 yyyy", CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal, out date))
+                        if (!DateTime.TryParseExact(tweet.CreatedAt.ToString(), "ddd MMM dd HH:mm:ss zz00 yyyy", CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal, out date))
                         {
                             date = DateTime.UtcNow;
                         }
 
+                        if (tweet.InReplyToScreenName != null)
+                        {
+                            text = $"{Color.DARKGRAY}@{tweet.InReplyToScreenName}{Color.NORMAL} {text}";
+                        }
+
                         Bootstrap.Client.Client.Message(e.Recipient,
-                            $"{Color.OLIVE}» {Color.BLUE}{tweet.user.name}{Color.LIGHTGRAY} {date.ToRelativeString()}{Color.NORMAL}: {text}"
+                            $"{Color.OLIVE}» {Color.BLUE}{tweet.User.Name}{Color.LIGHTGRAY} {date.ToRelativeString()}{Color.NORMAL}: {text}"
                         );
 
                         var fakeEvent = new ChatMessageEventArgs(e.Sender, e.Recipient, text);
