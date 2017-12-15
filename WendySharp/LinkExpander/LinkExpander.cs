@@ -170,8 +170,8 @@ namespace WendySharp
                 return;
             }
 
-            var text = $"{Color.BLUE}@{tweet.CreatedBy.ScreenName}{Color.NORMAL} just tweeted: {FormatTweet(tweet)}";
-            
+            var text = $"{Color.BLUE}@{tweet.CreatedBy.ScreenName}{Color.NORMAL} just tweeted: {FormatTweet(tweet)}{Color.BLUE} {tweet.Url}";
+
             foreach (var channel in TwitterToChannels[tweet.CreatedBy.Id])
             {
                 Bootstrap.Client.Client.Message(channel, text);
@@ -227,7 +227,7 @@ namespace WendySharp
 
         private string FormatTweet(ITweet tweet)
         {
-            var text = tweet.FullText.Substring(tweet.DisplayTextRange[0]);
+            var text = tweet.FullText.Substring(tweet.SafeDisplayTextRange[0]);
             text = WebUtility.HtmlDecode(text).Replace('\n', ' ').Trim();
             
             if (Config.Twitter.ExpandURLs && tweet.Entities != null)
@@ -249,7 +249,8 @@ namespace WendySharp
                 }
             }
 
-            if (tweet.InReplyToScreenName != null)
+            // Checking range because some mentions still display it
+            if (tweet.SafeDisplayTextRange[0] > 0 && tweet.InReplyToScreenName != null)
             {
                 text = $"{Color.DARKGRAY}@{tweet.InReplyToScreenName}{Color.NORMAL} {text}";
             }
