@@ -156,24 +156,24 @@ namespace WendySharp
 
         private async void OnTweetReceived(object sender, MatchedTweetReceivedEventArgs matchedTweetReceivedEventArgs)
         {
+            Log.WriteDebug("Twitter", $"Streamed {matchedTweetReceivedEventArgs.Tweet.Url}: {matchedTweetReceivedEventArgs.Tweet.FullText}");
+
             // Skip replies
             if (matchedTweetReceivedEventArgs.Tweet.InReplyToStatusId != null)
             {
                 return;
             }
 
+            if (!TwitterToChannels.ContainsKey(matchedTweetReceivedEventArgs.Tweet.CreatedBy.Id))
+            {
+                return;
+            }
+            
             // TODO: Streaming api does not seem to return extended tweets
             var tweet = await TweetAsync.GetTweet(matchedTweetReceivedEventArgs.Tweet.Id);
 
             if (tweet?.FullText == null)
             {
-                return;
-            }
-
-            if (!TwitterToChannels.ContainsKey(tweet.CreatedBy.Id))
-            {
-                Log.WriteError("Twitter", $"Got streaming tweet from {tweet.CreatedBy.Id} @{tweet.CreatedBy.Name} but we don't know who that is");
-                Log.WriteError("Twitter", $"{tweet.IsRetweet} {tweet.Retweeted}");
                 return;
             }
 
