@@ -156,6 +156,12 @@ namespace WendySharp
 
         private async void OnTweetReceived(object sender, MatchedTweetReceivedEventArgs matchedTweetReceivedEventArgs)
         {
+            // Skip replies
+            if (matchedTweetReceivedEventArgs.Tweet.InReplyToStatusId != null)
+            {
+                return;
+            }
+
             // TODO: Streaming api does not seem to return extended tweets
             var tweet = await TweetAsync.GetTweet(matchedTweetReceivedEventArgs.Tweet.Id);
 
