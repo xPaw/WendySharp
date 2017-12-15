@@ -16,6 +16,7 @@ namespace WendySharp
         public string TrueNickname;
         public ModeList ModeList;
         public Whois Whois;
+        private LinkExpander LinkExpander;
 
         public BaseClient()
         {
@@ -75,7 +76,7 @@ namespace WendySharp
             new Permissions();
             new Commands(Client);
             new Spam(Client);
-            new LinkExpander(Client);
+            LinkExpander = new LinkExpander(Client);
             new FunActions(this);
             ChannelList = new Channels(Client);
             Whois = new Whois(Client);
@@ -95,6 +96,8 @@ namespace WendySharp
         {
             Client.LogOut();
             Client.Close();
+
+            LinkExpander.TwitterStream?.StopStream();
         }
 
         private void OnConnected(object sender, EventArgs e)

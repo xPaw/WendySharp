@@ -16,6 +16,8 @@ namespace WendySharp
             /// Whether or not to expand URLs in tweets.
             /// </summary>
             public bool ExpandURLs { get; set; }
+
+            public Dictionary<string, List<string>> AccountsToFollow { get; set; }
         }
 
         public class YoutubeConfig

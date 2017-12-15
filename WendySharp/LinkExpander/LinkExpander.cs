@@ -1,16 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Xml;
 using NetIrc2;
 using NetIrc2.Events;
 using NetIrc2.Parsing;
 using Newtonsoft.Json;
+using Tweetinvi;
+using Tweetinvi.Events;
+using Tweetinvi.Models;
+using Tweetinvi.Streaming;
 
 namespace WendySharp
 {
@@ -21,9 +26,13 @@ namespace WendySharp
         private readonly Regex TwitchCompiledMatch;
         private readonly FixedSizedQueue<string> LastMatches;
         private readonly LinkExpanderConfig Config;
+        private readonly Dictionary<long, List<string>> TwitterToChannels;
+        public IFilteredStream TwitterStream { get; private set; }
 
         public LinkExpander(IrcClient client)
         {
+            TwitterToChannels = new Dictionary<long, List<string>>();
+
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config", "services.json");
 
             if (!File.Exists(path))
@@ -79,6 +88,88 @@ namespace WendySharp
             TwitchCompiledMatch = new Regex(@"(^|/|\.)twitch\.tv/(?<channel>[a-zA-Z0-9_]+)", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
 
             client.GotMessage += OnMessage;
+
+            TweetinviConfig.ApplicationSettings.TweetMode = TweetMode.Extended;
+
+            // lul per thread or application credentials
+            Auth.ApplicationCredentials = new TwitterCredentials(
+                Config.Twitter.ConsumerKey,
+                Config.Twitter.ConsumerSecret,
+                Config.Twitter.AccessToken,
+                Config.Twitter.AccessSecret
+            );
+            
+            if (Config.Twitter.AccountsToFollow?.Count > 0)
+            {
+                var thread = new Thread(StartTwitterStream)
+                {
+                    Name = "TwitterStream"
+                };
+                thread.Start();
+            }
+        }
+
+        private void StartTwitterStream()
+        {
+            TwitterStream = Tweetinvi.Stream.CreateFilteredStream();
+            TwitterStream.MatchingTweetReceived += OnTweetReceived;
+
+            TwitterStream.StallWarnings = true;
+            TwitterStream.WarningFallingBehindDetected += (sender, args) =>
+            {
+                Log.WriteWarn("Twitter", $"Stream falling behind: {args.WarningMessage.PercentFull} {args.WarningMessage.Code} {args.WarningMessage.Message}");
+            };
+
+            TwitterStream.StreamStopped += (sender, args) =>
+            {
+                var ex = args.Exception;
+                var twitterDisconnectMessage = args.DisconnectMessage;
+
+                if (ex != null)
+                {
+                    Log.WriteError("Twitter", ex.ToString());
+                }
+
+                if (twitterDisconnectMessage != null)
+                {
+                    Log.WriteError("Twitter", $"Stream stopped: {twitterDisconnectMessage.Code} {twitterDisconnectMessage.Reason}");
+                }
+                
+                TwitterStream.ResumeStream(); // TODO: delays and stuff?
+            };
+
+            var twitterUsers = Tweetinvi.User.GetUsersFromScreenNames(Config.Twitter.AccountsToFollow.Keys);
+
+            foreach (var user in twitterUsers)
+            {
+                var channels = Config.Twitter.AccountsToFollow.First(u => u.Key.Equals(user.ScreenName, StringComparison.InvariantCultureIgnoreCase));
+                
+                Log.WriteInfo("Twitter", $"Following @{user.ScreenName}");
+
+                TwitterToChannels.Add(user.Id, channels.Value);
+
+                TwitterStream.AddFollow(user);
+            }
+
+            TwitterStream.StartStreamMatchingAnyCondition();
+        }
+
+        private async void OnTweetReceived(object sender, MatchedTweetReceivedEventArgs matchedTweetReceivedEventArgs)
+        {
+            // TODO: Streaming api does not seem to return extended tweets
+            var tweet = await TweetAsync.GetTweet(matchedTweetReceivedEventArgs.Tweet.Id);
+
+            if (tweet?.FullText == null)
+            {
+                return;
+            }
+
+            var text = $"{Color.BLUE}@{tweet.CreatedBy.ScreenName}{Color.NORMAL} just tweeted: {FormatTweet(tweet)}";
+            
+            foreach (var channel in TwitterToChannels[tweet.CreatedBy.Id])
+            {
+                Bootstrap.Client.Client.Message(channel, text);
+            }
         }
 
         private void OnMessage(object sender, ChatMessageEventArgs e)
@@ -93,7 +184,7 @@ namespace WendySharp
             ProcessTwitch(e);
         }
 
-        private void ProcessTwitter(ChatMessageEventArgs e)
+        private async void ProcessTwitter(ChatMessageEventArgs e)
         {
             var matches = TwitterCompiledMatch.Matches(e.Message);
 
@@ -108,84 +199,56 @@ namespace WendySharp
 
                 LastMatches.Enqueue(e.Recipient + status);
 
-                using (var webClient = new SaneWebClient())
+                var tweet = await TweetAsync.GetTweet(long.Parse(status));
+                
+                if (tweet?.FullText == null)
                 {
-                    var url = new UriBuilder("https://api.twitter.com/1.1/statuses/show.json")
+                    continue;
+                }
+                
+                var text = FormatTweet(tweet);
+
+                Bootstrap.Client.Client.Message(e.Recipient,
+                    $"{Color.OLIVE}» {Color.BLUE}{tweet.CreatedBy.Name}{Color.LIGHTGRAY} {tweet.CreatedAt.ToRelativeString()}{Color.NORMAL}: {text}"
+                );
+
+                var fakeEvent = new ChatMessageEventArgs(e.Sender, e.Recipient, text);
+
+                ProcessYoutube(fakeEvent);
+                ProcessTwitch(fakeEvent);
+            }
+        }
+
+        private string FormatTweet(ITweet tweet)
+        {
+            var text = tweet.FullText.Substring(tweet.DisplayTextRange[0]);
+            text = WebUtility.HtmlDecode(text).Replace('\n', ' ').Trim();
+            
+            if (Config.Twitter.ExpandURLs && tweet.Entities != null)
+            {
+                if (tweet.Entities.Urls != null)
+                {
+                    foreach (var entityUrl in tweet.Entities.Urls)
                     {
-                        Query = $"id={status}&tweet_mode=extended"
-                    }.Uri;
-                    var authHeader = TwitterAuthorization.GetHeader("GET", url, Config.Twitter);
+                        text = text.Replace(WebUtility.HtmlDecode(entityUrl.URL), WebUtility.HtmlDecode(entityUrl.ExpandedURL));
+                    }
+                }
 
-                    webClient.DownloadDataCompleted += (s, twitter) =>
+                if (tweet.Entities.Medias != null)
+                {
+                    foreach (var entityUrl in tweet.Entities.Medias)
                     {
-                        if (twitter.Error != null || twitter.Cancelled)
-                        {
-                            Log.WriteError("Twitter", "Exception: {0}", twitter.Error?.Message);
-                            return;
-                        }
-
-                        var response = Encoding.UTF8.GetString(twitter.Result);
-                        var tweet = JsonConvert.DeserializeObject<Twitter.TwitterStatus>(response);
-
-                        if (tweet.FullText == null)
-                        {
-                            return;
-                        }
-
-                        var text = tweet.FullText.Substring(tweet.DisplayTextRange[0]);
-                        text = WebUtility.HtmlDecode(text).Replace('\n', ' ').Trim();
-
-                        // Check if original message contains tweet text (with t.co links)
-                        if (e.Message.ToString().Contains(text))
-                        {
-                            return;
-                        }
-
-                        if (Config.Twitter.ExpandURLs && tweet.ExtendedEntities != null)
-                        {
-                            if (tweet.ExtendedEntities.Urls != null)
-                            {
-                                foreach (var entityUrl in tweet.ExtendedEntities.Urls)
-                                {
-                                    text = text.Replace(WebUtility.HtmlDecode(entityUrl.Url), WebUtility.HtmlDecode(entityUrl.ExpandedUrl));
-                                }
-                            }
-
-                            if (tweet.ExtendedEntities.Media != null)
-                            {
-                                foreach (var entityUrl in tweet.ExtendedEntities.Media)
-                                {
-                                    text = text.Replace(WebUtility.HtmlDecode(entityUrl.Url), WebUtility.HtmlDecode(entityUrl.ExpandedUrl));
-                                }
-                            }
-                        }
-
-                        DateTime date;
-
-                        if (!DateTime.TryParseExact(tweet.CreatedAt.ToString(), "ddd MMM dd HH:mm:ss zz00 yyyy", CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal, out date))
-                        {
-                            date = DateTime.UtcNow;
-                        }
-
-                        if (tweet.InReplyToScreenName != null)
-                        {
-                            text = $"{Color.DARKGRAY}@{tweet.InReplyToScreenName}{Color.NORMAL} {text}";
-                        }
-
-                        Bootstrap.Client.Client.Message(e.Recipient,
-                            $"{Color.OLIVE}» {Color.BLUE}{tweet.User.Name}{Color.LIGHTGRAY} {date.ToRelativeString()}{Color.NORMAL}: {text}"
-                        );
-
-                        var fakeEvent = new ChatMessageEventArgs(e.Sender, e.Recipient, text);
-
-                        ProcessYoutube(fakeEvent);
-                        ProcessTwitch(fakeEvent);
-                    };
-
-                    webClient.Headers.Add(HttpRequestHeader.Authorization, $"OAuth {authHeader}");
-                    webClient.DownloadDataAsync(url);
+                        text = text.Replace(WebUtility.HtmlDecode(entityUrl.URL), WebUtility.HtmlDecode(entityUrl.ExpandedURL));
+                    }
                 }
             }
+
+            if (tweet.InReplyToScreenName != null)
+            {
+                text = $"{Color.DARKGRAY}@{tweet.InReplyToScreenName}{Color.NORMAL} {text}";
+            }
+
+            return text;
         }
 
         private void ProcessYoutube(ChatMessageEventArgs e)

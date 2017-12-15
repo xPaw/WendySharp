@@ -12,7 +12,15 @@
 		"AccessSecret": "",
 		"ConsumerKey": "",
 		"ConsumerSecret": "",
-		"ExpandURLs": true
+		"ExpandURLs": true,
+		
+		"AccountsToFollow":
+		{
+			"bbcnews":
+			[
+				"#test"
+			]
+		}
 	},
 	
 	"YouTube":
