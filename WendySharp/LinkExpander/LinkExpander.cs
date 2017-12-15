@@ -170,6 +170,13 @@ namespace WendySharp
                 return;
             }
 
+            if (!TwitterToChannels.ContainsKey(tweet.CreatedBy.Id))
+            {
+                Log.WriteError("Twitter", $"Got streaming tweet from {tweet.CreatedBy.Id} @{tweet.CreatedBy.Name} but we don't know who that is");
+                Log.WriteError("Twitter", $"{tweet.IsRetweet} {tweet.Retweeted}");
+                return;
+            }
+
             var text = $"{Color.BLUE}@{tweet.CreatedBy.ScreenName}{Color.NORMAL} just tweeted: {FormatTweet(tweet)}{Color.BLUE} {tweet.Url}";
 
             foreach (var channel in TwitterToChannels[tweet.CreatedBy.Id])
