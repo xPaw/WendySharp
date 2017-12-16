@@ -6,7 +6,6 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Xml;
 using NetIrc2;
 using NetIrc2.Events;
@@ -156,13 +155,13 @@ namespace WendySharp
 
         private async void OnTweetReceived(object sender, MatchedTweetReceivedEventArgs matchedTweetReceivedEventArgs)
         {
-            Log.WriteDebug("Twitter", $"Streamed {matchedTweetReceivedEventArgs.Tweet.Url}: {matchedTweetReceivedEventArgs.Tweet.FullText}");
-
             // Skip replies
             if (matchedTweetReceivedEventArgs.Tweet.InReplyToStatusId != null)
             {
                 return;
             }
+
+            Log.WriteDebug("Twitter", $"Streamed {matchedTweetReceivedEventArgs.Tweet.Url}: {matchedTweetReceivedEventArgs.Tweet.FullText}");
 
             if (!TwitterToChannels.ContainsKey(matchedTweetReceivedEventArgs.Tweet.CreatedBy.Id))
             {
@@ -177,7 +176,7 @@ namespace WendySharp
                 return;
             }
 
-            var text = $"{Color.BLUE}@{tweet.CreatedBy.ScreenName}{Color.NORMAL} just tweeted: {FormatTweet(tweet)}{Color.BLUE} {tweet.Url}";
+            var text = $"{Color.BLUE}@{tweet.CreatedBy.ScreenName}{Color.NORMAL} tweeted {tweet.CreatedAt.ToRelativeString()}: {FormatTweet(tweet)} -{Color.DARKBLUE} {tweet.Url}";
 
             foreach (var channel in TwitterToChannels[tweet.CreatedBy.Id])
             {
@@ -220,9 +219,16 @@ namespace WendySharp
                 }
                 
                 var text = FormatTweet(tweet);
+                var reply = string.Empty;
+
+                // Checking range because some mentions still display it
+                if (tweet.SafeDisplayTextRange[0] > 0 && tweet.InReplyToScreenName != null)
+                {
+                    reply = $" in reply to {Color.BLUE}@{tweet.InReplyToScreenName}{Color.NORMAL}";
+                }
 
                 Bootstrap.Client.Client.Message(e.Recipient,
-                    $"{Color.OLIVE}» {Color.BLUE}{tweet.CreatedBy.Name}{Color.LIGHTGRAY} {tweet.CreatedAt.ToRelativeString()}{Color.NORMAL}: {text}"
+                    $"{Color.OLIVE}» {Color.BLUE}@{tweet.CreatedBy.ScreenName}{Color.LIGHTGRAY} {tweet.CreatedAt.ToRelativeString()}{Color.NORMAL}{reply}: {text}"
                 );
 
                 var fakeEvent = new ChatMessageEventArgs(e.Sender, e.Recipient, text);
@@ -243,7 +249,7 @@ namespace WendySharp
                 {
                     foreach (var entityUrl in tweet.Entities.Urls)
                     {
-                        text = text.Replace(WebUtility.HtmlDecode(entityUrl.URL), WebUtility.HtmlDecode(entityUrl.ExpandedURL));
+                        text = text.Replace(entityUrl.URL,entityUrl.ExpandedURL);
                     }
                 }
 
@@ -251,15 +257,26 @@ namespace WendySharp
                 {
                     foreach (var entityUrl in tweet.Entities.Medias)
                     {
-                        text = text.Replace(WebUtility.HtmlDecode(entityUrl.URL), WebUtility.HtmlDecode(entityUrl.ExpandedURL));
+                        text = text.Replace(entityUrl.URL, entityUrl.ExpandedURL);
                     }
                 }
-            }
+                
+                void ColorEntities<T>(List<T> entities, string color)
+                {
+                    if (entities == null)
+                    {
+                        return;
+                    }
 
-            // Checking range because some mentions still display it
-            if (tweet.SafeDisplayTextRange[0] > 0 && tweet.InReplyToScreenName != null)
-            {
-                text = $"{Color.DARKGRAY}@{tweet.InReplyToScreenName}{Color.NORMAL} {text}";
+                    foreach (var entity in entities)
+                    {
+                        text = text.Replace(entity.ToString(), $"{color}{entity.ToString()}{Color.NORMAL}", StringComparison.InvariantCultureIgnoreCase);
+                    }
+                }
+
+                ColorEntities(tweet.Entities.Hashtags, Color.DARKGRAY);
+                ColorEntities(tweet.Entities.UserMentions, Color.BLUE);
+                ColorEntities(tweet.Entities.Symbols, Color.GREEN);
             }
 
             return text;
