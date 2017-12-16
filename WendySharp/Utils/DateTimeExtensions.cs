@@ -10,7 +10,7 @@ namespace WendySharp
         /// </summary>
         public static string ToRelativeString(this DateTime dt)
         {
-            TimeSpan span = (DateTime.UtcNow - dt);
+            var span = DateTime.UtcNow - dt.ToUniversalTime();
 
             // Normalize time span
             bool future = false;
