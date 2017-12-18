@@ -156,7 +156,7 @@ namespace WendySharp
         private async void OnTweetReceived(object sender, MatchedTweetReceivedEventArgs matchedTweetReceivedEventArgs)
         {
             // Skip replies
-            if (matchedTweetReceivedEventArgs.Tweet.InReplyToStatusId != null)
+            if (matchedTweetReceivedEventArgs.Tweet.InReplyToUserId != null && !TwitterToChannels.ContainsKey(matchedTweetReceivedEventArgs.Tweet.InReplyToUserId.GetValueOrDefault()))
             {
                 return;
             }
