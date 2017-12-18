@@ -65,22 +65,23 @@ namespace WendySharp
                 return;
             }
 
+            var sender = e.Sender;
             var channel = Channels[e.Recipient];
 
-            channel.AddAction(e.Sender, e.Message);
+            channel.AddAction(sender, e.Message);
 
             var saidLines = channel.LastActions.Count(x =>
-                x.Identity == e.Sender &&
+                x.Identity == sender &&
                 x.Time.AddSeconds(channel.LinesThresholdSeconds) >= DateTime.UtcNow
             );
 
-            bool triggered = saidLines >= channel.LinesThreshold; // [triggering intensifies]
+            var triggered = saidLines >= channel.LinesThreshold;
 
             if (!triggered)
             {
                 var repeatLines = channel.LastActions.Count(x =>
-                    x.Identity == e.Sender &&
-                    x.Time.AddSeconds(channel.LinesThresholdSeconds) >= DateTime.UtcNow &&
+                    x.Identity == sender &&
+                    x.Time.AddSeconds(channel.RepeatThresholdSeconds) >= DateTime.UtcNow &&
                     x.Message == e.Message
                 );
 
@@ -94,13 +95,13 @@ namespace WendySharp
 
             channel.LastActions.Clear(); // TODO: FIX
 
-            Log.WriteInfo("Spam", "A line by '{0}' in {1} was detected as spam. Quieting for {2} seconds.", e.Sender, e.Recipient, channel.Duration);
+            Log.WriteInfo("Spam", "A line by '{0}' in {1} was detected as spam. Quieting for {2} seconds.", sender, e.Recipient, channel.Duration);
 
-            var sender = e.Sender;
+            Bootstrap.Client.Client.Notice(sender.Nickname, channel.Message);
+
             Whois.NormalizeIdentity(sender);
 
-            Bootstrap.Client.Client.Mode(e.Recipient, "+q", new IrcString[1] { sender });
-            Bootstrap.Client.Client.Notice(e.Sender.Nickname, channel.Message);
+            Bootstrap.Client.Client.Mode(e.Recipient, "+q", sender);
 
             Bootstrap.Client.ModeList.AddLateModeRequest(
                 new LateModeRequest
@@ -148,7 +149,7 @@ namespace WendySharp
 
             Whois.NormalizeIdentity(ident);
 
-            var quits = channel.AddUserPart(ident.ToString(), channelName, channel.QuitsThresholdSeconds);
+            var quits = channel.AddUserPart(ident.ToString(), channel.QuitsThresholdSeconds);
 
             if (quits < channel.QuitsThreshold)
             {
@@ -159,12 +160,12 @@ namespace WendySharp
 
             Log.WriteInfo("Spam", "'{1}' ({0}) is spamming joins/quits in {2}. Redirecting for {3} minutes.", nickname, ident, channelName, channel.QuitsBanMinutes);
 
-            Bootstrap.Client.Client.Mode(channelName, "+b", new IrcString[1] { ident + "$" + Bootstrap.Client.Settings.RedirectChannel });
+            Bootstrap.Client.Client.Mode(channelName, "+b", ident + "$" + Bootstrap.Client.Settings.RedirectChannel);
 
             // In case they manage to come back before ban takes place
             Bootstrap.Client.Client.Kick(nickname, channelName, string.Format("Fix your connection. Banned for {0} minutes", channel.QuitsBanMinutes));
 
-            Bootstrap.Client.Client.Notice(nickname, string.Format("You have been from {0} for {1} minutes for rapidly rejoining the channel.", channelName, channel.QuitsBanMinutes));
+            Bootstrap.Client.Client.Notice(nickname, string.Format("You have been banned from {0} for {1} minutes for rapidly rejoining the channel.", channelName, channel.QuitsBanMinutes));
 
             Bootstrap.Client.ModeList.AddLateModeRequest(
                 new LateModeRequest
@@ -180,10 +181,8 @@ namespace WendySharp
 
         private static bool IsWhitelisted(IrcIdentity ident, string channel)
         {
-            User user;
-
             // If this user has a "spam.whitelist" permission, allow them to spam
-            return Users.TryGetUser(ident, out user) && user.HasPermission(channel, "spam.whitelist");
+            return Users.TryGetUser(ident, out var user) && user.HasPermission(channel, "spam.whitelist");
         }
     }
 }

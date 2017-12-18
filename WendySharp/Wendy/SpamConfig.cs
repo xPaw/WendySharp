@@ -56,7 +56,7 @@ namespace WendySharp
             );
         }
 
-        public byte AddUserPart(string sender, string channel, uint thresholdSeconds)
+        public byte AddUserPart(string sender, uint thresholdSeconds)
         {
             if (!Users.ContainsKey(sender))
             {
