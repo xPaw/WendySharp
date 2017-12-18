@@ -17,7 +17,7 @@ namespace WendySharp
 
                 try
                 {
-                    var users = JsonConvert.DeserializeObject<List<User>>(data);
+                    var users = JsonConvert.DeserializeObject<List<User>>(data, new JsonSerializerSettings { MissingMemberHandling = MissingMemberHandling.Error });
 
                     foreach (var user in users)
                     {

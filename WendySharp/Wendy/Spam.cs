@@ -32,7 +32,7 @@ namespace WendySharp
 
                 try
                 {
-                    Channels = JsonConvert.DeserializeObject<Dictionary<string, SpamConfig>>(data);
+                    Channels = JsonConvert.DeserializeObject<Dictionary<string, SpamConfig>>(data, new JsonSerializerSettings { MissingMemberHandling = MissingMemberHandling.Error });
 
                     foreach(var channel in Channels)
                     {

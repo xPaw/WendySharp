@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using NetIrc2;
+using Newtonsoft.Json;
 
 namespace WendySharp
 {
@@ -25,15 +26,34 @@ namespace WendySharp
 
     class SpamConfig
     {
+        [JsonProperty(Required = Required.Always)]
         public string Message { get; set; }
+
+        [JsonProperty(Required = Required.Always)]
         public uint Duration { get; set; }
+
+        [JsonProperty(Required = Required.Always)]
         public uint LinesThreshold { get; set; }
+
+        [JsonProperty(Required = Required.Always)]
         public uint LinesThresholdSeconds { get; set; }
+
+        [JsonProperty(Required = Required.Always)]
         public uint RepeatThreshold { get; set; }
+
+        [JsonProperty(Required = Required.Always)]
         public uint RepeatThresholdSeconds { get; set; }
+
+        [JsonProperty(Required = Required.Always)]
         public uint QuitsThreshold { get; set; }
+
+        [JsonProperty(Required = Required.Always)]
         public uint QuitsThresholdSeconds { get; set; }
+
+        [JsonProperty(Required = Required.Always)]
         public uint QuitsBanMinutes { get; set; }
+
+        [JsonProperty(Required = Required.Always)]
         public uint UserMentionsInOneMessage { get; set; }
 
         public readonly FixedSizedQueue<ChatAction> LastActions;

@@ -9,8 +9,11 @@ namespace WendySharp
 {
     class User
     {
-        public string Identity = null; // Assigned from JSON
-        public Dictionary<string, List<string>> Permissions; // Assigned from JSON
+        [JsonProperty(Required = Required.Always)]
+        public string Identity = null;
+        
+        [JsonProperty(Required = Required.Always)]
+        public Dictionary<string, List<string>> Permissions;
         public Dictionary<string, Regex> CompiledPermissionsMatch;
 
         public User()

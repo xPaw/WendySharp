@@ -28,7 +28,7 @@ namespace WendySharp
 
                 try
                 {
-                    Settings = JsonConvert.DeserializeObject<Settings>(data);
+                    Settings = JsonConvert.DeserializeObject<Settings>(data, new JsonSerializerSettings { MissingMemberHandling = MissingMemberHandling.Error });
 
                     if (!IrcValidation.IsNickname(Settings.Nickname))
                     {

@@ -45,7 +45,7 @@ namespace WendySharp
 
             try
             {
-                Config = JsonConvert.DeserializeObject<LinkExpanderConfig>(data);
+                Config = JsonConvert.DeserializeObject<LinkExpanderConfig>(data, new JsonSerializerSettings { MissingMemberHandling = MissingMemberHandling.Error });
 
                 if (Config.Twitter.AccessSecret == null ||
                     Config.Twitter.AccessToken == null ||
@@ -98,7 +98,7 @@ namespace WendySharp
                 Config.Twitter.AccessSecret
             );
             
-            if (Config.Twitter.AccountsToFollow?.Count > 0)
+            if (Config.Twitter.AccountsToFollow.Count > 0)
             {
                 var thread = new Thread(StartTwitterStream)
                 {
