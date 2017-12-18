@@ -10,11 +10,11 @@ namespace WendySharp
     class User
     {
         [JsonProperty(Required = Required.Always)]
-        public string Identity = null;
+        public string Identity;
         
         [JsonProperty(Required = Required.Always)]
         public Dictionary<string, List<string>> Permissions;
-        public Dictionary<string, Regex> CompiledPermissionsMatch;
+        private readonly Dictionary<string, Regex> CompiledPermissionsMatch;
 
         public User()
         {
@@ -46,7 +46,7 @@ namespace WendySharp
                     throw new JsonException(string.Format("Permission list for '{0}' in channel '{1}' is empty.", Identity, channel.Key));
                 }
 
-                string pattern = @"^(" + string.Join("|", channel.Value.Select(x => Regex.Escape(x))).Replace(@"\*", @".*") + @")$";
+                var pattern = @"^(" + string.Join("|", channel.Value.Select(Regex.Escape)).Replace(@"\*", @".*") + @")$";
 
                 CompiledPermissionsMatch.Add(channel.Key, new Regex(pattern, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture));
             }
@@ -59,12 +59,7 @@ namespace WendySharp
                 return true;
             }
 
-            if (channel != "*" && HasPermission("*", permission))
-            {
-                return true;
-            }
-
-            return false;
+            return channel != "*" && HasPermission("*", permission);
         }
     }
 }

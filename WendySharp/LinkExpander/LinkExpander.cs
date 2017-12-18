@@ -242,42 +242,44 @@ namespace WendySharp
         {
             var text = tweet.FullText.Substring(tweet.SafeDisplayTextRange[0]);
             text = WebUtility.HtmlDecode(text).Replace('\n', ' ').Trim();
-            
-            if (Config.Twitter.ExpandURLs && tweet.Entities != null)
+
+            if (!Config.Twitter.ExpandURLs || tweet.Entities == null)
             {
-                if (tweet.Entities.Urls != null)
-                {
-                    foreach (var entityUrl in tweet.Entities.Urls)
-                    {
-                        text = text.Replace(entityUrl.URL,entityUrl.ExpandedURL);
-                    }
-                }
-
-                if (tweet.Entities.Medias != null)
-                {
-                    foreach (var entityUrl in tweet.Entities.Medias)
-                    {
-                        text = text.Replace(entityUrl.URL, entityUrl.ExpandedURL);
-                    }
-                }
-                
-                void ColorEntities<T>(List<T> entities, string color)
-                {
-                    if (entities == null)
-                    {
-                        return;
-                    }
-
-                    foreach (var entity in entities)
-                    {
-                        text = text.Replace(entity.ToString(), $"{color}{entity.ToString()}{Color.NORMAL}", StringComparison.InvariantCultureIgnoreCase);
-                    }
-                }
-
-                ColorEntities(tweet.Entities.Hashtags, Color.DARKGRAY);
-                ColorEntities(tweet.Entities.UserMentions, Color.BLUE);
-                ColorEntities(tweet.Entities.Symbols, Color.GREEN);
+                return text;
             }
+
+            if (tweet.Entities.Urls != null)
+            {
+                foreach (var entityUrl in tweet.Entities.Urls)
+                {
+                    text = text.Replace(entityUrl.URL,entityUrl.ExpandedURL);
+                }
+            }
+
+            if (tweet.Entities.Medias != null)
+            {
+                foreach (var entityUrl in tweet.Entities.Medias)
+                {
+                    text = text.Replace(entityUrl.URL, entityUrl.ExpandedURL);
+                }
+            }
+                
+            void ColorEntities<T>(List<T> entities, string color)
+            {
+                if (entities == null)
+                {
+                    return;
+                }
+
+                foreach (var entity in entities)
+                {
+                    text = text.Replace(entity.ToString(), $"{color}{entity.ToString()}{Color.NORMAL}", StringComparison.InvariantCultureIgnoreCase);
+                }
+            }
+
+            ColorEntities(tweet.Entities.Hashtags, Color.DARKGRAY);
+            ColorEntities(tweet.Entities.UserMentions, Color.BLUE);
+            ColorEntities(tweet.Entities.Symbols, Color.GREEN);
 
             return text;
         }

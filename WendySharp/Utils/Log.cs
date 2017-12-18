@@ -15,13 +15,13 @@ namespace WendySharp
             ERROR
         }
 
-        private static object logLock = new object();
+        private static readonly object logLock = new object();
 
         static Log()
         {
             try
             {
-                string logsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, LOG_DIRECTORY);
+                var logsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, LOG_DIRECTORY);
                 Directory.CreateDirectory(logsDir);
             }
             catch (Exception ex)
@@ -52,14 +52,7 @@ namespace WendySharp
 
         private static void WriteLine(Category category, string component, string format, params object[] args)
         {
-            string logLine = string.Format(
-                "{0} [{1}] {2}: {3}{4}",
-                DateTime.Now.ToLongTimeString(),
-                category,
-                component,
-                string.Format(format, args),
-                Environment.NewLine
-            );
+            var logLine = $"{DateTime.Now.ToLongTimeString()} [{category}] {component}: {string.Format(format, args)}{Environment.NewLine}";
 
             lock (logLock)
             {
@@ -96,7 +89,7 @@ namespace WendySharp
 
         private static string GetLogFile()
         {
-            string logFile = string.Format("{0}.log", DateTime.Now.ToString("MMMM_dd_yyyy"));
+            var logFile = string.Format("{0}.log", DateTime.Now.ToString("MMMM_dd_yyyy"));
 
             return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, LOG_DIRECTORY, logFile);
         }

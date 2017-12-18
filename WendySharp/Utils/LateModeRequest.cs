@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Timers;
-using NetIrc2;
 
 namespace WendySharp
 {
@@ -37,7 +36,7 @@ namespace WendySharp
 
             var time = Time.Subtract(DateTime.UtcNow).TotalMilliseconds;
 
-            if (time > Int32.MaxValue)
+            if (time > int.MaxValue)
             {
                 Log.WriteError("Late mode", "TODO: Timers can't have a big interval, timer for {0} not started.", Recipient);
 
@@ -62,14 +61,14 @@ namespace WendySharp
             }
         }
 
-        public void Execute()
+        private void Execute()
         {
             if (!Bootstrap.Client.Client.IsConnected)
             {
                 return;
             }
 
-            Bootstrap.Client.Client.Mode(Channel, Mode, new IrcString[1] { Recipient });
+            Bootstrap.Client.Client.Mode(Channel, Mode, Recipient);
         }
 
         private void StartNormalTimer()

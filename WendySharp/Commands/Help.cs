@@ -27,12 +27,12 @@ namespace WendySharp
                 return;
             }
 
-            User user;
-            Users.TryGetUser(command.Event.Sender, out user);
+            Users.TryGetUser(command.Event.Sender, out var user);
 
             var commands = Reference
                 .GetRegisteredCommands()
-                .Where(x => x.Permission == null || (user != null && user.HasPermission(command.Event.Recipient, x.Permission)));
+                .Where(x => x.Permission == null || (user != null && user.HasPermission(command.Event.Recipient, x.Permission)))
+                .ToList();
 
             if (!commands.Any())
             {

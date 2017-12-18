@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using NetIrc2.Parsing;
 
 namespace WendySharp
 {

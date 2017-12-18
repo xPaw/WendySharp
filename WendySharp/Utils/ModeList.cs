@@ -30,7 +30,7 @@ namespace WendySharp
             client.GotMode += OnModeChange;
         }
 
-        public void RecheckLateModes()
+        private void RecheckLateModes()
         {
             foreach (var mode in LateModes)
             {
@@ -61,7 +61,7 @@ namespace WendySharp
             SaveToFile();
         }
 
-        public void RemoveLateModeRequest(LateModeRequest request)
+        private void RemoveLateModeRequest(LateModeRequest request)
         {
             request.Dispose();
 
@@ -80,26 +80,25 @@ namespace WendySharp
 
             var command = e.Command.ToString();
             var parameters = e.GetParameterList();
-            char currentState = ' ';
-            int index = 0;
-            string ident;
+            var currentState = ' ';
+            var index = 0;
 
-            for (int i = 0; i < command.Length; i++)
+            foreach (var currentChar in command)
             {
-                if (command[i] == '+' || command[i] == '-')
+                if (currentChar == '+' || currentChar == '-')
                 {
-                    currentState = command[i];
+                    currentState = currentChar;
 
                     continue;
                 }
 
-                ident = parameters[index++];
+                string ident = parameters[index++];
 
-                Log.WriteDebug("Mode", "{0}{1} on {2}", currentState, command[i], ident);
+                Log.WriteDebug("Mode", "{0}{1} on {2}", currentState, currentChar, ident);
 
                 var channel = Bootstrap.Client.ChannelList.GetChannel(e.Recipient);
 
-                if (command[i] == 'o')
+                if (currentChar == 'o')
                 {
                     if (currentState == '+')
                     {
@@ -116,10 +115,10 @@ namespace WendySharp
                         channel.Users[ident] = 0;
                     }
                 }
-                else if (command[i] == 'b')
+                else if (currentChar == 'b')
                 {
                     // Drop channel forward
-                    var temp = ident.Split(new char[] { '$' }, 2);
+                    var temp = ident.Split(new[] { '$' }, 2);
 
                     if (temp.Length > 1)
                     {
@@ -127,11 +126,11 @@ namespace WendySharp
                     }
                 }
 
-                var mode = Find(e.Recipient, ident, string.Format("{0}{1}", currentState, command[i]));
+                var mode = Find(e.Recipient, ident, string.Format("{0}{1}", currentState, currentChar));
 
                 if (mode != null)
                 {
-                    Log.WriteInfo("Mode", "'{0}' in {1} was set {2}{3}, removing our late mode request", ident, e.Recipient, currentState, command[i]);
+                    Log.WriteInfo("Mode", "'{0}' in {1} was set {2}{3}, removing our late mode request", ident, e.Recipient, currentState, currentChar);
 
                     RemoveLateModeRequest(mode);
                 }

@@ -24,9 +24,8 @@ namespace WendySharp
         public override void OnCommand(CommandArguments command)
         {
             var nick = command.Arguments.Groups["nick"].Value;
-            IrcIdentity ident;
 
-            if (!IrcIdentity.TryParse(nick, out ident))
+            if (!IrcIdentity.TryParse(nick, out var ident))
             {
                 command.Reply("Invalid identity.");
 

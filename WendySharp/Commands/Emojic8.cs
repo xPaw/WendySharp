@@ -532,7 +532,7 @@ namespace WendySharp
         {
             var random = new Random(command.Arguments.Groups["text"].Value.Trim().GetHashCode());
             var randomStrLength = random.Next(1, 3); // Math.floor(min + Math.random() * (max - min))
-            string answer = "" + Color.NORMAL;
+            var answer = "" + Color.NORMAL;
 
             for (var i = 0; i < randomStrLength; i++)
             {

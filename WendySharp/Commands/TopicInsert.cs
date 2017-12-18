@@ -1,6 +1,4 @@
-﻿using System;
-using NetIrc2;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace WendySharp
 {

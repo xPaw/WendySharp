@@ -18,12 +18,12 @@ namespace WendySharp
         /// put a $ at the end of this if given, otherwise any trailing string will
         /// still match.
         /// </summary>
-        public string ArgumentMatch { get; protected set; }
+        protected string ArgumentMatch { private get; set; }
 
         /// <summary>
         /// If specified, is the usage text for the command's arguments.
         /// For example, if the command takes two requried arguments and one optional
-        /// argument, this should be set to something like "<arg1> <arg2> [arg3]"
+        /// argument, this should be set to something like "&lt;arg1> &lt;arg2> [arg3]"
         /// </summary>
         public string Usage { get; protected set; }
 

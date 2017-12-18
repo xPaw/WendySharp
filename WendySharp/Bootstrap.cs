@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Threading;
-using System.IO;
 
 namespace WendySharp
 {
-    class Bootstrap
+    static class Bootstrap
     {
         public static ManualResetEvent ResetEvent { get; private set; }
         public static BaseClient Client { get; private set; }
 
-        public static void Main(string[] args)
+        public static void Main()
         {
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
@@ -33,7 +32,7 @@ namespace WendySharp
         {
             var e = args.ExceptionObject as Exception;
 
-            Log.WriteError("Unhandled Exception", "{0}\n{1}", e.Message, e.StackTrace);
+            Log.WriteError("Unhandled Exception", "{0}\n{1}", e?.Message, e?.StackTrace);
 
             if (args.IsTerminating)
             {

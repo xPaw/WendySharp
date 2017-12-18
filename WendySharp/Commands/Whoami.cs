@@ -21,9 +21,8 @@ namespace WendySharp
         public override void OnCommand(CommandArguments command)
         {
             var nick = command.Arguments.Groups["nick"].Value;
-            IrcIdentity ident;
 
-            if (nick.Length == 0 || !IrcIdentity.TryParse(nick, out ident))
+            if (nick.Length == 0 || !IrcIdentity.TryParse(nick, out var ident))
             {
                 ident = command.Event.Sender;
             }
@@ -47,9 +46,7 @@ namespace WendySharp
                         return;
                     }
 
-                    User user;
-
-                    if (!Users.TryGetUser(ident, out user))
+                    if (!Users.TryGetUser(ident, out var user))
                     {
                         command.Reply("This user has no permissions.");
 

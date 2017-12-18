@@ -7,9 +7,7 @@ namespace WendySharp
         /// <exception cref="ArgumentException">Invalid input.</exception>
         public static DateTime Parse(string input, string inputUnit)
         {
-            int i;
-
-            if (!int.TryParse(input, out i) || i <= 0)
+            if (!int.TryParse(input, out var i) || i <= 0)
             {
                 throw new ArgumentException("Duration can not be zero.");
             }

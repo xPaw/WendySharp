@@ -9,7 +9,7 @@ namespace WendySharp
     {
         public IrcIdentity Identity;
         public IrcString Account;
-        public List<Action<WhoisData>> Callbacks;
+        public readonly List<Action<WhoisData>> Callbacks;
 
         public WhoisData()
         {
@@ -45,7 +45,7 @@ namespace WendySharp
             }
         }
 
-        public void QueryAccount(IrcIdentity ident, Action<WhoisData> callback)
+        private void QueryAccount(IrcIdentity ident, Action<WhoisData> callback)
         {
             WhoisData data;
 
@@ -67,7 +67,7 @@ namespace WendySharp
             Bootstrap.Client.Client.Whois(ident.Nickname);
         }
 
-        public static IrcIdentity NormalizeIdentity(IrcIdentity ident)
+        public static void NormalizeIdentity(IrcIdentity ident)
         {
             if (ident.Username == null)
             {
@@ -106,8 +106,6 @@ namespace WendySharp
             {
                 ident.Nickname = "*";
             }
-
-            return ident;
         }
 
         private void OnIrcStatement(object sender, IrcUnknownStatementEventArgs e)
@@ -115,7 +113,7 @@ namespace WendySharp
             var @params = e.Data.Parameters;
             IrcString nickname;
 
-            switch ((string)e.Data.Command)
+            switch (e.Data.Command)
             {
                 case "311":
                     if (@params.Count >= 4)
@@ -141,11 +139,10 @@ namespace WendySharp
                     break;
 
                 case "318":
-                    WhoisData data;
 
                     nickname = @params[1];
 
-                    if (!Pending.TryGetValue(nickname, out data))
+                    if (!Pending.TryGetValue(nickname, out var data))
                     {
                         break;
                     }
@@ -163,23 +160,23 @@ namespace WendySharp
 
         private void OnIrcError(object sender, IrcErrorEventArgs e)
         {
-            if (e.Error == IrcReplyCode.NoSuchNickname)
+            if (e.Error != IrcReplyCode.NoSuchNickname)
             {
-                var nickname = e.Data.Parameters[1];
+                return;
+            }
 
-                WhoisData data;
+            var nickname = e.Data.Parameters[1];
 
-                if (!Pending.TryGetValue(nickname, out data))
-                {
-                    return;
-                }
+            if (!Pending.TryGetValue(nickname, out var data))
+            {
+                return;
+            }
 
-                Pending.Remove(nickname);
+            Pending.Remove(nickname);
 
-                foreach (var callback in data.Callbacks)
-                {
-                    callback.Invoke(data);
-                }
+            foreach (var callback in data.Callbacks)
+            {
+                callback.Invoke(data);
             }
         }
     }

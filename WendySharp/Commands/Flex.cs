@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using NetIrc2;
 
 namespace WendySharp
 {
@@ -41,7 +40,7 @@ namespace WendySharp
                 }
             }
 
-            Bootstrap.Client.Client.Mode(command.Event.Recipient, "+o", new IrcString[1] { command.Event.Sender.Nickname });
+            Bootstrap.Client.Client.Mode(command.Event.Recipient, "+o", command.Event.Sender.Nickname);
 
             Bootstrap.Client.ModeList.AddLateModeRequest(
                 new LateModeRequest

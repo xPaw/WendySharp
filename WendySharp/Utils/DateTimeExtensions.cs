@@ -13,7 +13,7 @@ namespace WendySharp
             var span = DateTime.UtcNow - dt.ToUniversalTime();
 
             // Normalize time span
-            bool future = false;
+            var future = false;
             if (span.TotalSeconds < 0)
             {
                 // In the future
@@ -22,47 +22,47 @@ namespace WendySharp
             }
 
             // Test for Now
-            double totalSeconds = span.TotalSeconds;
+            var totalSeconds = span.TotalSeconds;
             if (totalSeconds < 0.9)
             {
                 return "now";
             }
 
             // Date/time near current date/time
-            string format = (future) ? "in {0} {1}" : "{0} {1} ago";
+            var format = future ? "in {0} {1}" : "{0} {1} ago";
             if (totalSeconds < 55)
             {
                 // Seconds
-                int seconds = Math.Max(1, span.Seconds);
-                return String.Format(format, seconds,
-                    (seconds == 1) ? "second" : "seconds");
+                var seconds = Math.Max(1, span.Seconds);
+                return string.Format(format, seconds,
+                    seconds == 1 ? "second" : "seconds");
             }
 
-            if (totalSeconds < (55 * 60))
+            if (totalSeconds < 55 * 60)
             {
                 // Minutes
-                int minutes = Math.Max(1, span.Minutes);
-                return String.Format(format, minutes,
-                    (minutes == 1) ? "minute" : "minutes");
+                var minutes = Math.Max(1, span.Minutes);
+                return string.Format(format, minutes,
+                    minutes == 1 ? "minute" : "minutes");
             }
-            if (totalSeconds < (24 * 60 * 60))
+            if (totalSeconds < 24 * 60 * 60)
             {
                 // Hours
-                int hours = Math.Max(1, span.Hours);
-                return String.Format(format, hours,
-                    (hours == 1) ? "hour" : "hours");
+                var hours = Math.Max(1, span.Hours);
+                return string.Format(format, hours,
+                    hours == 1 ? "hour" : "hours");
             }
 
             // Format both date and time
-            if (totalSeconds < (48 * 60 * 60))
+            if (totalSeconds < 48 * 60 * 60)
             {
                 // 1 Day
-                format = (future) ? "tomorrow" : "yesterday";
+                format = future ? "tomorrow" : "yesterday";
             }
-            else if (totalSeconds < (3 * 24 * 60 * 60))
+            else if (totalSeconds < 3 * 24 * 60 * 60)
             {
                 // 2 Days
-                format = String.Format(format, 2, "days");
+                format = string.Format(format, 2, "days");
             }
             else if (dt.Year == DateTime.Now.Year)
             {
@@ -75,7 +75,7 @@ namespace WendySharp
             }
 
             // Add time
-            return String.Format("{0} at {1:HH:mm}", format, dt);
+            return string.Format("{0} at {1:HH:mm}", format, dt);
         }
     }
 }

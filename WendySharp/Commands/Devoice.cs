@@ -32,11 +32,10 @@ namespace WendySharp
             else
             {
                 var nicksTemp = input.Split(' ');
-                IrcIdentity ident;
 
                 foreach (var nick in nicksTemp)
                 {
-                    if (!IrcIdentity.TryParse(nick, out ident))
+                    if (!IrcIdentity.TryParse(nick, out var ident))
                     {
                         command.Reply("'{0}' is a invalid indentity.", nick);
 

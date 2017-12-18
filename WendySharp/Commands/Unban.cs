@@ -24,9 +24,8 @@ namespace WendySharp
         public override void OnCommand(CommandArguments command)
         {
             var nick = command.Arguments.Groups["nick"].Value;
-            IrcIdentity ident;
 
-            if (!IrcIdentity.TryParse(nick, out ident))
+            if (!IrcIdentity.TryParse(nick, out var ident))
             {
                 command.Reply("Invalid identity.");
 
@@ -75,7 +74,7 @@ namespace WendySharp
 
                     Log.WriteInfo("Unban", "'{0}' unbanned '{1}' in {2}", command.Event.Sender, ident, command.Event.Recipient);
 
-                    Bootstrap.Client.Client.Mode(command.Event.Recipient, isQuiet ? "-q" : "-b", new IrcString[1] { ident });
+                    Bootstrap.Client.Client.Mode(command.Event.Recipient, isQuiet ? "-q" : "-b", ident);
 
                     command.ReplyAsNotice("{0} {1}", isQuiet ? "Unmuted" : "Unbanned", ident);
                 }

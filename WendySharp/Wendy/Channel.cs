@@ -52,7 +52,7 @@ namespace WendySharp
                     return;
                 }
 
-                byte status = Users[oldName];
+                var status = Users[oldName];
 
                 RemoveUser(oldName);
                 Users[newName] = status;

@@ -1,6 +1,5 @@
 ﻿using System.Text.RegularExpressions;
 using NetIrc2.Events;
-using NetIrc2.Parsing;
 
 namespace WendySharp
 {

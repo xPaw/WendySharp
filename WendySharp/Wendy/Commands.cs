@@ -51,7 +51,7 @@ namespace WendySharp
                 cmd.Compile();
             }
 
-            string pattern = @"^(?:" + string.Join("|", RegisteredCommands.Select(x => string.Format("({0})", string.Join("|", x.Match)))) + @")(?: |$)";
+            var pattern = @"^(?:" + string.Join("|", RegisteredCommands.Select(x => string.Format("({0})", string.Join("|", x.Match)))) + @")(?: |$)";
 
             CompiledCommandMatch = new Regex(pattern, RegexOptions.Compiled | RegexOptions.CultureInvariant);
         }
@@ -108,7 +108,7 @@ namespace WendySharp
                 return;
             }
 
-            int i = 1;
+            var i = 1;
 
             while (match.Groups[i].Value.Length == 0)
             {
@@ -128,10 +128,8 @@ namespace WendySharp
             
             if (command.Permission != null)
             {
-                User user;
-
                 // If there is no such user, don't pass
-                if (!Users.TryGetUser(e.Sender, out user))
+                if (!Users.TryGetUser(e.Sender, out var user))
                 {
                     Log.WriteDebug("CommandHandler", "'{0}' is not a user I know of, can't perform '{1}' ({2})", e.Sender, arguments.MatchedCommand, command.Permission);
 

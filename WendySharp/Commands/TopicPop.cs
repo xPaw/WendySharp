@@ -22,16 +22,15 @@ namespace WendySharp
             var channel = Bootstrap.Client.ChannelList.GetChannel(command.Event.Recipient);
 
             var topic = channel.Topic.Split(new [] { " | " }, StringSplitOptions.None);
-            var count = topic.Count();
-
-            if (count < 2)
+            
+            if (topic.Length < 2)
             {
                 command.Reply("Not enough parts in the topic to pop anything.");
 
                 return;
             }
 
-            var newTopic = string.Join(" | ", topic.Take(count - 1)).Trim();
+            var newTopic = string.Join(" | ", topic.Take(topic.Length - 1)).Trim();
 
             if (newTopic == channel.Topic)
             {

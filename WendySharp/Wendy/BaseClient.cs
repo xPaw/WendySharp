@@ -15,8 +15,8 @@ namespace WendySharp
         public readonly Channels ChannelList;
         public string TrueNickname;
         public ModeList ModeList;
-        public Whois Whois;
-        private LinkExpander LinkExpander;
+        public readonly Whois Whois;
+        private readonly LinkExpander LinkExpander;
 
         public BaseClient()
         {

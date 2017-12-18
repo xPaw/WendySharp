@@ -26,9 +26,8 @@ namespace WendySharp
         public override void OnCommand(CommandArguments command)
         {
             var nick = command.Arguments.Groups["nick"].Value;
-            IrcIdentity ident;
 
-            if (!IrcIdentity.TryParse(nick, out ident))
+            if (!IrcIdentity.TryParse(nick, out var ident))
             {
                 command.Reply("Invalid identity.");
 
@@ -36,7 +35,7 @@ namespace WendySharp
             }
 
             var duration = command.Arguments.Groups["duration"].Value;
-            DateTime durationTime = default(DateTime);
+            var durationTime = default(DateTime);
 
             if (duration.Length > 0)
             {
@@ -124,7 +123,7 @@ namespace WendySharp
                         reason = string.Format("Banned by {0}", command.Event.Sender.Nickname);
                     }
 
-                    Bootstrap.Client.Client.Mode(command.Event.Recipient, isQuiet ? "+q" : "+b", new IrcString[1] { ident });
+                    Bootstrap.Client.Client.Mode(command.Event.Recipient, isQuiet ? "+q" : "+b", ident);
 
                     if (!isQuiet && channel.HasUser(nickname))
                     {

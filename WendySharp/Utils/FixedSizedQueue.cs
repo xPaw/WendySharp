@@ -10,9 +10,9 @@ namespace WendySharp
         {
             base.Enqueue(obj);
 
-            while (base.Count > Limit)
+            while (Count > Limit)
             {
-                base.Dequeue();
+                Dequeue();
             }
         }
     }

@@ -23,7 +23,7 @@ namespace WendySharp
             // TODO: implement mask search
             //var mask = command.Arguments.Groups["mask"].Value;
 
-            var modes = Bootstrap.Client.ModeList.GetModes().Where(x => x.Time != default(DateTime)).OrderBy(x => x.Time);
+            var modes = Bootstrap.Client.ModeList.GetModes().Where(x => x.Time != default(DateTime)).OrderBy(x => x.Time).ToList();
 
             if (!modes.Any())
             {
