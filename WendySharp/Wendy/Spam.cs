@@ -79,27 +79,30 @@ namespace WendySharp
             }
             else
             {
-                var saidLines = channel.LastActions.Count(x =>
-                    x.Identity == sender &&
-                    x.Time.AddSeconds(channel.LinesThresholdSeconds) >= DateTime.UtcNow
-                );
+                var saidLines = 0;
+                var repeatLines = 0;
 
-                var triggered = saidLines >= channel.LinesThreshold;
-
-                if (!triggered)
+                foreach (var message in channel.LastActions)
                 {
-                    var repeatLines = channel.LastActions.Count(x =>
-                        x.Identity == sender &&
-                        x.Time.AddSeconds(channel.RepeatThresholdSeconds) >= DateTime.UtcNow &&
-                        x.Message == e.Message
-                    );
-
-                    triggered = repeatLines >= channel.RepeatThreshold;
-
-                    if (!triggered)
+                    if (message.Identity != sender)
                     {
-                        return;
+                        continue;
                     }
+
+                    if (message.Time.AddSeconds(channel.LinesThresholdSeconds) >= DateTime.UtcNow)
+                    {
+                        saidLines++;
+                    }
+                    
+                    if (message.Time.AddSeconds(channel.RepeatThresholdSeconds) >= DateTime.UtcNow && message.Message == e.Message)
+                    {
+                        repeatLines++;
+                    }
+                }
+
+                if (saidLines < channel.LinesThreshold && repeatLines < channel.RepeatThreshold)
+                {
+                    return;
                 }
 
                 channel.LastActions.Clear(); // TODO: FIX
