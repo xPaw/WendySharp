@@ -34,6 +34,7 @@ namespace WendySharp
         public uint QuitsThreshold { get; set; }
         public uint QuitsThresholdSeconds { get; set; }
         public uint QuitsBanMinutes { get; set; }
+        public uint UserMentionsInOneMessage { get; set; }
 
         public readonly FixedSizedQueue<ChatAction> LastActions;
         private readonly Dictionary<string, UserAction> Users;

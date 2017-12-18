@@ -7,25 +7,12 @@ namespace WendySharp
     {
         public const byte Operator = (byte)'@';
 
-        public string Name { get; private set; }
+        public string Name { get; }
         public string Topic { get; set; }
-        public Dictionary<string, byte> Users { get; private set; }
+        public Dictionary<string, byte> Users { get; }
 
-        public bool WeAreOpped
-        {
-            get
-            {
-                return Users[Bootstrap.Client.TrueNickname] == Operator;
-            }
-        }
-
-        public bool HasChanServ
-        {
-            get
-            {
-                return Bootstrap.Client.Settings.UsesChanServ && HasUser("ChanServ");
-            }
-        }
+        public bool WeAreOpped => Users[Bootstrap.Client.TrueNickname] == Operator;
+        public bool HasChanServ => Bootstrap.Client.Settings.UsesChanServ && HasUser("ChanServ");
 
         public Channel(string name)
         {

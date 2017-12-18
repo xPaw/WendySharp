@@ -70,35 +70,45 @@ namespace WendySharp
 
             channel.AddAction(sender, e.Message);
 
-            var saidLines = channel.LastActions.Count(x =>
-                x.Identity == sender &&
-                x.Time.AddSeconds(channel.LinesThresholdSeconds) >= DateTime.UtcNow
-            );
+            var actualChannel = Bootstrap.Client.ChannelList.GetChannel(e.Recipient);
+            var mentions = e.Message.Split((byte)' ').Count(word => word.Length > 2 && actualChannel.HasUser(word));
 
-            var triggered = saidLines >= channel.LinesThreshold;
-
-            if (!triggered)
+            if (mentions >= channel.UserMentionsInOneMessage)
             {
-                var repeatLines = channel.LastActions.Count(x =>
+                Bootstrap.Client.Client.Notice(sender.Nickname, "Don't mention too many users at once.");
+            }
+            else
+            {
+                var saidLines = channel.LastActions.Count(x =>
                     x.Identity == sender &&
-                    x.Time.AddSeconds(channel.RepeatThresholdSeconds) >= DateTime.UtcNow &&
-                    x.Message == e.Message
+                    x.Time.AddSeconds(channel.LinesThresholdSeconds) >= DateTime.UtcNow
                 );
 
-                triggered = repeatLines >= channel.RepeatThreshold;
+                var triggered = saidLines >= channel.LinesThreshold;
 
                 if (!triggered)
                 {
-                    return;
+                    var repeatLines = channel.LastActions.Count(x =>
+                        x.Identity == sender &&
+                        x.Time.AddSeconds(channel.RepeatThresholdSeconds) >= DateTime.UtcNow &&
+                        x.Message == e.Message
+                    );
+
+                    triggered = repeatLines >= channel.RepeatThreshold;
+
+                    if (!triggered)
+                    {
+                        return;
+                    }
                 }
+
+                channel.LastActions.Clear(); // TODO: FIX
+
+                Bootstrap.Client.Client.Notice(sender.Nickname, channel.Message);
             }
 
-            channel.LastActions.Clear(); // TODO: FIX
-
             Log.WriteInfo("Spam", "A line by '{0}' in {1} was detected as spam. Quieting for {2} seconds.", sender, e.Recipient, channel.Duration);
-
-            Bootstrap.Client.Client.Notice(sender.Nickname, channel.Message);
-
+            
             Whois.NormalizeIdentity(sender);
 
             Bootstrap.Client.Client.Mode(e.Recipient, "+q", sender);
