@@ -77,6 +77,10 @@ namespace WendySharp
             {
                 Bootstrap.Client.Client.Notice(sender.Nickname, "Don't mention too many users at once.");
             }
+            else if (mentions > 0 && e.Message.ToString().Contains('▄'))
+            {
+                // Stupid tactic to deal with spambots
+            }
             else
             {
                 var saidLines = 0;
