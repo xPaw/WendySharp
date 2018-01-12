@@ -94,8 +94,6 @@ namespace WendySharp
 
                 string ident = parameters[index++];
 
-                Log.WriteDebug("Mode", "{0}{1} on {2}", currentState, currentChar, ident);
-
                 var channel = Bootstrap.Client.ChannelList.GetChannel(e.Recipient);
 
                 if (currentChar == 'o')

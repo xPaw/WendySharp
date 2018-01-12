@@ -117,7 +117,7 @@ namespace WendySharp
 
             var command = RegisteredCommands[i - 1];
 
-            Log.WriteDebug("CommandHandler", "Matched command '{0}' (as {2}) for {1}", command.Match.First(), e.Sender, match.Value);
+            Log.WriteInfo("CommandHandler", "Matched command '{0}' (as {2}) for {1}", command.Match.First(), e.Sender, match.Value);
 
             var arguments = new CommandArguments
             {
@@ -131,7 +131,7 @@ namespace WendySharp
                 // If there is no such user, don't pass
                 if (!Users.TryGetUser(e.Sender, out var user))
                 {
-                    Log.WriteDebug("CommandHandler", "'{0}' is not a user I know of, can't perform '{1}' ({2})", e.Sender, arguments.MatchedCommand, command.Permission);
+                    Log.WriteInfo("CommandHandler", "'{0}' is not a user I know of, can't perform '{1}' ({2})", e.Sender, arguments.MatchedCommand, command.Permission);
 
                     return;
                 }
@@ -139,12 +139,12 @@ namespace WendySharp
                 // If this user doesn't have required permission, don't pass
                 if (!user.HasPermission(e.Recipient, command.Permission))
                 {
-                    Log.WriteDebug("CommandHandler", "'{0}' has no permission to perform '{1}' ({2})", e.Sender, arguments.MatchedCommand, command.Permission);
+                    Log.WriteInfo("CommandHandler", "'{0}' has no permission to perform '{1}' ({2})", e.Sender, arguments.MatchedCommand, command.Permission);
 
                     return;
                 }
 
-                Log.WriteDebug("CommandHandler", "'{0}' is authorized to perform '{1}' ({2})", e.Sender, arguments.MatchedCommand, command.Permission);
+                Log.WriteInfo("CommandHandler", "'{0}' is authorized to perform '{1}' ({2})", e.Sender, arguments.MatchedCommand, command.Permission);
             }
 
             if (command.CompiledMatch != null)
