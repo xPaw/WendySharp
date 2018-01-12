@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Xml;
 using NetIrc2;
 using NetIrc2.Events;
@@ -134,7 +135,13 @@ namespace WendySharp
                     Log.WriteError("Twitter", $"Stream stopped: {twitterDisconnectMessage.Code} {twitterDisconnectMessage.Reason}");
                 }
                 
-                TwitterStream.ResumeStream(); // TODO: delays and stuff?
+                TwitterStream.StopStream();
+
+                Task.Factory.StartNew(() =>
+                {
+                    Thread.Sleep(5000);
+                    TwitterStream.StartStreamMatchingAnyConditionAsync();
+                });
             };
 
             var twitterUsers = Tweetinvi.User.GetUsersFromScreenNames(Config.Twitter.AccountsToFollow.Keys);
@@ -150,7 +157,7 @@ namespace WendySharp
                 TwitterStream.AddFollow(user);
             }
 
-            TwitterStream.StartStreamMatchingAnyCondition();
+            TwitterStream.StartStreamMatchingAnyConditionAsync();
         }
 
         private async void OnTweetReceived(object sender, MatchedTweetReceivedEventArgs matchedTweetReceivedEventArgs)
