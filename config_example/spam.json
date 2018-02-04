@@ -10,6 +10,8 @@
 		"RepeatThreshold": 3,
 		"RepeatThresholdSeconds": 4,
 		
+		"UserMentionsInOneMessage": 4,
+		
 		"QuitsThreshold": 4,
 		"QuitsThresholdSeconds": 100,
 		"QuitsBanMinutes": 30
