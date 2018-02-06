@@ -158,15 +158,14 @@ namespace WendySharp
             TwitterStream.StartStreamMatchingAnyConditionAsync();
         }
 
-        private async void OnTweetReceived(object sender, MatchedTweetReceivedEventArgs matchedTweetReceivedEventArgs)
+        private void OnTweetReceived(object sender, MatchedTweetReceivedEventArgs matchedTweetReceivedEventArgs)
         {
             // Skip replies
             if (matchedTweetReceivedEventArgs.Tweet.InReplyToUserId != null && !TwitterToChannels.ContainsKey(matchedTweetReceivedEventArgs.Tweet.InReplyToUserId.GetValueOrDefault()))
             {
+                Log.WriteDebug("Twitter", $"@{matchedTweetReceivedEventArgs.Tweet.CreatedBy.ScreenName} replied to @{matchedTweetReceivedEventArgs.Tweet.InReplyToScreenName}");
                 return;
             }
-
-            Log.WriteDebug("Twitter", $"Streamed {matchedTweetReceivedEventArgs.Tweet.Url}: {matchedTweetReceivedEventArgs.Tweet.FullText}");
 
             if (!TwitterToChannels.ContainsKey(matchedTweetReceivedEventArgs.Tweet.CreatedBy.Id))
             {
@@ -178,16 +177,17 @@ namespace WendySharp
                 Log.WriteDebug("Twitter", $"@{matchedTweetReceivedEventArgs.Tweet.CreatedBy.ScreenName} retweeted @{matchedTweetReceivedEventArgs.Tweet.RetweetedTweet.CreatedBy.ScreenName}");
                 return;
             }
-            
-            // TODO: Streaming api does not seem to return extended tweets
-            var tweet = await TweetAsync.GetTweet(matchedTweetReceivedEventArgs.Tweet.Id);
 
-            if (tweet?.FullText == null)
+            Log.WriteDebug("Twitter", $"Streamed {matchedTweetReceivedEventArgs.Tweet.Url}: {matchedTweetReceivedEventArgs.Tweet.FullText}");
+
+            var tweet = matchedTweetReceivedEventArgs.Tweet;
+            var text = $"{Color.BLUE}@{tweet.CreatedBy.ScreenName}{Color.DARKGRAY} tweeted {tweet.CreatedAt.ToRelativeString()}:{Color.NORMAL} {FormatTweet(tweet)}";
+
+            // Only append tweet url if its not already contained in the tweet (e.g. photo url)
+            if (!text.Contains(tweet.Url))
             {
-                return;
+                text += $"{Color.DARKBLUE} {tweet.Url}";
             }
-
-            var text = $"{Color.BLUE}@{tweet.CreatedBy.ScreenName}{Color.NORMAL} tweeted {tweet.CreatedAt.ToRelativeString()}: {FormatTweet(tweet)} -{Color.DARKBLUE} {tweet.Url}";
 
             foreach (var channel in TwitterToChannels[tweet.CreatedBy.Id])
             {
@@ -263,7 +263,7 @@ namespace WendySharp
             {
                 foreach (var entityUrl in tweet.Entities.Urls)
                 {
-                    text = text.Replace(entityUrl.URL,entityUrl.ExpandedURL);
+                    text = text.Replace(entityUrl.URL, entityUrl.ExpandedURL);
                 }
             }
 
