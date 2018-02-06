@@ -10,7 +10,7 @@ namespace WendySharp
     class User
     {
         [JsonProperty(Required = Required.Always)]
-        public string Identity;
+        public string Identity = null;
         
         [JsonProperty(Required = Required.Always)]
         public Dictionary<string, List<string>> Permissions;
