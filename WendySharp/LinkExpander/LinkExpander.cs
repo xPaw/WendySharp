@@ -134,8 +134,6 @@ namespace WendySharp
                 {
                     Log.WriteError("Twitter", $"Stream stopped: {twitterDisconnectMessage.Code} {twitterDisconnectMessage.Reason}");
                 }
-                
-                TwitterStream.StopStream();
 
                 Task.Factory.StartNew(() =>
                 {
