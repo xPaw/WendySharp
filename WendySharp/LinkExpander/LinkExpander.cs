@@ -172,6 +172,12 @@ namespace WendySharp
             {
                 return;
             }
+
+            if (matchedTweetReceivedEventArgs.Tweet.RetweetedTweet != null && TwitterToChannels.ContainsKey(matchedTweetReceivedEventArgs.Tweet.RetweetedTweet.CreatedBy.Id))
+            {
+                Log.WriteDebug("Twitter", $"@{matchedTweetReceivedEventArgs.Tweet.CreatedBy.ScreenName} retweeted @{matchedTweetReceivedEventArgs.Tweet.RetweetedTweet.CreatedBy.ScreenName}");
+                return;
+            }
             
             // TODO: Streaming api does not seem to return extended tweets
             var tweet = await TweetAsync.GetTweet(matchedTweetReceivedEventArgs.Tweet.Id);
