@@ -12,10 +12,13 @@ namespace WendySharp
     {
         private readonly List<Command> RegisteredCommands;
         private readonly Regex CompiledCommandMatch;
+        private readonly Faq FaqCommand;
 
         public Commands(IrcClient client)
         {
             client.GotMessage += OnMessage;
+
+            FaqCommand = new Faq();
 
             RegisteredCommands = new List<Command>
             {
@@ -95,6 +98,16 @@ namespace WendySharp
             else if (message[0] == Bootstrap.Client.Settings.Prefix && Bootstrap.Client.Settings.Channels.Contains(e.Recipient))
             {
                 message = message.Substring(1);
+            }
+            else if (message[0] == '?' && message[1] == '?' && Bootstrap.Client.Settings.Channels.Contains(e.Recipient))
+            {
+                FaqCommand.OnCommand(new CommandArguments
+                {
+                    MatchedCommand = message.Substring(2),
+                    Event = e
+                });
+
+                return;
             }
             else
             {
