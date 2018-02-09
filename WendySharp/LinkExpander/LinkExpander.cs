@@ -275,7 +275,7 @@ namespace WendySharp
                 }
             }
                 
-            void ColorEntities<T>(List<T> entities, string color)
+            void ColorEntities<T>(IReadOnlyCollection<T> entities, string color)
             {
                 if (entities == null)
                 {

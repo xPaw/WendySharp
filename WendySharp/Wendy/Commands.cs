@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using NetIrc2;
 using NetIrc2.Events;
-using NetIrc2.Parsing;
 
 namespace WendySharp
 {
@@ -62,7 +61,7 @@ namespace WendySharp
             CompiledCommandMatch = new Regex(pattern, RegexOptions.Compiled | RegexOptions.CultureInvariant);
         }
 
-        public List<Command> GetRegisteredCommands()
+        public IEnumerable<Command> GetRegisteredCommands()
         {
             return RegisteredCommands;
         }

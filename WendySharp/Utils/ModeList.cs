@@ -38,7 +38,7 @@ namespace WendySharp
             }
         }
 
-        public List<LateModeRequest> GetModes()
+        public IEnumerable<LateModeRequest> GetModes()
         {
             return LateModes;
         }

@@ -39,7 +39,7 @@ namespace WendySharp
 
                     ident = whoisData.Identity;
 
-                    if (ident.Nickname.ToString().ToLowerInvariant() == Bootstrap.Client.TrueNickname.ToLowerInvariant())
+                    if (string.Equals(ident.Nickname.ToString(), Bootstrap.Client.TrueNickname, StringComparison.InvariantCultureIgnoreCase))
                     {
                         command.Reply("That's me, dummy.");
 

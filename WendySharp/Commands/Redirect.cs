@@ -60,7 +60,7 @@ namespace WendySharp
 
                     var nickname = ident.Nickname;
 
-                    if (nickname.ToString().ToLowerInvariant() == Bootstrap.Client.TrueNickname.ToLowerInvariant())
+                    if (string.Equals(nickname.ToString(), Bootstrap.Client.TrueNickname, StringComparison.InvariantCultureIgnoreCase))
                     {
                         command.Reply("Don't you even dare.");
 
