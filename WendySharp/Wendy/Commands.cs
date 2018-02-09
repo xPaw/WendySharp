@@ -76,19 +76,7 @@ namespace WendySharp
             }
 
             var message = e.Message.ToString().TrimEnd();
-            var authorizedWithServices = !Bootstrap.Client.HasIdentifyMsg; // Default to true for networks that dont have identify-msg
-            User user = null;
-
-            if (Bootstrap.Client.HasIdentifyMsg)
-            {
-                authorizedWithServices = message[0] == '+';
-                message = message.Substring(1);
-            }
-
-            if (authorizedWithServices)
-            {
-                Users.TryGetUser(e.Sender, out user);
-            }
+            Users.TryGetUser(e.Sender, out var user);
 
             SpamPlugin.OnMessage(e, message, user);
 
@@ -121,7 +109,6 @@ namespace WendySharp
             {
                 FaqCommand.OnCommand(new CommandArguments
                 {
-                    AuthorizedWithServices = authorizedWithServices,
                     User = user,
                     MatchedCommand = message.Substring(2),
                     Event = e
@@ -156,7 +143,6 @@ namespace WendySharp
             {
                 IsDirect = isDirect,
                 User = user,
-                AuthorizedWithServices = authorizedWithServices,
                 MatchedCommand = match.Value.Trim(),
                 Event = e
             };

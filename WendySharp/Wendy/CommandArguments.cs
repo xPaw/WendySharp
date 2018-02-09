@@ -1,7 +1,6 @@
 ﻿using System;
 using NetIrc2.Events;
 using System.Text.RegularExpressions;
-using NetIrc2.Parsing;
 
 namespace WendySharp
 {
@@ -9,7 +8,6 @@ namespace WendySharp
     {
         public bool IsDirect;
         public string MatchedCommand;
-        public bool AuthorizedWithServices;
         public ChatMessageEventArgs Event;
         public Match Arguments;
         public User User;
