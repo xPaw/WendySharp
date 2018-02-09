@@ -26,9 +26,8 @@ namespace WendySharp
         private void Reply(string message, bool notice)
         {
             string recipient = Event.Recipient;
-            var isChannelMessage = IrcValidation.IsChannelName(recipient);
 
-            if (isChannelMessage)
+            if (recipient[0] == '#')
             {
                 if (!notice)
                 {

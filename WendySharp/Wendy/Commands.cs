@@ -70,7 +70,7 @@ namespace WendySharp
         private void OnMessage(object obj, ChatMessageEventArgs e)
         {
             // Don't do anything in a private message
-            if (!IrcValidation.IsChannelName(e.Recipient))
+            if (e.Recipient[0] != '#')
             {
                 return;
             }
