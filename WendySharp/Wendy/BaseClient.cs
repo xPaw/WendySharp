@@ -72,7 +72,6 @@ namespace WendySharp
             new Permissions();
             new Commands(Client);
             LinkExpander = new LinkExpander(Client);
-            new FunActions(this);
             ChannelList = new Channels(Client);
             Whois = new Whois(Client);
         }
