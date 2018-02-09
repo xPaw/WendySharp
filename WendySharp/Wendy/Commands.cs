@@ -74,7 +74,7 @@ namespace WendySharp
 
             var message = e.Message.ToString().TrimEnd();
 
-            if (string.IsNullOrEmpty(message))
+            if (string.IsNullOrEmpty(message) || message.Length < 2)
             {
                 return;
             }
