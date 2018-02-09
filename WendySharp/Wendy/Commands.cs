@@ -13,11 +13,14 @@ namespace WendySharp
         private readonly List<Command> RegisteredCommands;
         private readonly Regex CompiledCommandMatch;
         private readonly Faq FaqCommand;
+        private readonly Spam SpamPlugin;
 
         public Commands(IrcClient client)
         {
             client.GotMessage += OnMessage;
+            client.GotChatAction += OnMessage;
 
+            SpamPlugin = new Spam(client);
             FaqCommand = new Faq();
 
             RegisteredCommands = new List<Command>
@@ -74,12 +77,20 @@ namespace WendySharp
 
             var message = e.Message.ToString().TrimEnd();
             var authorizedWithServices = !Bootstrap.Client.HasIdentifyMsg; // Default to true for networks that dont have identify-msg
+            User user = null;
 
             if (Bootstrap.Client.HasIdentifyMsg)
             {
                 authorizedWithServices = message[0] == '+';
                 message = message.Substring(1);
             }
+
+            if (authorizedWithServices)
+            {
+                Users.TryGetUser(e.Sender, out user);
+            }
+
+            SpamPlugin.OnMessage(e, message, user);
 
             if (message.Length < 2)
             {
@@ -151,7 +162,7 @@ namespace WendySharp
             if (command.Permission != null)
             {
                 // If there is no such user, don't pass
-                if (!authorizedWithServices || !Users.TryGetUser(e.Sender, out var user))
+                if (user == null)
                 {
                     Log.WriteInfo("CommandHandler", "'{0}' is not a user I know of, can't perform '{1}' ({2})", e.Sender, arguments.MatchedCommand, command.Permission);
 

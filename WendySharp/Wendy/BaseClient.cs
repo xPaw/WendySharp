@@ -75,7 +75,6 @@ namespace WendySharp
 
             new Permissions();
             new Commands(Client);
-            new Spam(Client);
             LinkExpander = new LinkExpander(Client);
             new FunActions(this);
             ChannelList = new Channels(Client);

@@ -51,30 +51,13 @@ namespace WendySharp
                 Log.WriteWarn("Spam", "File config/spam.json doesn't exist");
             }
 
-            client.GotMessage += OnMessage;
-            client.GotChatAction += OnMessage;
-
             client.GotLeaveChannel += OnLeaveChannel;
             client.GotUserQuit += OnUserQuit;
         }
-
-        private void OnMessage(object obj, ChatMessageEventArgs e)
+        
+        public void OnMessage(ChatMessageEventArgs e, string message, User user)
         {
-            if (e.Sender == null || !Channels.ContainsKey(e.Recipient))
-            {
-                return;
-            }
-
-            var authorizedWithServices = !Bootstrap.Client.HasIdentifyMsg; // Default to true for networks that dont have identify-msg
-            var message = e.Message.ToString();
-
-            if (Bootstrap.Client.HasIdentifyMsg)
-            {
-                authorizedWithServices = message[0] == '+';
-                message = message.Substring(1);
-            }
-
-            if (authorizedWithServices && IsWhitelisted(e.Sender, e.Recipient))
+            if (e.Sender == null || !Channels.ContainsKey(e.Recipient) || (user != null && user.HasPermission(e.Recipient, "spam.whitelist")))
             {
                 return;
             }
