@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using NetIrc2;
+using NetIrc2.Events;
 using NetIrc2.Parsing;
 using Newtonsoft.Json;
 
@@ -16,6 +18,7 @@ namespace WendySharp
         public string TrueNickname;
         public ModeList ModeList;
         public readonly Whois Whois;
+        public bool HasIdentifyMsg;
         private readonly LinkExpander LinkExpander;
 
         public BaseClient()
@@ -68,6 +71,7 @@ namespace WendySharp
 
             Client.Connected += OnConnected;
             Client.Closed += OnDisconnected;
+            Client.GotUnknownIrcStatement += ClientOnGotUnknownIrcStatement;
 
             new Permissions();
             new Commands(Client);
@@ -102,6 +106,10 @@ namespace WendySharp
 
             Client.LogIn(Settings.Nickname, "https://github.com/xPaw/WendySharp", Settings.Nickname, null, null, Settings.Password);
 
+            // Poorly implemented IRCv3 caps as NetIrc2 does not support that
+            Client.IrcCommand("CAP", "REQ", "multi-prefix identify-msg");
+            Client.IrcCommand("CAP", "END");
+
             foreach (var channel in Settings.Channels)
             {
                 Client.Join(channel);
@@ -115,6 +123,8 @@ namespace WendySharp
 
         private async void OnDisconnected(object sender, EventArgs e)
         {
+            HasIdentifyMsg = false;
+
             Log.WriteInfo("IRC", "Disconnected");
 
             if (!Bootstrap.ResetEvent.WaitOne(0))
@@ -128,6 +138,29 @@ namespace WendySharp
             else
             {
                 Log.WriteInfo("IRC", "Exiting");
+            }
+        }
+
+        private void ClientOnGotUnknownIrcStatement(object sender, IrcUnknownStatementEventArgs statement)
+        {
+            if (statement.Data.Command == "CAP")
+            {
+                var @params = statement.Data.Parameters;
+
+                if (@params.Count >= 3)
+                {
+                    if (@params[1] == "ACK")
+                    {
+                        var caps = ((string)@params[2]).Split(' ');
+
+                        HasIdentifyMsg = caps.Contains("identify-msg");
+
+                        if (HasIdentifyMsg)
+                        {
+                            Log.WriteInfo("IRC", "Enabled identify-msg cap");
+                        }
+                    }
+                }
             }
         }
 

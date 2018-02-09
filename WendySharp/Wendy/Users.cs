@@ -18,6 +18,11 @@ namespace WendySharp
 
         public static bool TryGetUser(IrcIdentity ident, out User user)
         {
+            if (Bootstrap.Client.HasIdentifyMsg)
+            {
+                return UsersList.TryGetValue(ident.Nickname, out user);
+            }
+
             return UsersList.TryGetValue(string.Format("{0}@{1}", ident.Username, ident.Hostname), out user);
         }
     }

@@ -25,6 +25,15 @@ namespace WendySharp
             if (nick.Length == 0 || !IrcIdentity.TryParse(nick, out var ident))
             {
                 ident = command.Event.Sender;
+
+                if (command.AuthorizedWithServices)
+                {
+                    command.Reply($"{Color.GREEN}You are authorized with services.");
+                }
+                else
+                {
+                    command.Reply($"{Color.RED}You are NOT authorized with services.");
+                }
             }
 
             Bootstrap.Client.Whois.Query(ident,

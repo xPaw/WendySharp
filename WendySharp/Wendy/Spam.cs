@@ -60,7 +60,21 @@ namespace WendySharp
 
         private void OnMessage(object obj, ChatMessageEventArgs e)
         {
-            if (e.Sender == null || !Channels.ContainsKey(e.Recipient) || IsWhitelisted(e.Sender, e.Recipient))
+            if (e.Sender == null || !Channels.ContainsKey(e.Recipient))
+            {
+                return;
+            }
+
+            var authorizedWithServices = !Bootstrap.Client.HasIdentifyMsg; // Default to true for networks that dont have identify-msg
+            var message = e.Message.ToString();
+
+            if (Bootstrap.Client.HasIdentifyMsg)
+            {
+                authorizedWithServices = message[0] == '+';
+                message = message.Substring(1);
+            }
+
+            if (authorizedWithServices && IsWhitelisted(e.Sender, e.Recipient))
             {
                 return;
             }
@@ -68,16 +82,16 @@ namespace WendySharp
             var sender = e.Sender;
             var channel = Channels[e.Recipient];
 
-            channel.AddAction(sender, e.Message);
+            channel.AddAction(sender, message);
 
             var actualChannel = Bootstrap.Client.ChannelList.GetChannel(e.Recipient);
-            var mentions = e.Message.Split((byte)' ').Count(word => word.Length > 2 && actualChannel.HasUser(word));
+            var mentions = message.Split(' ').Count(word => word.Length > 2 && actualChannel.HasUser(word));
 
             if (mentions >= channel.UserMentionsInOneMessage)
             {
                 Bootstrap.Client.Client.Notice(sender.Nickname, "Don't mention too many users at once.");
             }
-            else if (mentions > 0 && e.Message.ToString().Contains('▄'))
+            else if (mentions > 0 && message.Contains('▄'))
             {
                 // Stupid tactic to deal with spambots
             }
@@ -86,19 +100,19 @@ namespace WendySharp
                 var saidLines = 0;
                 var repeatLines = 0;
 
-                foreach (var message in channel.LastActions)
+                foreach (var action in channel.LastActions)
                 {
-                    if (message.Identity != sender)
+                    if (action.Identity != sender)
                     {
                         continue;
                     }
 
-                    if (message.Time.AddSeconds(channel.LinesThresholdSeconds) >= DateTime.UtcNow)
+                    if (action.Time.AddSeconds(channel.LinesThresholdSeconds) >= DateTime.UtcNow)
                     {
                         saidLines++;
                     }
                     
-                    if (message.Time.AddSeconds(channel.RepeatThresholdSeconds) >= DateTime.UtcNow && message.Message == e.Message)
+                    if (action.Time.AddSeconds(channel.RepeatThresholdSeconds) >= DateTime.UtcNow && action.Message == message)
                     {
                         repeatLines++;
                     }

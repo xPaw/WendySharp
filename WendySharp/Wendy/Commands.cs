@@ -73,8 +73,15 @@ namespace WendySharp
             }
 
             var message = e.Message.ToString().TrimEnd();
+            var authorizedWithServices = !Bootstrap.Client.HasIdentifyMsg; // Default to true for networks that dont have identify-msg
 
-            if (string.IsNullOrEmpty(message) || message.Length < 2)
+            if (Bootstrap.Client.HasIdentifyMsg)
+            {
+                authorizedWithServices = message[0] == '+';
+                message = message.Substring(1);
+            }
+
+            if (message.Length < 2)
             {
                 return;
             }
@@ -103,6 +110,7 @@ namespace WendySharp
             {
                 FaqCommand.OnCommand(new CommandArguments
                 {
+                    AuthorizedWithServices = authorizedWithServices,
                     MatchedCommand = message.Substring(2),
                     Event = e
                 });
@@ -135,6 +143,7 @@ namespace WendySharp
             var arguments = new CommandArguments
             {
                 IsDirect = isDirect,
+                AuthorizedWithServices = authorizedWithServices,
                 MatchedCommand = match.Value.Trim(),
                 Event = e
             };
@@ -142,7 +151,7 @@ namespace WendySharp
             if (command.Permission != null)
             {
                 // If there is no such user, don't pass
-                if (!Users.TryGetUser(e.Sender, out var user))
+                if (!authorizedWithServices || !Users.TryGetUser(e.Sender, out var user))
                 {
                     Log.WriteInfo("CommandHandler", "'{0}' is not a user I know of, can't perform '{1}' ({2})", e.Sender, arguments.MatchedCommand, command.Permission);
 

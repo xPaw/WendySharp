@@ -9,6 +9,7 @@ namespace WendySharp
     {
         public bool IsDirect;
         public string MatchedCommand;
+        public bool AuthorizedWithServices;
         public ChatMessageEventArgs Event;
         public Match Arguments;
 
