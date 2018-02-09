@@ -12,6 +12,7 @@ namespace WendySharp
         public bool AuthorizedWithServices;
         public ChatMessageEventArgs Event;
         public Match Arguments;
+        public User User;
 
         public void ReplyAsNotice(string message, params object[] args)
         {

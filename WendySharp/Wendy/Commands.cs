@@ -122,6 +122,7 @@ namespace WendySharp
                 FaqCommand.OnCommand(new CommandArguments
                 {
                     AuthorizedWithServices = authorizedWithServices,
+                    User = user,
                     MatchedCommand = message.Substring(2),
                     Event = e
                 });
@@ -154,6 +155,7 @@ namespace WendySharp
             var arguments = new CommandArguments
             {
                 IsDirect = isDirect,
+                User = user,
                 AuthorizedWithServices = authorizedWithServices,
                 MatchedCommand = match.Value.Trim(),
                 Event = e
