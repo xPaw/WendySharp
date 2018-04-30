@@ -21,6 +21,14 @@ namespace WendySharp
 {
     class LinkExpander
     {
+        class EntityContainer
+        {
+            public int Start { get; set; }
+            public int End { get; set; }
+            public string Replacement { get; set; }
+            public string IrcColor { get; set; } = string.Empty;
+        }
+
         private readonly Regex TwitterCompiledMatch;
         private readonly Regex YoutubeCompiledMatch;
         private readonly Regex TwitchCompiledMatch;
@@ -252,45 +260,88 @@ namespace WendySharp
         private string FormatTweet(ITweet tweet)
         {
             var text = tweet.FullText.Substring(tweet.SafeDisplayTextRange[0]);
-            text = WebUtility.HtmlDecode(text).Replace('\n', ' ').Trim();
 
             if (!Config.Twitter.ExpandURLs || tweet.Entities == null)
             {
                 return text;
             }
 
+            var entities = new List<EntityContainer>();
+
             if (tweet.Entities.Urls != null)
             {
-                foreach (var entityUrl in tweet.Entities.Urls)
+                foreach (var entity in tweet.Entities.Urls)
                 {
-                    text = text.Replace(entityUrl.URL, entityUrl.ExpandedURL);
+                    entities.Add(new EntityContainer
+                    {
+                        Start = entity.Indices[0],
+                        End = entity.Indices[1],
+                        Replacement = entity.ExpandedURL,
+                    });
                 }
             }
 
             if (tweet.Entities.Medias != null)
             {
-                foreach (var entityUrl in tweet.Entities.Medias)
+                foreach (var entity in tweet.Entities.Medias)
                 {
-                    text = text.Replace(entityUrl.URL, entityUrl.ExpandedURL);
+                    entities.Add(new EntityContainer
+                    {
+                        Start = entity.Indices[0],
+                        End = entity.Indices[1],
+                        Replacement = entity.ExpandedURL,
+                    });
                 }
             }
-                
-            void ColorEntities<T>(IReadOnlyCollection<T> entities, string color)
+
+            if (tweet.Entities.Hashtags != null)
             {
-                if (entities == null)
+                foreach (var entity in tweet.Entities.Hashtags)
                 {
-                    return;
-                }
-
-                foreach (var entity in entities)
-                {
-                    text = text.Replace(entity.ToString(), $"{color}{entity.ToString()}{Color.NORMAL}", StringComparison.InvariantCultureIgnoreCase);
+                    entities.Add(new EntityContainer
+                    {
+                        Start = entity.Indices[0],
+                        End = entity.Indices[1],
+                        Replacement = "#" + entity.Text,
+                        IrcColor = Color.DARKGRAY,
+                    });
                 }
             }
 
-            ColorEntities(tweet.Entities.Hashtags, Color.DARKGRAY);
-            ColorEntities(tweet.Entities.UserMentions, Color.BLUE);
-            ColorEntities(tweet.Entities.Symbols, Color.GREEN);
+            if (tweet.Entities.UserMentions != null)
+            {
+                foreach (var entity in tweet.Entities.UserMentions)
+                {
+                    entities.Add(new EntityContainer
+                    {
+                        Start = entity.Indices[0],
+                        End = entity.Indices[1],
+                        Replacement = "@" + entity.ScreenName,
+                        IrcColor = Color.BLUE,
+                    });
+                }
+            }
+
+            if (tweet.Entities.Symbols != null)
+            {
+                foreach (var entity in tweet.Entities.Symbols)
+                {
+                    entities.Add(new EntityContainer
+                    {
+                        Start = entity.Indices[0],
+                        End = entity.Indices[1],
+                        Replacement = "$" + entity.Text,
+                        IrcColor = Color.GREEN,
+                    });
+                }
+            }
+
+            foreach (var entity in entities.OrderByDescending(e => e.Start))
+            {
+                text = text.Substring(0, entity.Start) + entity.IrcColor + entity.Replacement + Color.NORMAL + text.Substring(entity.End);
+            }
+
+            text = WebUtility.HtmlDecode(text).Replace('\n', ' ').Trim();
 
             return text;
         }
