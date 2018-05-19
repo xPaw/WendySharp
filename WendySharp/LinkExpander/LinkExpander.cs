@@ -259,11 +259,11 @@ namespace WendySharp
 
         private string FormatTweet(ITweet tweet)
         {
-            var text = tweet.FullText.Substring(tweet.SafeDisplayTextRange[0]);
+            var text = tweet.FullText;
 
             if (!Config.Twitter.ExpandURLs || tweet.Entities == null)
             {
-                return text;
+                return text.Substring(tweet.SafeDisplayTextRange[0]);
             }
 
             var entities = new List<EntityContainer>();
@@ -338,10 +338,17 @@ namespace WendySharp
 
             foreach (var entity in entities.OrderByDescending(e => e.Start))
             {
+                if (entity.End < tweet.SafeDisplayTextRange[0])
+                {
+                    break;
+                }
+
                 text = text.Substring(0, entity.Start) + entity.IrcColor + entity.Replacement + Color.NORMAL + text.Substring(entity.End);
             }
 
-            text = WebUtility.HtmlDecode(text).Replace('\n', ' ').Trim();
+            text = text.Substring(tweet.SafeDisplayTextRange[0]);
+            text = WebUtility.HtmlDecode(text).Replace('\n', ' ');
+            text = text.Trim();
 
             return text;
         }
