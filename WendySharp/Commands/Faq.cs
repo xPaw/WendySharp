@@ -36,15 +36,11 @@ namespace WendySharp
 
             if (!Commands.ContainsKey(command.Event.Recipient))
             {
-                command.Reply("This channel has no FAQ entries.");
-
                 return;
             }
 
             if (!Commands[command.Event.Recipient].TryGetValue(cmd[0], out var text))
             {
-                command.Reply("No such topic.");
-
                 return;
             }
 
