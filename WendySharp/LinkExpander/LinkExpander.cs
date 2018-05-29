@@ -336,14 +336,54 @@ namespace WendySharp
                 }
             }
 
-            foreach (var entity in entities.OrderByDescending(e => e.Start))
+            // Ref: https://github.com/twitter/twitter-text/blob/34dc1dd9f10e9171100cdff0cb2b7a9ed9ea2bd6/js/src/lib/convertUnicodeIndices.js
+            if (entities.Count > 0)
             {
-                if (entity.End < tweet.SafeDisplayTextRange[0])
+                entities = entities.OrderBy(e => e.Start).ToList();
+
+                var charIndex = 0;
+                var entityIndex = 0;
+                var codePointIndex = 0;
+                var entityCurrent = entities[0];
+                
+                while (charIndex < text.Length)
                 {
-                    break;
+                    if (entityCurrent.Start == codePointIndex)
+                    {
+                        var len = entityCurrent.End - entityCurrent.Start;
+                        entityCurrent.Start = charIndex;
+                        entityCurrent.End = charIndex + len;
+
+                        entityIndex++;
+
+                        if (entityIndex == entities.Count)
+                        {
+                            // no more entity
+                            break;
+                        }
+
+                        entityCurrent = entities[entityIndex];
+                    }
+
+                    if (char.IsSurrogatePair(text[charIndex], text[charIndex + 1]) && charIndex < text.Length - 1)
+                    {
+                        // Found surrogate pair
+                        charIndex++;
+                    }
+
+                    codePointIndex++;
+                    charIndex++;
                 }
 
-                text = text.Substring(0, entity.Start) + entity.IrcColor + entity.Replacement + Color.NORMAL + text.Substring(entity.End);
+                foreach (var entity in entities.OrderByDescending(e => e.Start))
+                {
+                    if (entity.End < tweet.SafeDisplayTextRange[0])
+                    {
+                        break;
+                    }
+
+                    text = text.Substring(0, entity.Start) + entity.IrcColor + entity.Replacement + Color.NORMAL + text.Substring(entity.End);
+                }
             }
 
             text = text.Substring(tweet.SafeDisplayTextRange[0]);
