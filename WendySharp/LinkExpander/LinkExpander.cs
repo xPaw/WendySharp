@@ -365,7 +365,7 @@ namespace WendySharp
                         entityCurrent = entities[entityIndex];
                     }
 
-                    if (char.IsSurrogatePair(text[charIndex], text[charIndex + 1]) && charIndex < text.Length - 1)
+                    if (charIndex < text.Length - 1 && char.IsSurrogatePair(text[charIndex], text[charIndex + 1]))
                     {
                         // Found surrogate pair
                         charIndex++;
