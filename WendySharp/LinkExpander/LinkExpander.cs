@@ -272,12 +272,15 @@ namespace WendySharp
             {
                 foreach (var entity in tweet.Entities.Urls)
                 {
-                    entities.Add(new EntityContainer
+                    if (!entities.Exists(x => x.Start == entity.Indices[0]))
                     {
-                        Start = entity.Indices[0],
-                        End = entity.Indices[1],
-                        Replacement = entity.ExpandedURL,
-                    });
+                        entities.Add(new EntityContainer
+                        {
+                            Start = entity.Indices[0],
+                            End = entity.Indices[1],
+                            Replacement = entity.ExpandedURL,
+                        });
+                    }
                 }
             }
 
@@ -285,12 +288,15 @@ namespace WendySharp
             {
                 foreach (var entity in tweet.Entities.Medias)
                 {
-                    entities.Add(new EntityContainer
+                    if (!entities.Exists(x => x.Start == entity.Indices[0]))
                     {
-                        Start = entity.Indices[0],
-                        End = entity.Indices[1],
-                        Replacement = entity.ExpandedURL,
-                    });
+                        entities.Add(new EntityContainer
+                        {
+                            Start = entity.Indices[0],
+                            End = entity.Indices[1],
+                            Replacement = entity.ExpandedURL,
+                        });
+                    }
                 }
             }
 
@@ -298,13 +304,16 @@ namespace WendySharp
             {
                 foreach (var entity in tweet.Entities.Hashtags)
                 {
-                    entities.Add(new EntityContainer
+                    if (!entities.Exists(x => x.Start == entity.Indices[0]))
                     {
-                        Start = entity.Indices[0],
-                        End = entity.Indices[1],
-                        Replacement = "#" + entity.Text,
-                        IrcColor = Color.DARKGRAY,
-                    });
+                        entities.Add(new EntityContainer
+                        {
+                            Start = entity.Indices[0],
+                            End = entity.Indices[1],
+                            Replacement = "#" + entity.Text,
+                            IrcColor = Color.DARKGRAY,
+                        });
+                    }
                 }
             }
 
@@ -312,13 +321,16 @@ namespace WendySharp
             {
                 foreach (var entity in tweet.Entities.UserMentions)
                 {
-                    entities.Add(new EntityContainer
+                    if (!entities.Exists(x => x.Start == entity.Indices[0]))
                     {
-                        Start = entity.Indices[0],
-                        End = entity.Indices[1],
-                        Replacement = "@" + entity.ScreenName,
-                        IrcColor = Color.BLUE,
-                    });
+                        entities.Add(new EntityContainer
+                        {
+                            Start = entity.Indices[0],
+                            End = entity.Indices[1],
+                            Replacement = "@" + entity.ScreenName,
+                            IrcColor = Color.BLUE,
+                        });
+                    }
                 }
             }
 
@@ -326,13 +338,16 @@ namespace WendySharp
             {
                 foreach (var entity in tweet.Entities.Symbols)
                 {
-                    entities.Add(new EntityContainer
+                    if (!entities.Exists(x => x.Start == entity.Indices[0]))
                     {
-                        Start = entity.Indices[0],
-                        End = entity.Indices[1],
-                        Replacement = "$" + entity.Text,
-                        IrcColor = Color.GREEN,
-                    });
+                        entities.Add(new EntityContainer
+                        {
+                            Start = entity.Indices[0],
+                            End = entity.Indices[1],
+                            Replacement = "$" + entity.Text,
+                            IrcColor = Color.GREEN,
+                        });
+                    }
                 }
             }
 
