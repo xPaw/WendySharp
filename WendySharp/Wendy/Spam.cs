@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using NetIrc2;
 using NetIrc2.Events;
 using Newtonsoft.Json;
@@ -19,6 +20,7 @@ namespace WendySharp
     class Spam
     {
         private readonly Dictionary<string, SpamConfig> Channels;
+        private readonly Regex SpamMessagesRegex;
 
         public Spam(IrcClient client)
         {
@@ -51,6 +53,25 @@ namespace WendySharp
                 Log.WriteWarn("Spam", "File config/spam.json doesn't exist");
             }
 
+            path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config", "spam_messages.txt");
+
+            if (File.Exists(path))
+            {
+                var data = File.ReadAllText(path);
+                var pattern = "(" + string.Join("|", data.Split("\n").Select(line => Regex.Escape(line.Trim())).Where(line => line.Length > 0)) + ")";
+
+                SpamMessagesRegex = new Regex(
+                    pattern,
+                    RegexOptions.Compiled |
+                    RegexOptions.CultureInvariant |
+                    RegexOptions.ExplicitCapture |
+                    RegexOptions.IgnoreCase
+                );
+
+                Console.WriteLine(pattern);
+                Console.WriteLine(SpamMessagesRegex.ToString());
+            }
+
             client.GotLeaveChannel += OnLeaveChannel;
             client.GotUserQuit += OnUserQuit;
         }
@@ -74,9 +95,9 @@ namespace WendySharp
             {
                 Bootstrap.Client.Client.Notice(sender.Nickname, "Don't mention too many users at once.");
             }
-            else if (mentions > 0 && message.Contains('▄'))
+            else if (SpamMessagesRegex.IsMatch(message))
             {
-                // Stupid tactic to deal with spambots
+                //
             }
             else
             {
