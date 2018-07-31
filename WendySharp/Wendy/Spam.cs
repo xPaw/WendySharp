@@ -53,25 +53,6 @@ namespace WendySharp
                 Log.WriteWarn("Spam", "File config/spam.json doesn't exist");
             }
 
-            path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config", "spam_messages.txt");
-
-            if (File.Exists(path))
-            {
-                var data = File.ReadAllText(path);
-                var pattern = "(" + string.Join("|", data.Split("\n").Select(line => Regex.Escape(line.Trim())).Where(line => line.Length > 0)) + ")";
-
-                SpamMessagesRegex = new Regex(
-                    pattern,
-                    RegexOptions.Compiled |
-                    RegexOptions.CultureInvariant |
-                    RegexOptions.ExplicitCapture |
-                    RegexOptions.IgnoreCase
-                );
-
-                Console.WriteLine(pattern);
-                Console.WriteLine(SpamMessagesRegex.ToString());
-            }
-
             client.GotLeaveChannel += OnLeaveChannel;
             client.GotUserQuit += OnUserQuit;
         }
@@ -94,10 +75,6 @@ namespace WendySharp
             if (mentions >= channel.UserMentionsInOneMessage)
             {
                 Bootstrap.Client.Client.Notice(sender.Nickname, "Don't mention too many users at once.");
-            }
-            else if (SpamMessagesRegex.IsMatch(message))
-            {
-                //
             }
             else
             {
