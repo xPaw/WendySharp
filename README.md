@@ -1,6 +1,6 @@
-## Wendy# [![Build Status](https://travis-ci.org/xPaw/WendySharp.svg?branch=master)](https://travis-ci.org/xPaw/WendySharp)
+## Wendy# [![Build Status](https://travis-ci.com/xPaw/WendySharp.svg?branch=master)](https://travis-ci.com/xPaw/WendySharp)
 
-A successor to @brownan's [abbot](https://github.com/SteamDatabase/Wendy) rewritten in C#.
+A C# IRC bot.
 
 ## NetIRC2
 
