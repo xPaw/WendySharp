@@ -10,10 +10,11 @@ namespace WendySharp
     class User
     {
         [JsonProperty(Required = Required.Always)]
-        public string Identity = null;
-        
+        public string Identity;
+
         [JsonProperty(Required = Required.Always)]
         public Dictionary<string, List<string>> Permissions;
+
         private readonly Dictionary<string, Regex> CompiledPermissionsMatch;
 
         public User()
@@ -29,7 +30,7 @@ namespace WendySharp
                 throw new JsonException("Missing identity field");
             }
 
-            if (!Permissions.Any())
+            if (Permissions.Count == 0)
             {
                 throw new JsonException(string.Format("Permission list for '{0}' is empty.", Identity));
             }
@@ -41,12 +42,12 @@ namespace WendySharp
                     throw new JsonException(string.Format("Invalid channel '{0}' for user '{1}'", channel.Key, Identity));
                 }
 
-                if (!channel.Value.Any())
+                if (channel.Value.Count == 0)
                 {
                     throw new JsonException(string.Format("Permission list for '{0}' in channel '{1}' is empty.", Identity, channel.Key));
                 }
 
-                var pattern = @"^(" + string.Join("|", channel.Value.Select(Regex.Escape)).Replace(@"\*", @".*") + @")$";
+                var pattern = "^(" + string.Join("|", channel.Value.Select(Regex.Escape)).Replace(@"\*", ".*") + ")$";
 
                 CompiledPermissionsMatch.Add(channel.Key, new Regex(pattern, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture));
             }

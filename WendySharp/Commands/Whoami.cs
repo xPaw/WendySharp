@@ -65,7 +65,7 @@ namespace WendySharp
                         permissions.AddRange(user.Permissions[command.Event.Recipient]);
                     }
 
-                    if (!permissions.Any())
+                    if (permissions.Count == 0)
                     {
                         command.Reply("This user has no permissions in this channel.");
 

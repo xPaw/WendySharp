@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using NetIrc2;
 using NetIrc2.Events;
 using Newtonsoft.Json;
@@ -20,7 +19,6 @@ namespace WendySharp
     class Spam
     {
         private readonly Dictionary<string, SpamConfig> Channels;
-        private readonly Regex SpamMessagesRegex;
 
         public Spam(IrcClient client)
         {
@@ -56,10 +54,10 @@ namespace WendySharp
             client.GotLeaveChannel += OnLeaveChannel;
             client.GotUserQuit += OnUserQuit;
         }
-        
+
         public void OnMessage(ChatMessageEventArgs e, string message, User user)
         {
-            if (e.Sender == null || !Channels.ContainsKey(e.Recipient) || (user != null && user.HasPermission(e.Recipient, "spam.whitelist")))
+            if (e.Sender == null || !Channels.ContainsKey(e.Recipient) || (user?.HasPermission(e.Recipient, "spam.whitelist") == true))
             {
                 return;
             }
@@ -92,7 +90,7 @@ namespace WendySharp
                     {
                         saidLines++;
                     }
-                    
+
                     if (action.Time.AddSeconds(channel.RepeatThresholdSeconds) >= DateTime.UtcNow && action.Message == message)
                     {
                         repeatLines++;
@@ -110,7 +108,7 @@ namespace WendySharp
             }
 
             Log.WriteInfo("Spam", "A line by '{0}' in {1} was detected as spam. Quieting for {2} seconds.", sender, e.Recipient, channel.Duration);
-            
+
             Whois.NormalizeIdentity(sender);
 
             Bootstrap.Client.Client.Mode(e.Recipient, "+q", sender);

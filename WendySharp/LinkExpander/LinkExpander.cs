@@ -106,7 +106,7 @@ namespace WendySharp
                 Config.Twitter.AccessToken,
                 Config.Twitter.AccessSecret
             );
-            
+
             if (Config.Twitter.AccountsToFollow.Count > 0)
             {
                 var thread = new Thread(StartTwitterStream)
@@ -123,10 +123,7 @@ namespace WendySharp
             TwitterStream.MatchingTweetReceived += OnTweetReceived;
 
             TwitterStream.StallWarnings = true;
-            TwitterStream.WarningFallingBehindDetected += (sender, args) =>
-            {
-                Log.WriteWarn("Twitter", $"Stream falling behind: {args.WarningMessage.PercentFull} {args.WarningMessage.Code} {args.WarningMessage.Message}");
-            };
+            TwitterStream.WarningFallingBehindDetected += (_, args) => Log.WriteWarn("Twitter", $"Stream falling behind: {args.WarningMessage.PercentFull} {args.WarningMessage.Code} {args.WarningMessage.Message}");
 
             TwitterStream.StreamStopped += (sender, args) =>
             {
@@ -155,7 +152,7 @@ namespace WendySharp
             foreach (var user in twitterUsers)
             {
                 var channels = Config.Twitter.AccountsToFollow.First(u => u.Key.Equals(user.ScreenName, StringComparison.InvariantCultureIgnoreCase));
-                
+
                 Log.WriteInfo("Twitter", $"Following @{user.ScreenName}");
 
                 TwitterToChannels.Add(user.Id, channels.Value);
@@ -230,13 +227,13 @@ namespace WendySharp
 
                 LastMatches.Enqueue(e.Recipient + status);
 
-                var tweet = await TweetAsync.GetTweet(long.Parse(status));
-                
+                var tweet = await TweetAsync.GetTweet(long.Parse(status)).ConfigureAwait(false);
+
                 if (tweet?.FullText == null)
                 {
                     continue;
                 }
-                
+
                 var text = FormatTweet(tweet);
                 var reply = string.Empty;
 
@@ -360,7 +357,7 @@ namespace WendySharp
                 var entityIndex = 0;
                 var codePointIndex = 0;
                 var entityCurrent = entities[0];
-                
+
                 while (charIndex < text.Length)
                 {
                     if (entityCurrent.Start == codePointIndex)
@@ -403,9 +400,8 @@ namespace WendySharp
 
             text = text.Substring(tweet.SafeDisplayTextRange[0]);
             text = WebUtility.HtmlDecode(text).Replace('\n', ' ');
-            text = text.Trim();
 
-            return text;
+            return text.Trim();
         }
 
         private void ProcessYoutube(ChatMessageEventArgs e)
@@ -452,7 +448,7 @@ namespace WendySharp
                         {
                             // "longest video on youtube" crashes it due to "W" not being parsed
                         }
-                        
+
                         if (time != TimeSpan.Zero)
                         {
                             info.Add(time.ToString());
@@ -530,7 +526,7 @@ namespace WendySharp
                             $"{Color.OLIVE}» {Color.LIGHTGRAY}{stream.stream.channel.status} {Color.DARKGRAY}({int.Parse(stream.stream.viewers.ToString()):N0} viewers)"
                         );
                     };
-                    
+
                     webClient.DownloadDataAsync(new Uri($"https://api.twitch.tv/kraken/streams/{channel}?client_id={Config.Twitch.ClientId}"));
                 }
             }

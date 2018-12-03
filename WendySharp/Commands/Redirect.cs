@@ -49,7 +49,7 @@ namespace WendySharp
                     return;
                 }
             }
-                
+
             Bootstrap.Client.Whois.Query(ident,
                 whoisData =>
                 {

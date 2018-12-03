@@ -19,7 +19,7 @@ namespace WendySharp
                 eventArgs.Cancel = true;
                 ResetEvent.Set();
             };
-            
+
             Client = new BaseClient();
             Client.Connect();
 

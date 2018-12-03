@@ -67,7 +67,7 @@ namespace WendySharp
 
         private void HandleModification(CommandArguments command, IReadOnlyList<string> cmd, bool isRemoval)
         {
-            if (command.User == null || !command.User.HasPermission(command.Event.Recipient, Permission))
+            if (command.User?.HasPermission(command.Event.Recipient, Permission) != true)
             {
                 command.Reply("You have no permission to use this command.");
 

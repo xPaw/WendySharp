@@ -43,8 +43,10 @@ namespace WendySharp
                 return;
             }
 
-            Timer = new Timer();
-            Timer.Interval = time;
+            Timer = new Timer
+            {
+                Interval = time
+            };
             Timer.Elapsed += OnRealTimerElapsed;
             Timer.Start();
 
@@ -75,8 +77,10 @@ namespace WendySharp
         {
             Dispose();
 
-            Timer = new Timer();
-            Timer.Interval = TimeSpan.FromMinutes(1).TotalMilliseconds;
+            Timer = new Timer
+            {
+                Interval = TimeSpan.FromMinutes(1).TotalMilliseconds
+            };
             Timer.Elapsed += OnTimerElapsed;
             Timer.Start();
         }

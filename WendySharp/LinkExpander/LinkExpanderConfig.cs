@@ -44,10 +44,10 @@ namespace WendySharp
             [JsonProperty(Required = Required.Always)]
             public string ClientId { get; set; }
         }
-        
+
         [JsonProperty(Required = Required.Always)]
         public TwitterConfig Twitter { get; set; }
-        
+
         [JsonProperty(Required = Required.Always)]
         public YoutubeConfig YouTube { get; set; }
 

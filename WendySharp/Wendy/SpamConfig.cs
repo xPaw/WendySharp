@@ -82,7 +82,7 @@ namespace WendySharp
             if (!Users.ContainsKey(sender))
             {
                 Users.Add(sender, new UserAction());
-                
+
                 return 1;
             }
 

@@ -30,10 +30,10 @@ namespace WendySharp
 
             var commands = Reference
                 .GetRegisteredCommands()
-                .Where(x => x.Permission == null || (command.User != null && command.User.HasPermission(command.Event.Recipient, x.Permission)))
+                .Where(x => x.Permission == null || (command.User?.HasPermission(command.Event.Recipient, x.Permission) == true))
                 .ToList();
 
-            if (!commands.Any())
+            if (commands.Count == 0)
             {
                 return;
             }
@@ -42,14 +42,14 @@ namespace WendySharp
 
             if (matchedCommand.Length == 0)
             {
-                var allowedCommands = commands.Select(x => x.Match.First());
+                var allowedCommands = commands.Select(x => x.Match[0]);
 
                 command.ReplyAsNotice("Commands you have access to in this channel: {0}", string.Join(", ", allowedCommands));
 
                 return;
             }
 
-            var foundCommand = commands.FirstOrDefault(x => x.Match.Contains(matchedCommand));
+            var foundCommand = commands.Find(x => x.Match.Contains(matchedCommand));
 
             if (foundCommand == null)
             {
@@ -63,7 +63,7 @@ namespace WendySharp
 
         public static void PrintUsage(CommandArguments commandArguments, Command command, bool printAliases = false)
         {
-            commandArguments.ReplyAsNotice("Usage: {0} {1}", command.Match.First(), command.Usage ?? "(no arguments)");
+            commandArguments.ReplyAsNotice("Usage: {0} {1}", command.Match[0], command.Usage ?? "(no arguments)");
 
             if (printAliases && command.Match.Count > 1)
             {

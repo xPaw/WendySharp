@@ -34,8 +34,10 @@ namespace WendySharp
         {
             if (ident.Username != null || ident.Hostname != null)
             {
-                var data = new WhoisData();
-                data.Identity = ident;
+                var data = new WhoisData
+                {
+                    Identity = ident
+                };
 
                 callback.Invoke(data);
             }

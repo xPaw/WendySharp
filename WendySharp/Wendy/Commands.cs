@@ -50,13 +50,13 @@ namespace WendySharp
                 new Emojic8(),
                 new Help(this),
             };
-            
+
             foreach (var cmd in RegisteredCommands)
             {
                 cmd.Compile();
             }
 
-            var pattern = @"^(?:" + string.Join("|", RegisteredCommands.Select(x => string.Format("({0})", string.Join("|", x.Match)))) + @")(?: |$)";
+            var pattern = "^(?:" + string.Join("|", RegisteredCommands.Select(x => string.Format("({0})", string.Join("|", x.Match)))) + ")(?: |$)";
 
             CompiledCommandMatch = new Regex(pattern, RegexOptions.Compiled | RegexOptions.CultureInvariant);
         }
@@ -136,7 +136,7 @@ namespace WendySharp
 
             var command = RegisteredCommands[i - 1];
 
-            Log.WriteInfo("CommandHandler", "Matched command '{0}' (as {2}) for {1}", command.Match.First(), e.Sender, match.Value);
+            Log.WriteInfo("CommandHandler", "Matched command '{0}' (as {2}) for {1}", command.Match[0], e.Sender, match.Value);
 
             var arguments = new CommandArguments
             {
@@ -145,7 +145,7 @@ namespace WendySharp
                 MatchedCommand = match.Value.Trim(),
                 Event = e
             };
-            
+
             if (command.Permission != null)
             {
                 // If there is no such user, don't pass

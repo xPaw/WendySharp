@@ -25,7 +25,7 @@ namespace WendySharp
 
             var modes = Bootstrap.Client.ModeList.GetModes().Where(x => x.Time != default(DateTime)).OrderBy(x => x.Time).ToList();
 
-            if (!modes.Any())
+            if (modes.Count == 0)
             {
                 command.ReplyAsNotice("No pending unbans in this channel.");
 

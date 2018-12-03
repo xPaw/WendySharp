@@ -62,9 +62,10 @@ namespace WendySharp
                 Environment.Exit(1);
             }
 
-            Client = new IrcClient();
-
-            Client.ClientVersion = "Wendy# -- https://github.com/xPaw/WendySharp";
+            Client = new IrcClient
+            {
+                ClientVersion = "Wendy# -- https://github.com/xPaw/WendySharp"
+            };
 
             Client.Connected += OnConnected;
             Client.Closed += OnDisconnected;
@@ -80,8 +81,10 @@ namespace WendySharp
         {
             TrueNickname = Settings.Nickname;
 
-            var options = new IrcClientConnectionOptions();
-            options.SynchronizationContext = SynchronizationContext.Current;
+            var options = new IrcClientConnectionOptions
+            {
+                SynchronizationContext = SynchronizationContext.Current
+            };
 
             Client.Connect(Settings.Server, Settings.Port, options);
         }
@@ -117,7 +120,7 @@ namespace WendySharp
 
             if (!Bootstrap.ResetEvent.WaitOne(0))
             {
-                await Task.Delay(2000);
+                await Task.Delay(2000).ConfigureAwait(false);
 
                 Log.WriteInfo("IRC", "Reconnecting");
 
