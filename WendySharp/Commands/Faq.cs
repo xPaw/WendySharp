@@ -81,9 +81,11 @@ namespace WendySharp
 
             if (isRemoval)
             {
-                if (cmd.Count < 2 || Commands[command.Event.Recipient].ContainsKey(cmd[1]))
+                if (cmd.Count < 2 || !Commands[command.Event.Recipient].ContainsKey(cmd[1]))
                 {
                     command.Reply("Usage: ??remove <existing key>");
+
+                    return;
                 }
 
                 Commands[command.Event.Recipient].Remove(cmd[1]);
