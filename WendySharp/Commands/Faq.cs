@@ -34,6 +34,18 @@ namespace WendySharp
                 return;
             }
 
+            if (cmd[0] == "list")
+            {
+                if (!Commands.ContainsKey(command.Event.Recipient))
+                {
+                    command.Reply($"There are no commands in this channel.");
+                }
+
+                command.Reply($"Available commands: {string.Join(", ", Commands[command.Event.Recipient].Keys)}");
+
+                return;
+            }
+
             if (!Commands.ContainsKey(command.Event.Recipient))
             {
                 return;
@@ -50,7 +62,7 @@ namespace WendySharp
                 command.Event.Sender.Nickname = $"{Color.RED}{cmd[1]}{Color.NORMAL}";
             }
 
-            command.Reply($"{Color.BLUE}{cmd[0]}{Color.NORMAL} - {text}");
+            command.Reply(text);
         }
 
         private void HandleModification(CommandArguments command, IReadOnlyList<string> cmd, bool isRemoval)
