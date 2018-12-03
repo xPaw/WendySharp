@@ -20,6 +20,7 @@ namespace WendySharp
     class Spam
     {
         private readonly Dictionary<string, SpamConfig> Channels;
+        private readonly Regex SpamMessagesRegex;
 
         public Spam(IrcClient client)
         {

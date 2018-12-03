@@ -5,13 +5,17 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Xml;
 using NetIrc2;
 using NetIrc2.Events;
 using NetIrc2.Parsing;
 using Newtonsoft.Json;
 using Tweetinvi;
+using Tweetinvi.Events;
 using Tweetinvi.Models;
+using Tweetinvi.Streaming;
 
 namespace WendySharp
 {
@@ -30,9 +34,13 @@ namespace WendySharp
         private readonly Regex TwitchCompiledMatch;
         private readonly FixedSizedQueue<string> LastMatches;
         private readonly LinkExpanderConfig Config;
+        private readonly Dictionary<long, List<string>> TwitterToChannels;
+        public IFilteredStream TwitterStream { get; private set; }
 
         public LinkExpander(IrcClient client)
         {
+            TwitterToChannels = new Dictionary<long, List<string>>();
+
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config", "services.json");
 
             if (!File.Exists(path))
@@ -98,8 +106,103 @@ namespace WendySharp
                 Config.Twitter.AccessToken,
                 Config.Twitter.AccessSecret
             );
+            
+            if (Config.Twitter.AccountsToFollow.Count > 0)
+            {
+                var thread = new Thread(StartTwitterStream)
+                {
+                    Name = "TwitterStream"
+                };
+                thread.Start();
+            }
         }
-        
+
+        private void StartTwitterStream()
+        {
+            TwitterStream = Tweetinvi.Stream.CreateFilteredStream();
+            TwitterStream.MatchingTweetReceived += OnTweetReceived;
+
+            TwitterStream.StallWarnings = true;
+            TwitterStream.WarningFallingBehindDetected += (sender, args) =>
+            {
+                Log.WriteWarn("Twitter", $"Stream falling behind: {args.WarningMessage.PercentFull} {args.WarningMessage.Code} {args.WarningMessage.Message}");
+            };
+
+            TwitterStream.StreamStopped += (sender, args) =>
+            {
+                var ex = args.Exception;
+                var twitterDisconnectMessage = args.DisconnectMessage;
+
+                if (ex != null)
+                {
+                    Log.WriteError("Twitter", ex.ToString());
+                }
+
+                if (twitterDisconnectMessage != null)
+                {
+                    Log.WriteError("Twitter", $"Stream stopped: {twitterDisconnectMessage.Code} {twitterDisconnectMessage.Reason}");
+                }
+
+                Task.Factory.StartNew(() =>
+                {
+                    Thread.Sleep(5000);
+                    TwitterStream.StartStreamMatchingAnyConditionAsync();
+                });
+            };
+
+            var twitterUsers = Tweetinvi.User.GetUsersFromScreenNames(Config.Twitter.AccountsToFollow.Keys);
+
+            foreach (var user in twitterUsers)
+            {
+                var channels = Config.Twitter.AccountsToFollow.First(u => u.Key.Equals(user.ScreenName, StringComparison.InvariantCultureIgnoreCase));
+                
+                Log.WriteInfo("Twitter", $"Following @{user.ScreenName}");
+
+                TwitterToChannels.Add(user.Id, channels.Value);
+
+                TwitterStream.AddFollow(user);
+            }
+
+            TwitterStream.StartStreamMatchingAnyConditionAsync();
+        }
+
+        private void OnTweetReceived(object sender, MatchedTweetReceivedEventArgs matchedTweetReceivedEventArgs)
+        {
+            // Skip replies
+            if (matchedTweetReceivedEventArgs.Tweet.InReplyToUserId != null && !TwitterToChannels.ContainsKey(matchedTweetReceivedEventArgs.Tweet.InReplyToUserId.GetValueOrDefault()))
+            {
+                Log.WriteDebug("Twitter", $"@{matchedTweetReceivedEventArgs.Tweet.CreatedBy.ScreenName} replied to @{matchedTweetReceivedEventArgs.Tweet.InReplyToScreenName}");
+                return;
+            }
+
+            if (!TwitterToChannels.ContainsKey(matchedTweetReceivedEventArgs.Tweet.CreatedBy.Id))
+            {
+                return;
+            }
+
+            if (matchedTweetReceivedEventArgs.Tweet.RetweetedTweet != null && TwitterToChannels.ContainsKey(matchedTweetReceivedEventArgs.Tweet.RetweetedTweet.CreatedBy.Id))
+            {
+                Log.WriteDebug("Twitter", $"@{matchedTweetReceivedEventArgs.Tweet.CreatedBy.ScreenName} retweeted @{matchedTweetReceivedEventArgs.Tweet.RetweetedTweet.CreatedBy.ScreenName}");
+                return;
+            }
+
+            Log.WriteDebug("Twitter", $"Streamed {matchedTweetReceivedEventArgs.Tweet.Url}: {matchedTweetReceivedEventArgs.Tweet.FullText}");
+
+            var tweet = matchedTweetReceivedEventArgs.Tweet;
+            var text = $"{Color.BLUE}@{tweet.CreatedBy.ScreenName}{Color.DARKGRAY} tweeted {tweet.CreatedAt.ToRelativeString()}:{Color.NORMAL} {FormatTweet(tweet)}";
+
+            // Only append tweet url if its not already contained in the tweet (e.g. photo url)
+            if (!text.Contains(tweet.Url))
+            {
+                text += $"{Color.DARKBLUE} {tweet.Url}";
+            }
+
+            foreach (var channel in TwitterToChannels[tweet.CreatedBy.Id])
+            {
+                Bootstrap.Client.Client.Message(channel, text);
+            }
+        }
+
         private void OnMessage(object sender, ChatMessageEventArgs e)
         {
             if (!Config.Channels.Contains(e.Recipient))

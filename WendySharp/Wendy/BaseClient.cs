@@ -90,6 +90,8 @@ namespace WendySharp
         {
             Client.LogOut();
             Client.Close();
+
+            LinkExpander.TwitterStream?.StopStream();
         }
 
         private void OnConnected(object sender, EventArgs e)

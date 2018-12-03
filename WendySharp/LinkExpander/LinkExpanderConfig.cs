@@ -28,6 +28,9 @@ namespace WendySharp
             /// </summary>
             [JsonProperty(Required = Required.Always)]
             public bool ExpandURLs { get; set; }
+
+            [JsonProperty(Required = Required.Always)]
+            public Dictionary<string, List<string>> AccountsToFollow { get; set; }
         }
 
         public class YoutubeConfig
