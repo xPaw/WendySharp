@@ -113,6 +113,13 @@ namespace WendySharp
 
             Bootstrap.Client.Client.Mode(e.Recipient, "+q", sender);
 
+            if (Bootstrap.Client.ModeList.Find(e.Recipient, sender.ToString(), "-q") != null)
+            {
+                Log.WriteInfo("Spam", "There's already a latemode set for '{0}' in {1}", sender, e.Recipient);
+
+                return;
+            }
+
             Bootstrap.Client.ModeList.AddLateModeRequest(
                 new LateModeRequest
                 {
@@ -176,6 +183,13 @@ namespace WendySharp
             Bootstrap.Client.Client.Kick(nickname, channelName, string.Format("Fix your connection. Banned for {0} minutes", channel.QuitsBanMinutes));
 
             Bootstrap.Client.Client.Notice(nickname, string.Format("You have been banned from {0} for {1} minutes for rapidly rejoining the channel.", channelName, channel.QuitsBanMinutes));
+
+            if (Bootstrap.Client.ModeList.Find(channelName, ident.ToString(), "-b") != null)
+            {
+                Log.WriteInfo("Spam", "There's already a latemode set for '{0}' in {1}", ident, channelName);
+
+                return;
+            }
 
             Bootstrap.Client.ModeList.AddLateModeRequest(
                 new LateModeRequest
