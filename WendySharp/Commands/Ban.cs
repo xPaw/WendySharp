@@ -90,22 +90,7 @@ namespace WendySharp
                         return;
                     }
 
-                    if (whoisData.Identity.Nickname != null)
-                    {
-                        Whois.NormalizeIdentity(ident);
-                    }
-                    else
-                    {
-                        if (ident.Username == null)
-                        {
-                            ident.Username = "*";
-                        }
-
-                        if (ident.Hostname == null)
-                        {
-                            ident.Hostname = "*";
-                        }
-                    }
+                    Whois.NormalizeIdentity(ident);
 
                     if (Bootstrap.Client.ModeList.Find(command.Event.Recipient, ident.ToString(), isQuiet ? "-q" : "-b") != null)
                     {
