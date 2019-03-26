@@ -523,7 +523,7 @@ namespace WendySharp
                         }
 
                         Bootstrap.Client.Client.Message(e.Recipient,
-                            $"{Color.OLIVE}» {Color.LIGHTGRAY}{stream.stream.channel.status} {Color.DARKGRAY}({int.Parse(stream.stream.viewers.ToString()):N0} viewers)"
+                            $"{Color.OLIVE}» {Color.LIGHTGRAY}{stream.stream.channel.status.Trim()} {Color.DARKGRAY}({int.Parse(stream.stream.viewers.ToString()):N0} viewers)"
                         );
                     };
 
