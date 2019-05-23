@@ -207,9 +207,16 @@ namespace WendySharp
                 return;
             }
 
-            ProcessTwitter(e);
-            ProcessYoutube(e);
-            ProcessTwitch(e);
+            try
+            {
+                ProcessTwitter(e);
+                ProcessYoutube(e);
+                ProcessTwitch(e);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(nameof(LinkExpander), $"Exception: {ex}");
+            }
         }
 
         private async void ProcessTwitter(ChatMessageEventArgs e)
