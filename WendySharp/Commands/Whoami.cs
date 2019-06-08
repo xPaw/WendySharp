@@ -48,7 +48,14 @@ namespace WendySharp
 
                     if (!Users.TryGetUser(ident, out var user))
                     {
-                        command.Reply("This user has no permissions.");
+                        if (ident.Nickname == command.Event.Sender)
+                        {
+                            command.Reply("You have no permissions.");
+
+                            return;
+                        }
+
+                        command.Reply($"{ident.Nickname} has no permissions.");
 
                         return;
                     }
@@ -65,14 +72,28 @@ namespace WendySharp
                         permissions.AddRange(user.Permissions[command.Event.Recipient]);
                     }
 
-                    if (permissions.Count == 0)
+                    if (ident.Nickname == command.Event.Sender)
                     {
-                        command.Reply("This user has no permissions in this channel.");
+                        if (permissions.Count > 0)
+                        {
+                            command.Reply($"You have following permissions in this channel: {string.Join(", ", permissions.Distinct())}");
+
+                            return;
+                        }
+
+                        command.Reply("You have no permissions in this channel.");
 
                         return;
                     }
 
-                    command.Reply("{0} has following permissions in this channel: {1}", ident.Nickname, string.Join(", ", permissions.Distinct()));
+                    if (permissions.Count > 0)
+                    {
+                        command.Reply($"{ident.Nickname} has following permissions in this channel: {string.Join(", ", permissions.Distinct())}");
+
+                        return;
+                    }
+
+                    command.Reply($"{ident.Nickname} has no permissions in this channel.");
                 }
             );
         }
