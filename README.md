@@ -1,4 +1,4 @@
-## Wendy# [![Build Status](https://travis-ci.com/xPaw/WendySharp.svg?branch=master)](https://travis-ci.com/xPaw/WendySharp)
+## Wendy#
 
 A C# IRC bot.
 
