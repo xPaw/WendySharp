@@ -100,7 +100,7 @@ namespace WendySharp
             }
             else if (ident.Hostname != "*")
             {
-                ident.Username = "*";
+                //ident.Username = "*";
             }
 
             // We don't want to accidentally ban *!*@*
