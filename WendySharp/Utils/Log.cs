@@ -52,7 +52,7 @@ namespace WendySharp
 
         private static void WriteLine(Category category, string component, string format, params object[] args)
         {
-            var logLine = $"{DateTime.Now.ToLongTimeString()} [{category}] {component}: {string.Format(format, args)}{Environment.NewLine}";
+            var logLine = $"{DateTime.Now.ToString("s").Replace('T', ' ')} [{category}] {component}: {string.Format(format, args)}{Environment.NewLine}";
 
             lock (logLock)
             {
