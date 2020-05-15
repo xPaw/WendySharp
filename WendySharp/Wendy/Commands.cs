@@ -44,7 +44,6 @@ namespace WendySharp
                 new Part(),
                 new Parrot(),
                 new Say(),
-                new Quit(),
                 new Moderated(),
                 new Whoami(),
                 new Emojic8(),
