@@ -124,7 +124,7 @@ namespace WendySharp
                     }
                 }
 
-                var mode = Find(e.Recipient, ident, string.Format("{0}{1}", currentState, currentChar));
+                var mode = Find(e.Recipient, ident, $"{currentState}{currentChar}");
 
                 if (mode != null)
                 {

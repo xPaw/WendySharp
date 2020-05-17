@@ -105,7 +105,7 @@ namespace WendySharp
 
                     if(reason.Length == 0)
                     {
-                        reason = string.Format("Banned by {0}", command.Event.Sender.Nickname);
+                        reason = $"Banned by {command.Event.Sender.Nickname}";
                     }
 
                     Bootstrap.Client.Client.Mode(command.Event.Recipient, isQuiet ? "+q" : "+b", ident);

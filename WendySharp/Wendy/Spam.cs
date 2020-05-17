@@ -180,9 +180,9 @@ namespace WendySharp
             Bootstrap.Client.Client.Mode(channelName, "+b", ident + "$" + Bootstrap.Client.Settings.RedirectChannel);
 
             // In case they manage to come back before ban takes place
-            Bootstrap.Client.Client.Kick(nickname, channelName, string.Format("Fix your connection. Banned for {0} minutes", channel.QuitsBanMinutes));
+            Bootstrap.Client.Client.Kick(nickname, channelName, $"Fix your connection. Banned for {channel.QuitsBanMinutes} minutes");
 
-            Bootstrap.Client.Client.Notice(nickname, string.Format("You have been banned from {0} for {1} minutes for rapidly rejoining the channel.", channelName, channel.QuitsBanMinutes));
+            Bootstrap.Client.Client.Notice(nickname, $"You have been banned from {channelName} for {channel.QuitsBanMinutes} minutes for rapidly rejoining the channel.");
 
             if (Bootstrap.Client.ModeList.Find(channelName, ident.ToString(), "-b") != null)
             {

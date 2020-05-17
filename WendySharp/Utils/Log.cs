@@ -89,9 +89,7 @@ namespace WendySharp
 
         private static string GetLogFile()
         {
-            var logFile = string.Format("{0}.log", DateTime.Now.ToString("MMMM_dd_yyyy"));
-
-            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, LOG_DIRECTORY, logFile);
+            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, LOG_DIRECTORY, $"{DateTime.Now:MMMM_dd_yyyy}.log");
         }
     }
 }

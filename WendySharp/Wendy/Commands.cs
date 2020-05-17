@@ -54,7 +54,7 @@ namespace WendySharp
                 cmd.Compile();
             }
 
-            var pattern = "^(?:" + string.Join("|", RegisteredCommands.Select(x => string.Format("({0})", string.Join("|", x.Match)))) + ")(?: |$)";
+            var pattern = "^(?:" + string.Join("|", RegisteredCommands.Select(x => $"({string.Join("|", x.Match)})")) + ")(?: |$)";
 
             CompiledCommandMatch = new Regex(pattern, RegexOptions.Compiled | RegexOptions.CultureInvariant);
         }

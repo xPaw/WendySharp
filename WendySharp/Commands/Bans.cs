@@ -23,7 +23,7 @@ namespace WendySharp
             // TODO: implement mask search
             //var mask = command.Arguments.Groups["mask"].Value;
 
-            var modes = Bootstrap.Client.ModeList.GetModes().Where(x => x.Time != default(DateTime)).OrderBy(x => x.Time).ToList();
+            var modes = Bootstrap.Client.ModeList.GetModes().Where(x => x.Time != default).OrderBy(x => x.Time).ToList();
 
             if (modes.Count == 0)
             {
@@ -39,7 +39,7 @@ namespace WendySharp
                     mode.Mode,
                     mode.Recipient,
                     mode.Time.ToRelativeString(),
-                    mode.Sender == null ? "" : string.Format(" (from {0})", mode.Sender)
+                    mode.Sender == null ? "" : $" (from {mode.Sender})"
                 );
             }
         }

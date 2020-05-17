@@ -30,7 +30,7 @@ namespace WendySharp
             {
                 if (!notice)
                 {
-                    message = string.Format("{0}: {1}", Event.Sender.Nickname, message);
+                    message = $"{Event.Sender.Nickname}: {message}";
                 }
                 else
                 {

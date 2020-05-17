@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml;
 using NetIrc2;
 using NetIrc2.Events;
 using NetIrc2.Parsing;
@@ -21,7 +19,7 @@ namespace WendySharp
 {
     class LinkExpander
     {
-        class EntityContainer
+        private class EntityContainer
         {
             public int Start { get; set; }
             public int End { get; set; }

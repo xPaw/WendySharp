@@ -106,7 +106,7 @@ namespace WendySharp
 
                     Log.WriteInfo("Redirect", "'{0}' redirected '{1}' from {2} to {3}", command.Event.Sender, ident, command.Event.Recipient, targetChannel);
 
-                    var reason = string.Format("Redirected to {0} by {1} for 2 hours", targetChannel, command.Event.Sender.Nickname);
+                    var reason = $"Redirected to {targetChannel} by {command.Event.Sender.Nickname} for 2 hours";
 
                     Bootstrap.Client.Client.Mode(command.Event.Recipient, "+b", ident + "$" + targetChannel);
 

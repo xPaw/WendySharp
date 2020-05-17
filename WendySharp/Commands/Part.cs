@@ -26,7 +26,7 @@ namespace WendySharp
             {
                 channel = command.Event.Recipient;
 
-                Bootstrap.Client.Client.Message(channel, string.Format("Farewell, {0}!", channel));
+                Bootstrap.Client.Client.Message(channel, $"Farewell, {channel}!");
             }
             else
             {

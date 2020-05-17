@@ -32,19 +32,19 @@ namespace WendySharp
 
             if (Permissions.Count == 0)
             {
-                throw new JsonException(string.Format("Permission list for '{0}' is empty.", Identity));
+                throw new JsonException($"Permission list for '{Identity}' is empty.");
             }
 
             foreach (var channel in Permissions)
             {
                 if (channel.Key != "*" && !IrcValidation.IsChannelName(channel.Key))
                 {
-                    throw new JsonException(string.Format("Invalid channel '{0}' for user '{1}'", channel.Key, Identity));
+                    throw new JsonException($"Invalid channel '{channel.Key}' for user '{Identity}'");
                 }
 
                 if (channel.Value.Count == 0)
                 {
-                    throw new JsonException(string.Format("Permission list for '{0}' in channel '{1}' is empty.", Identity, channel.Key));
+                    throw new JsonException($"Permission list for '{Identity}' in channel '{channel.Key}' is empty.");
                 }
 
                 var pattern = "^(" + string.Join("|", channel.Value.Select(Regex.Escape)).Replace(@"\*", ".*") + ")$";

@@ -15,7 +15,7 @@ namespace WendySharp
 
         public void Check()
         {
-            if (Time == default(DateTime))
+            if (Time == default)
             {
                 return;
             }

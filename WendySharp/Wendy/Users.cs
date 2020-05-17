@@ -19,7 +19,7 @@ namespace WendySharp
 
         public static bool TryGetUser(IrcIdentity ident, out User user)
         {
-            return UsersList.TryGetValue(string.Format("{0}@{1}", ident.Username, ident.Hostname), out user);
+            return UsersList.TryGetValue($"{ident.Username}@{ident.Hostname}", out user);
         }
     }
 }

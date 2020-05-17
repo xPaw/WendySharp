@@ -13,6 +13,8 @@ namespace WendySharp
         public readonly IrcClient Client;
         public readonly Settings Settings;
         public readonly Channels ChannelList;
+        public readonly Permissions Permissions;
+        public readonly Commands Commands;
         public string TrueNickname;
         public ModeList ModeList;
         public readonly Whois Whois;
@@ -44,7 +46,7 @@ namespace WendySharp
                     {
                         if (!IrcValidation.IsChannelName(channel))
                         {
-                            throw new JsonException(string.Format("Channel '{0}' is not valid.", channel));
+                            throw new JsonException($"Channel '{channel}' is not valid.");
                         }
                     }
                 }
@@ -70,8 +72,8 @@ namespace WendySharp
             Client.Connected += OnConnected;
             Client.Closed += OnDisconnected;
 
-            new Permissions();
-            new Commands(Client);
+            Permissions = new Permissions();
+            Commands = new Commands(Client);
             LinkExpander = new LinkExpander(Client);
             ChannelList = new Channels(Client);
             Whois = new Whois(Client);
@@ -108,10 +110,7 @@ namespace WendySharp
                 Client.Join(channel);
             }
 
-            if (ModeList == null)
-            {
-                ModeList = new ModeList(Client);
-            }
+            ModeList ??= new ModeList(Client);
         }
 
         private async void OnDisconnected(object sender, EventArgs e)

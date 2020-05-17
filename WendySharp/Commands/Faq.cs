@@ -38,7 +38,7 @@ namespace WendySharp
             {
                 if (!Commands.ContainsKey(command.Event.Recipient))
                 {
-                    command.Reply($"There are no commands in this channel.");
+                    command.Reply("There are no commands in this channel.");
                 }
 
                 command.Reply($"Available commands: {string.Join(", ", Commands[command.Event.Recipient].Keys)}");

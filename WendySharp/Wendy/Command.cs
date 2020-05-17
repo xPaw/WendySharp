@@ -61,7 +61,7 @@ namespace WendySharp
             // probably strictly isn't the right thing to do, but the only thing
             // this really disallows is having no boundry between the command
             // and its arguments.
-            var pattern = string.Format(@"({0})( |\b){1}", string.Join("|", Match), ArgumentMatch);
+            var pattern = $@"({string.Join("|", Match)})( |\b){ArgumentMatch}";
 
             CompiledMatch = new Regex(pattern, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
         }
