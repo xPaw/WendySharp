@@ -30,7 +30,7 @@ namespace WendySharp
             {
                 if (channel.HasChanServ)
                 {
-                    Bootstrap.Client.Client.Message("ChanServ", string.Format("op {0}", channel.Name));
+                    Bootstrap.Client.Client.IrcCommand("CHANSERV", "op", channel.Name);
                 }
                 else
                 {

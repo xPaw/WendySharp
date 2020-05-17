@@ -28,7 +28,7 @@ namespace WendySharp
             else if (channel.HasChanServ)
             {
                 // Op both the bot and sender
-                Bootstrap.Client.Client.Message("ChanServ", string.Format("op {0} {1} {2}", channel.Name, Bootstrap.Client.TrueNickname, command.Event.Sender.Nickname));
+                Bootstrap.Client.Client.IrcCommand("CHANSERV", "op", channel.Name, Bootstrap.Client.TrueNickname, command.Event.Sender.Nickname);
             }
             else
             {

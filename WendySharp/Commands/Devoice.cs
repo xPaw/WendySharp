@@ -54,7 +54,7 @@ namespace WendySharp
             }
             else if (channel.HasChanServ)
             {
-                Bootstrap.Client.Client.Message("ChanServ", string.Format("devoice {0} {1}", channel.Name, string.Join(" ", nicks)));
+                Bootstrap.Client.Client.IrcCommand("CHANSERV", "devoice", channel.Name, string.Join(" ", nicks));
             }
             else
             {
