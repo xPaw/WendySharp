@@ -182,7 +182,7 @@ namespace WendySharp
             Log.WriteDebug("Twitter", $"Streamed {matchedTweetReceivedEventArgs.Tweet.Url}: {matchedTweetReceivedEventArgs.Tweet.FullText}");
 
             var tweet = matchedTweetReceivedEventArgs.Tweet;
-            var text = $"{Color.BLUE}@{tweet.CreatedBy.ScreenName}{Color.DARKGRAY} tweeted {tweet.CreatedAt.ToRelativeString()}:{Color.NORMAL} {FormatTweet(tweet)}";
+            var text = $"{Color.BLUE}@{tweet.CreatedBy.ScreenName}{Color.DARKGRAY} tweeted:{Color.NORMAL} {FormatTweet(tweet)}";
 
             // Only append tweet url if its not already contained in the tweet (e.g. photo url)
             if (!text.Contains(tweet.Url))
