@@ -26,10 +26,5 @@
 	"YouTube":
 	{
 		"ApiKey": ""
-	},
-	
-	"Twitch":
-	{
-		"ClientId": ""
 	}
 }

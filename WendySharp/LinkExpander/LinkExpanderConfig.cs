@@ -39,20 +39,11 @@ namespace WendySharp
             public string ApiKey { get; set; }
         }
 
-        public class TwitchConfig
-        {
-            [JsonProperty(Required = Required.Always)]
-            public string ClientId { get; set; }
-        }
-
         [JsonProperty(Required = Required.Always)]
         public TwitterConfig Twitter { get; set; }
 
         [JsonProperty(Required = Required.Always)]
         public YoutubeConfig YouTube { get; set; }
-
-        [JsonProperty(Required = Required.Always)]
-        public TwitchConfig Twitch { get; set; }
 
         /// <summary>
         /// Don't repeat a tweet if it was already mentioned in the last N tweets.
