@@ -30,7 +30,6 @@ namespace WendySharp
         }
 
         private readonly Regex TwitterCompiledMatch;
-        private readonly Regex YoutubeCompiledMatch;
         private readonly FixedSizedQueue<string> LastMatches;
         private readonly LinkExpanderConfig Config;
         private readonly Dictionary<long, List<string>> TwitterToChannels;
@@ -91,7 +90,6 @@ namespace WendySharp
             };
 
             TwitterCompiledMatch = new Regex(@"(^|/|\.)twitter\.com/(.+?)/status/(?<status>[0-9]+)", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
-            YoutubeCompiledMatch = new Regex(@"(^|/|\.)(youtube\.com/watch\?v=|youtube\.com/embed/|youtu\.be/)(?<id>[a-zA-Z0-9\-_]+)", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
             
             client.GotMessage += OnMessage;
 
@@ -208,7 +206,6 @@ namespace WendySharp
             try
             {
                 ProcessTwitter(e);
-                ProcessYoutube(e);
             }
             catch (Exception ex)
             {
@@ -250,10 +247,6 @@ namespace WendySharp
                 Bootstrap.Client.Client.Message(e.Recipient,
                     $"{Color.OLIVE}» {Color.BLUE}@{tweet.CreatedBy.ScreenName}{Color.LIGHTGRAY} {tweet.CreatedAt.ToRelativeString()}{Color.NORMAL}{reply}: {text}"
                 );
-
-                var fakeEvent = new ChatMessageEventArgs(e.Sender, e.Recipient, text);
-
-                ProcessYoutube(fakeEvent);
             }
         }
 
@@ -405,91 +398,6 @@ namespace WendySharp
             text = WebUtility.HtmlDecode(text).Replace('\n', ' ');
 
             return text.Trim();
-        }
-
-        private void ProcessYoutube(ChatMessageEventArgs e)
-        {
-            var matches = YoutubeCompiledMatch.Matches(e.Message);
-
-            foreach (Match match in matches)
-            {
-                var id = match.Groups["id"].Value;
-
-                if (LastMatches.Contains(e.Recipient + id))
-                {
-                    continue;
-                }
-
-                LastMatches.Enqueue(e.Recipient + id);
-
-                using (var webClient = new SaneWebClient())
-                {
-                    webClient.DownloadDataCompleted += (s, youtube) =>
-                    {
-                        if (youtube.Error != null || youtube.Cancelled)
-                        {
-                            return;
-                        }
-
-                        var response = Encoding.UTF8.GetString(youtube.Result);
-                        dynamic data = JsonConvert.DeserializeObject(response);
-
-                        if (data.items == null || data.items.Count == 0)
-                        {
-                            return;
-                        }
-
-                        var item = data.items[0];
-                        var info = new List<string>();
-                        var time = TimeSpan.Zero;
-
-                        try
-                        {
-                            time = XmlConvert.ToTimeSpan(item.contentDetails.duration.ToString());
-                        }
-                        catch (FormatException)
-                        {
-                            // "longest video on youtube" crashes it due to "W" not being parsed
-                        }
-
-                        if (time != TimeSpan.Zero)
-                        {
-                            info.Add(time.ToString());
-                        }
-
-                        if (item.statistics?.viewCount != null)
-                        {
-                            info.Add($"{Color.DARKGRAY}{int.Parse(item.statistics.viewCount.ToString()):N0}{Color.NORMAL} views");
-                        }
-
-                        if (item.statistics?.likeCount != null)
-                        {
-                            info.Add($"{Color.GREEN}{int.Parse(item.statistics.likeCount.ToString()):N0}{Color.NORMAL} likes");
-                            info.Add($"{Color.RED}{int.Parse(item.statistics.dislikeCount.ToString()):N0}{Color.NORMAL} dislikes");
-                        }
-
-                        if (item.snippet.liveBroadcastContent?.ToString() != "none")
-                        {
-                            info.Add(Color.GREEN + item.snippet.liveBroadcastContent.ToString() == "upcoming" ? "Upcoming Livestream" : "LIVE");
-                        }
-                        else if (item.contentDetails.definition?.ToString() != "hd")
-                        {
-                            info.Add(Color.RED + item.contentDetails.definition.ToString().ToUpper());
-                        }
-
-                        if (item.contentDetails.dimension?.ToString() != "2d")
-                        {
-                            info.Add(Color.RED + item.contentDetails.dimension.ToString().ToUpper());
-                        }
-
-                        Bootstrap.Client.Client.Message(e.Recipient,
-                            $"{Color.OLIVE}» {Color.LIGHTGRAY}{item.snippet.title}{Color.NORMAL} by {Color.BLUE}{item.snippet.channelTitle} {Color.NORMAL}({string.Join(", ", info)}{Color.NORMAL})"
-                        );
-                    };
-
-                    webClient.DownloadDataAsync(new Uri($"https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics&id={id}&key={Config.YouTube.ApiKey}"));
-                }
-            }
         }
     }
 }

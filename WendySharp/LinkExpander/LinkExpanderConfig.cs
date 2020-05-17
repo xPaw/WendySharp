@@ -33,17 +33,8 @@ namespace WendySharp
             public Dictionary<string, List<string>> AccountsToFollow { get; set; }
         }
 
-        public class YoutubeConfig
-        {
-            [JsonProperty(Required = Required.Always)]
-            public string ApiKey { get; set; }
-        }
-
         [JsonProperty(Required = Required.Always)]
         public TwitterConfig Twitter { get; set; }
-
-        [JsonProperty(Required = Required.Always)]
-        public YoutubeConfig YouTube { get; set; }
 
         /// <summary>
         /// Don't repeat a tweet if it was already mentioned in the last N tweets.
