@@ -46,7 +46,6 @@ namespace WendySharp
                 new Say(),
                 new Moderated(),
                 new Whoami(),
-                new Emojic8(),
                 new Help(this),
             };
 
