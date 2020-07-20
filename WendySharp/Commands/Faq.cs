@@ -13,7 +13,7 @@ namespace WendySharp
 
         public Faq()
         {
-            Commands = new Dictionary<string, Dictionary<string, string>>();
+            Commands = new Dictionary<string, Dictionary<string, string>>(StringComparer.InvariantCultureIgnoreCase);
 
             FilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config", "faq.json");
 
