@@ -13,13 +13,17 @@ namespace WendySharp
 
         public Faq()
         {
-            Commands = new Dictionary<string, Dictionary<string, string>>(StringComparer.InvariantCultureIgnoreCase);
-
             FilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config", "faq.json");
 
             if (File.Exists(FilePath))
             {
-                Commands = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, string>>>(File.ReadAllText(FilePath));
+                Commands = new Dictionary<string, Dictionary<string, string>>(
+                    JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, string>>>(
+                        File.ReadAllText(FilePath)), StringComparer.InvariantCultureIgnoreCase);
+            }
+            else
+            {
+                Commands = new Dictionary<string, Dictionary<string, string>>(StringComparer.InvariantCultureIgnoreCase);
             }
         }
 
