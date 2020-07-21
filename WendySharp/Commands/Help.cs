@@ -42,7 +42,8 @@ namespace WendySharp
 
             if (matchedCommand.Length == 0)
             {
-                var allowedCommands = commands.Select(x => x.Match[0]);
+                var allowedCommands = commands.Select(x => x.Match[0]).ToList();
+                allowedCommands.Add("??list");
 
                 command.ReplyAsNotice("Commands you have access to in this channel: {0}", string.Join(", ", allowedCommands));
 
