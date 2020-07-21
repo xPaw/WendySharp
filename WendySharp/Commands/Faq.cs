@@ -8,7 +8,7 @@ namespace WendySharp
 {
     class Faq
     {
-        private readonly Dictionary<string, Dictionary<string, string>> Commands;
+        private readonly Dictionary<string, SortedDictionary<string, string>> Commands;
         private readonly string FilePath;
         private const string Permission = "irc.op.faq";
 
@@ -18,11 +18,11 @@ namespace WendySharp
 
             if (File.Exists(FilePath))
             {
-                Commands = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, string>>>(File.ReadAllText(FilePath));
+                Commands = JsonConvert.DeserializeObject<Dictionary<string, SortedDictionary<string, string>>>(File.ReadAllText(FilePath));
             }
             else
             {
-                Commands = new Dictionary<string, Dictionary<string, string>>();
+                Commands = new Dictionary<string, SortedDictionary<string, string>>();
             }
         }
 
@@ -88,7 +88,7 @@ namespace WendySharp
 
             if (!Commands.ContainsKey(command.Event.Recipient))
             {
-                Commands[command.Event.Recipient] = new Dictionary<string, string>();
+                Commands[command.Event.Recipient] = new SortedDictionary<string, string>();
             }
 
             string trigger;
