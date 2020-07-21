@@ -133,14 +133,15 @@ namespace WendySharp
             }
 
             var command = RegisteredCommands[i - 1];
+            var matchedCommand = match.Value.Trim();
 
-            Log.WriteInfo("CommandHandler", "Matched command '{0}' (as {2}) for {1}", command.Match[0], e.Sender, match.Value);
+            Log.WriteInfo("CommandHandler", "Matched command '{0}' (as {1}) for {2}", command.Match[0], matchedCommand, e.Sender);
 
             var arguments = new CommandArguments
             {
                 IsDirect = isDirect,
                 User = user,
-                MatchedCommand = match.Value.Trim(),
+                MatchedCommand = matchedCommand,
                 Event = e
             };
 
