@@ -12,11 +12,21 @@ namespace WendySharp
         public Match Arguments;
         public User User;
 
+        public void ReplyAsNotice(string message)
+        {
+            Reply(message, true);
+        }
+        
         public void ReplyAsNotice(string message, params object[] args)
         {
             Reply(string.Format(message, args), true);
         }
 
+        public void Reply(string message)
+        {
+            Reply(message, false);
+        }
+        
         public void Reply(string message, params object[] args)
         {
             Reply(string.Format(message, args), false);
