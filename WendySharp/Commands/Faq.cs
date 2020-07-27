@@ -138,7 +138,7 @@ namespace WendySharp
             
             command.Reply("{1} FAQ entry: {0}", trigger, Commands[command.Event.Recipient].ContainsKey(trigger) ? "Modified" : "Added");
 
-            Commands[command.Event.Recipient][trigger] = cmd[2];
+            Commands[command.Event.Recipient][trigger] = string.Join(" ", cmd.Skip(2));
 
             SaveToFile();
         }
