@@ -16,11 +16,13 @@ namespace WendySharp
     {
         public DateTime LastPart;
         public byte PartsCount;
+        public byte BansCount;
 
         public UserAction()
         {
             LastPart = DateTime.UtcNow;
             PartsCount = 1;
+            BansCount = 0;
         }
     }
 
@@ -100,9 +102,10 @@ namespace WendySharp
             return Users[sender].PartsCount;
         }
 
-        public void ResetUserPart(string sender)
+        public byte AddUserBan(string sender)
         {
-            Users.Remove(sender);
+            Users[sender].PartsCount = 1;
+            return ++Users[sender].BansCount;
         }
     }
 }

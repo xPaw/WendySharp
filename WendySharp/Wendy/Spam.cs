@@ -173,16 +173,16 @@ namespace WendySharp
                 return;
             }
 
-            channel.ResetUserPart(ident.ToString());
+            var banMinutes = channel.AddUserBan(ident.ToString()) * channel.QuitsBanMinutes;
 
-            Log.WriteInfo("Spam", "'{1}' ({0}) is spamming joins/quits in {2}. Redirecting for {3} minutes.", nickname, ident, channelName, channel.QuitsBanMinutes);
+            Log.WriteInfo("Spam", "'{1}' ({0}) is spamming joins/quits in {2}. Redirecting for {3} minutes.", nickname, ident, channelName, banMinutes);
 
             Bootstrap.Client.Client.Mode(channelName, "+b", ident + "$" + Bootstrap.Client.Settings.RedirectChannel);
 
             // In case they manage to come back before ban takes place
-            Bootstrap.Client.Client.Kick(nickname, channelName, $"Fix your connection. Banned for {channel.QuitsBanMinutes} minutes");
+            Bootstrap.Client.Client.Kick(nickname, channelName, $"Fix your connection. Banned for {banMinutes} minutes");
 
-            Bootstrap.Client.Client.Notice(nickname, $"You have been banned from {channelName} for {channel.QuitsBanMinutes} minutes for rapidly rejoining the channel.");
+            Bootstrap.Client.Client.Notice(nickname, $"Please fix your connection. You have been banned from {channelName} for {banMinutes} minutes for rapidly rejoining the channel.");
 
             if (Bootstrap.Client.ModeList.Find(channelName, ident.ToString(), "-b") != null)
             {
@@ -197,7 +197,7 @@ namespace WendySharp
                     Channel = channelName,
                     Recipient = ident.ToString(),
                     Mode = "-b",
-                    Time = DateTime.UtcNow.AddMinutes(channel.QuitsBanMinutes),
+                    Time = DateTime.UtcNow.AddMinutes(banMinutes),
                     Reason = "Quit/leave flood"
                 }
             );
