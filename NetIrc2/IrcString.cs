@@ -477,16 +477,14 @@ namespace NetIrc2
         #endregion
 
         #region ISerializable
-        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
         IrcString(SerializationInfo info, StreamingContext context)
         {
             Throw.If.Null(info, "info");
 
-            var buffer = (byte[])info.GetValue("bytes", typeof(byte[])) ?? new byte[0];
+            var buffer = (byte[])info.GetValue("bytes", typeof(byte[])) ?? Array.Empty<byte>();
             Create(buffer, 0, buffer.Length);
         }
 
-        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
         void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
         {
             Throw.If.Null(info, "info");

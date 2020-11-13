@@ -1,11 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <Authors>xPaw</Authors>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/xPaw/WendySharp</RepositoryUrl>
     <PackageLicenseUrl>https://github.com/xPaw/WendySharp/blob/master/LICENSE</PackageLicenseUrl>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
