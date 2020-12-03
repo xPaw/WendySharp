@@ -15,8 +15,8 @@ namespace WendySharp
     class UserAction
     {
         public DateTime LastPart;
-        public byte PartsCount;
-        public byte BansCount;
+        public ushort PartsCount;
+        public ushort BansCount;
 
         public UserAction()
         {
@@ -79,7 +79,7 @@ namespace WendySharp
             );
         }
 
-        public byte AddUserPart(string sender, uint thresholdSeconds)
+        public ushort AddUserPart(string sender, uint thresholdSeconds)
         {
             if (!Users.ContainsKey(sender))
             {
@@ -102,7 +102,7 @@ namespace WendySharp
             return Users[sender].PartsCount;
         }
 
-        public byte AddUserBan(string sender)
+        public ushort AddUserBan(string sender)
         {
             Users[sender].PartsCount = 1;
             return ++Users[sender].BansCount;
