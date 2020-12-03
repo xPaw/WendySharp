@@ -69,7 +69,7 @@ namespace WendySharp
 
                     if (whoisData.Identity.Nickname != null)
                     {
-                        Whois.NormalizeIdentity(ident);
+                        ident = Whois.NormalizeIdentity(ident);
                     }
                     else
                     {

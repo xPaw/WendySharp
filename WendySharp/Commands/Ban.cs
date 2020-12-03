@@ -90,7 +90,7 @@ namespace WendySharp
                         return;
                     }
 
-                    Whois.NormalizeIdentity(ident);
+                    ident = Whois.NormalizeIdentity(ident);
 
                     if (Bootstrap.Client.ModeList.Find(command.Event.Recipient, ident.ToString(), isQuiet ? "-q" : "-b") != null)
                     {

@@ -69,8 +69,15 @@ namespace WendySharp
             Bootstrap.Client.Client.Whois(ident.Nickname);
         }
 
-        public static void NormalizeIdentity(IrcIdentity ident)
+        public static IrcIdentity NormalizeIdentity(IrcIdentity originalIdent)
         {
+            var ident = new IrcIdentity
+            {
+                Hostname = originalIdent.Hostname,
+                Nickname = originalIdent.Nickname,
+                Username = originalIdent.Username,
+            };
+
             if (ident.Username == null)
             {
                 ident.Username = "*";
@@ -90,6 +97,8 @@ namespace WendySharp
             {
                 ident.Nickname = "*";
             }
+
+            return ident;
         }
 
         private void OnIrcStatement(object sender, IrcUnknownStatementEventArgs e)

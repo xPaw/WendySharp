@@ -109,7 +109,7 @@ namespace WendySharp
 
             Log.WriteInfo("Spam", "A line by '{0}' in {1} was detected as spam. Quieting for {2} seconds.", sender, e.Recipient, channel.Duration);
 
-            Whois.NormalizeIdentity(sender);
+            sender = Whois.NormalizeIdentity(sender);
 
             Bootstrap.Client.Client.Mode(e.Recipient, "+q", sender);
 
@@ -164,7 +164,7 @@ namespace WendySharp
         {
             var nickname = ident.Nickname;
 
-            Whois.NormalizeIdentity(ident);
+            ident = Whois.NormalizeIdentity(ident);
 
             var quits = channel.AddUserPart(ident.ToString(), channel.QuitsThresholdSeconds);
 

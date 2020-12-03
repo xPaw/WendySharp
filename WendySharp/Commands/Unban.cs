@@ -56,8 +56,7 @@ namespace WendySharp
                     if (whoisData.Identity.Nickname != null)
                     {
                         ident = whoisData.Identity;
-
-                        Whois.NormalizeIdentity(ident);
+                        ident = Whois.NormalizeIdentity(ident);
                     }
                     else
                     {
