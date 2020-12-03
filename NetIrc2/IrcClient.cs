@@ -141,7 +141,10 @@ namespace NetIrc2
 
             var context = new Context()
             {
-                ReceiverThread = new Thread(ThreadReceiver),
+                ReceiverThread = new Thread(ThreadReceiver)
+                {
+                    Name = "IRC Receiver",
+                },
                 StartEvent = new ManualResetEvent(false),
                 Stream = stream,
                 SynchronizationContext = options.SynchronizationContext
